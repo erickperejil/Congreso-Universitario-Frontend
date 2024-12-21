@@ -1,7 +1,20 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
 
-const nextConfig: NextConfig = {
-  /* config options here */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com', // Agregamos el dominio de Unsplash
+        pathname: '/**',                // Permitimos todas las rutas del dominio
+      },
+      {
+        protocol: 'https',
+        hostname: 'ik.imagekit.io',     // Si necesitas otro dominio, agrégalo aquí
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
