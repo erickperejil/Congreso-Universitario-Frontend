@@ -45,8 +45,12 @@ export default function Carousel() {
   }, []);
 
   return (
+    
     <div className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden rounded-lg">
       {/* Contenedor del carrusel */}
+      <h1 className="text-[#E7E8F2] text-3xl font-bold text-center mb-6">
+        Ejes Tematicos
+      </h1>
       <div
         className="flex transition-transform duration-700 ease-in-out h-full rounded-sm"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
