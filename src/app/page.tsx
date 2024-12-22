@@ -1,8 +1,16 @@
+'use client'
+
 import Cronograma from "@/components/cronograma";
+import Navbar from "@/components/navbar";
+import PrimaryButton from "@/components/PrimaryButton";
 import Carousel from "@/components/ejes_tematicos";
 import Ponentes from "@/components/ponentes";
 //bg-[101017]
 export default function Home() {
+  const handleDownload = () => {
+    console.log('Cronograma descargado');
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col bg-[101017]"> 
     <main className="bg-[101017] flex-grow w-full mt-10">
@@ -31,3 +39,4 @@ export default function Home() {
   </div>
   );
 }
+
