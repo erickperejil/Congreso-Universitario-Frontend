@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Cronograma from "@/components/cronograma";
 import Carousel from "@/components/ejes_tematicos";
@@ -8,7 +8,7 @@ import PrimaryButton from "@/components/PrimaryButton";
 
 export default function Home() {
   const handleDownload = () => {
-    console.log('Cronograma descargado');
+    console.log("Cronograma descargado");
   };
 
   return (
@@ -26,7 +26,9 @@ export default function Home() {
           CONGRESO DE <br />
           INNOVACIÓN Y <br />
           TECNOLOGÍA <br />
-          <span className="text-[#32378C] font-extrabold text-shadow-none">UNAH 2025</span>
+          <span className="text-[#32378C] font-extrabold text-shadow-none">
+            UNAH 2025
+          </span>
         </h1>
       </header>
       <div className="h-16 w-full bg-gradient-to-b from-[#020202] to-[#101017]"></div>
@@ -35,52 +37,59 @@ export default function Home() {
       <main>
         {/* seccion de invitacion a descargar cronograma */}
         <section className="w-full h-screen flex items-center justify-center gap-12 px-8">
-          <img src="/promo.enc" alt="Cronograma del evento" className="w-[30rem] rounded-lg" />
+          <img
+            src="/promo.enc"
+            alt="Cronograma del evento"
+            className="w-[30rem] rounded-lg"
+          />
           <div className="w-[30rem] flex flex-col gap-8 text-6xl leading-none">
             <h2>Conoce nuestro cronograma de conferencias</h2>
-            <PrimaryButton text="Descargar Cronograma" action={handleDownload} />
-
+            <PrimaryButton
+              text="Descargar Cronograma"
+              action={handleDownload}
+            />
           </div>
         </section>
 
+        <div className="w-full min-h-screen flex flex-col bg-[101017]">
+          <div className="bg-[101017] flex-grow w-full mt-10">
 
 
-        <div className="w-full min-h-screen flex flex-col bg-[101017]"> 
-    <div className="bg-[101017] flex-grow w-full mt-10">
-      <div className="flex justify-center">
-      <Cronograma></Cronograma>
-      </div>
-      
-      <div className="container mx-auto px-4 py-10">
-      <section className="mt-12">
-          <div>
-          <Carousel></Carousel>
-          </div>
-        </section>
-        <section>
-          <div className="flex justify-center mt-[9%]">
-          <Ponentes></Ponentes>
-          </div>
-          <div>
-          
-          </div>
-        </section>
-      </div>
-    </div> 
-  </div>
+            <div className="container mx-auto px-4 py-10">
+              <section className="mt-12">
+                <div>
+                  <Carousel></Carousel>
+                </div>
+              </section>
+              <section>
+                <div className="flex justify-center mt-[9%]">
+                  <Ponentes></Ponentes>
+                </div>
+                <div></div>
+              </section>
+            </div>
+            <div className="flex justify-center">
+              <Cronograma></Cronograma>
+            </div>
 
+          </div>
+        </div>
       </main>
 
       <footer className="text-center py-4">
         <p>UNAH 2025</p>
         <ul className="list-none">
-          <li><strong>Teléfono:</strong> 2234-5678</li>
-          <li><strong>Email:</strong> contacto@unah.edu</li>
-          <li><strong>Dirección:</strong> Tegucigalpa, Honduras</li>
+          <li>
+            <strong>Teléfono:</strong> 2234-5678
+          </li>
+          <li>
+            <strong>Email:</strong> contacto@unah.edu
+          </li>
+          <li>
+            <strong>Dirección:</strong> Tegucigalpa, Honduras
+          </li>
         </ul>
       </footer>
     </div>
-
   );
 }
-
