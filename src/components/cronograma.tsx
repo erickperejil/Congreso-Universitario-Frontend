@@ -331,33 +331,33 @@ const ConferenciaComponent: FC<ConferenciaProps> = ({ conferencia }) => {
       <div className="w-full h-14 flex items-center text-2xl p-3 font-bold">
         {conferencia.horario}
       </div>
-      <div id="conferencia" className="w-full border border-slate-100 border-t-[#ffffff82] h-48 flex">
+      <div id="conferencia" className="w-full border border-slate-100 border-t-[#ffffff82] lg:h-48 lg:flex">
         <div
           id="hora"
-          className="p-5 px-7 w-1/4 flex flex-col items-center justify-center"
+          className="p-5 px-7 lg:w-1/4 flex flex-col items-center justify-center"
         >
-          <div className="relative w-full h-[80%] border border-slate-200">
+          <div className="relative w-full lg:h-[80%] h-28 border border-slate-200">
             <Image
               src={conferencia.expositor.imagen}
               alt={conferencia.expositor.nombre}
               fill
-              className="object-cover object-top"
+              className="object-contain object-top"
             />
           </div>
           <div className="border border-slate-200 w-full h-[20%] text-center">
             {conferencia.expositor.nombre}
           </div>
         </div>
-        <div id="data" className="w-2/4 flex flex-col p-5">
+        <div id="data" className="lg:w-2/4 flex flex-col p-5">
           <h2 className="text-lg font-bold">{conferencia.titulo}</h2>
-          <div className="text-base">{conferencia.lugar}</div>
-          {conferencia.requerimientos && (
+          <div className="text-base mt-3">{conferencia.lugar}</div>
+          {/* {conferencia.requerimientos && (
             <div className="text-sm">{conferencia.requerimientos}</div>
-          )}
+          )} */}
         </div>
         <div
           id="datosImportantes"
-          className="overflow-hidden w-1/4 relative p-4 cursor-pointer flex items-center"
+          className="overflow-hidden lg:w-1/4 relative p-4 cursor-pointer flex items-center"
           onClick={() =>
             setIndex((prev) => (prev + 1) % conferencia.datosImportantes.length)
           }
@@ -397,12 +397,12 @@ export default function Cronograma() {
   return (
     <div className="my-16 w-full flex flex-col items-center">
       <h2 className="text-6xl mb-10">Conferencias</h2>
-      <div className="flex w-3/5 justify-between">
+      <div className="flex lg:w-3/5 w-4/5 justify-between">
         {dias.map((dia) => (
           <div
             key={dia.fecha}
             onClick={() => setDiaSeleccionado(dia.fecha)}
-            className={`border border-[#1f2257] w-44 flex rounded-md h-10 items-center justify-center transition-all duration-300 cursor-pointer ${
+            className={`border border-[#1f2257] w-[22%] lg:text-base text-sm text-center flex rounded-md h-10 items-center justify-center transition-all duration-300 cursor-pointer ${
               diaSeleccionado === dia.fecha
                 ? "bg-[#F2AE30] text-[#32378C]"
                 : "bg-[#32378C] hover:bg-[#F2AE30] hover:text-[#32378C]"
