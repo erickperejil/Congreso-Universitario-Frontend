@@ -1,9 +1,10 @@
 import { useState } from "react";
 import PrimaryButton from "./PrimaryButton";
 
-const Navbar = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 
+
+const Nav = () => {
     const options = [
         {
             name: "Inicio",
@@ -27,75 +28,80 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="flex justify-between items-center h-14 px-4 text-sm fixed top-0 z-10 w-full bg-[#101017] text-white">
-            {/* Logo */}
-            <a href="#">
-                <img
-                    src="/logo_cit_blanco.webp"
-                    alt="Logo del congreso"
-                    className="w-14"
-                />
-            </a>
+        <Disclosure as="nav" className="h-14 px-4 text-sm fixed top-0 z-10 w-full bg-[#101017] text-white">
+            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+                <div className="relative flex h-14 items-center">
 
-            {/* Menú de navegación */}
-            <div className="flex items-center gap-4">
-                {/* Botón de menú para dispositivos móviles */}
-                <span
-                    className="material-symbols-outlined cursor-pointer text-xl md:hidden"
-                    onClick={() => setMenuOpen(!menuOpen)}
-                >
-                    {menuOpen ? "close" : "menu"}
-                </span>
-
-                {/* Opciones de menú desplegable en móviles */}
-                <ul
-                    className={`absolute top-14 left-0 w-full bg-[#101017] flex flex-col items-center gap-4 p-4 transition-transform duration-300 md:hidden ${
-                        menuOpen ? "translate-y-0" : "-translate-y-full"
-                    }`}
-                >
-                    {options.map((option) => (
-                        <li key={option.name}>
-                            <a
-                                href={option.link}
-                                className="flex items-center gap-1 hover:text-[#F8B133] transition"
-                            >
-                                <span className="material-symbols-outlined">
-                                    {option.icon}
+                    <div className="flex flex-1 items-center justify-between">
+                        <div className="inset-y-0 left-0 flex items-center sm:hidden">
+                            {/* Mobile menu button*/}
+                            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                                <span aria-hidden="true"
+                                    className="block material-symbols-outlined cursor-pointer text-xl group-data-[open]:hidden"
+                                >
+                                    menu
                                 </span>
-                                {option.name}
-                            </a>
-                        </li>
-                    ))}
-                    {/* Botón de inicio de sesión en móviles */}
-                    <li>
-                        <PrimaryButton text="Iniciar Sesión" action={handleLogin} />
-                    </li>
-                </ul>
 
-                {/* Menú horizontal en pantallas más grandes */}
-                <ul className="hidden md:flex items-center gap-8">
-                    {options.map((option) => (
-                        <li key={option.name}>
-                            <a
-                                href={option.link}
-                                className="flex items-center gap-1 hover:text-[#F8B133] transition"
-                            >
-                                <span className="material-symbols-outlined">
-                                    {option.icon}
+                                <span aria-hidden="true"
+                                    className="hidden material-symbols-outlined cursor-pointer text-xl group-data-[open]:block"
+                                >
+                                    close
                                 </span>
-                                {option.name}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
 
-                {/* Botón de inicio de sesión en pantallas grandes */}
-                <div className="hidden md:block">
-                    <PrimaryButton text="Iniciar Sesión" action={handleLogin} />
+                            </DisclosureButton>
+                        </div>
+                        <div className="flex shrink-0 items-center">
+                            <a href="#">
+                                <img
+                                    src="/logo_cit_blanco.webp"
+                                    alt="Logo del congreso"
+                                    className="w-14"
+                                />
+                            </a>
+                        </div>
+                        <div className="hidden sm:ml-6 sm:block">
+                            <div className="flex space-x-4">
+                                {options.map((item) => (
+                                    <a
+                                        key={item.name}
+                                        href={item.link}
+                                        className="text-gray-300 hover:text-[#F8B133] transition px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1"
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            {item.icon}
+                                        </span>
+                                        {item.name}
+                                    </a>
+
+                                ))}
+                            </div>
+                        </div>
+                        <PrimaryButton text="Iniciar sesión" action={handleLogin} />
+                    </div>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                    </div>
                 </div>
             </div>
-        </nav>
+
+            <DisclosurePanel className="sm:hidden">
+                <div className="space-y-1 px-2 pb-3 pt-2 bg-[#101017]">
+                    {options.map((item) => (
+                        <DisclosureButton
+                            key={item.name}
+                            as="a"
+                            href={item.link}
+                            className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center gap-1"
+                        >
+                            <span className="material-symbols-outlined">
+                                {item.icon}
+                            </span>
+                            {item.name}
+                        </DisclosureButton>
+                    ))}
+                </div>
+            </DisclosurePanel>
+        </Disclosure>
     );
 };
 
-export default Navbar;
+export default Nav;
