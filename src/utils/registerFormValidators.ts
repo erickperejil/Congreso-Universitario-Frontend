@@ -88,7 +88,10 @@
         return "";
     }
     
-    export function validateStudentCode(studentCode: string): string {
+    export function validateStudentCode(studentCode: string, universityID: number): string {
+        /* Solo validamos el numero de cuenta del estudiantes si es de la UNAH */
+        if(universityID !== 1) return "";
+
         if (studentCode === "") {
             return "El campo es requerido";
         }
@@ -143,6 +146,26 @@
 
         if(!genderArray.includes(gender)){
             return "El género no es válido";
+        }
+
+        return "";
+    }
+
+    export function validateForgotPasswordCode(code: string): string {
+        if (code === "") {
+            return "Digite el código";
+        }
+
+        if(code.length !== 6){
+            return "El código debe tener 6 caracteres";
+        }
+
+        return "";
+    }
+
+    export function validateEmailForgotPassword(email : string): string {
+        if(email.length === 0){
+            return "Ingrese el correo electronico"
         }
 
         return "";

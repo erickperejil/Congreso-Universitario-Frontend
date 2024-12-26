@@ -60,7 +60,7 @@ export default function Ponentes() {
 
   return (
     <div>
-      <h1 className="text-[#E7E8F2] text-3xl font-bold text-center mb-6">
+      <h1 className="text-[#E7E8F2] text-3xl md:text-5xl text-center mb-6">
         Ponentes
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-12">

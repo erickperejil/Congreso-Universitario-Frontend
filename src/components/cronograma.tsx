@@ -396,7 +396,7 @@ export default function Cronograma() {
 
   return (
     <div className="my-16 w-full flex flex-col items-center">
-      <h2 className="text-6xl mb-10">Conferencias</h2>
+      <h2 className="text-3xl md:text-5xl mb-10 mt-2">Conferencias</h2>
       <div className="flex lg:w-3/5 w-4/5 justify-between">
         {dias.map((dia) => (
           <div
@@ -415,7 +415,7 @@ export default function Cronograma() {
       <h3 className="text-4xl m-10">
         {dias.find((dia) => dia.fecha === diaSeleccionado)?.label}
       </h3>
-      <div id="conferencias" className="w-3/5">
+      <div id="conferencias" className="w-full md:w-4/5 lg:w-3/5">
         {conferenciasFiltradas.map((conf, idx) => (
           <ConferenciaComponent key={idx} conferencia={conf} />
         ))}
