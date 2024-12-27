@@ -3,11 +3,14 @@
 import { useState } from "react";
 import { useRouter } from 'next/router';
 import Link from "next/link";
+import Cookies from 'js-cookie';
+
 
 import Button from "@/components/Button";
 import InputForm from "@/components/InputForm";
 
 import { isLoginInputsValids } from "@/utils/loginFormValidators";
+import { login } from "./actions";
 
 function Login() {
     /* estados de inputs */
@@ -16,13 +19,32 @@ function Login() {
     const [areInputsValids, setAreInputsValids] = useState(false);
     const [loginError, setLoginError] = useState("Lo sentimos, revisa tus credenciales");
 
-    function handleLogin(event: React.FormEvent): void {
+    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        /* aca llamar a la funcion del backend */
+        // Llamada al servicio de login
+        const response = await login(email, password);
 
-        console.log("Login successful");
-    }
+        if (response.error) {
+            setLoginError(response.error);
+            console.error('Login failed:', response.error);
+            return;
+        }
+
+        // Limpiar el error si el login es exitoso
+        setLoginError(null);
+        console.log('Login successful, token:', response.token);
+
+        // Guardar el token en la cookie
+        if (response.token) {
+            Cookies.set('authToken', response.token, { expires: 1, secure: process.env.NODE_ENV === 'production' });
+        }
+
+        // Redirigir a la página protegida (por ejemplo, al dashboard o página principal)
+        window.location.href = '/dashboard';
+    };
+
+
 
     function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>): void {
         setAreInputsValids(isLoginInputsValids(e.target.value, password));
