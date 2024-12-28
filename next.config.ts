@@ -5,8 +5,8 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com', // Agregamos el dominio de Unsplash
-        pathname: '/**',                // Permitimos todas las rutas del dominio
+        hostname: 'unsplash.com', // Agregamos el dominio de Unsplash
+        pathname: '/photos/**',                // Permitimos todas las rutas del dominio
       },
       {
         protocol: 'https',

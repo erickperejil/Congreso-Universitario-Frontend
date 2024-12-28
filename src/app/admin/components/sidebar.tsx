@@ -1,13 +1,17 @@
-// components/Sidebar.tsx
 import React, { useState } from "react";
-import Image from "next/image"; // Importar el componente Image
+import Image from "next/image";
 import { FaUsers, FaLock, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeButton, setActiveButton] = useState("participantes");
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleButtonClick = (button: string) => {
+    setActiveButton(button);
   };
 
   return (
@@ -22,34 +26,44 @@ const Sidebar: React.FC = () => {
 
       {/* Barra lateral */}
       <div
-        className={`fixed top-0 left-0 h-full bg-white shadow-md z-40 transform ${
+        className={`fixed top-0 left-0 h-screen bg-white shadow-md z-40 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 md:static w-64 transition-transform duration-300`}
+        } md:translate-x-0 md:static w-64 transition-transform duration-300 flex flex-col`}
       >
         {/* Header */}
         <div className="p-6">
           <div className="flex flex-col items-center">
             <Image
-              src="/logo.png" // Cambia esta ruta por la ruta de tu logo
+              src="/logocongreso.svg" // Cambia esta ruta por la ruta de tu logo
               alt="Logo"
-              width={64} // Tamaño del logo (en píxeles)
-              height={64}
+              width={195} // Tamaño del logo (en píxeles)
+              height={68}
               className="mb-2"
             />
-            <h1 className="text-center font-semibold text-blue-900">
-              Congreso de Innovación y Tecnología
-            </h1>
-            <p className="text-center text-blue-600 text-sm">UNAH 2025</p>
           </div>
         </div>
 
         {/* Menu Items */}
-        <div className="flex flex-col gap-4 px-6">
-          <button className="flex items-center gap-4 py-2 px-4 rounded-md text-white bg-blue-900 hover:bg-blue-800">
+        <div className="flex flex-col gap-4 px-6 flex-grow">
+          <button
+            className={`flex items-center gap-4 py-2 px-4 rounded-md ${
+              activeButton === "participantes"
+                ? "text-white bg-blue-900"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+            onClick={() => handleButtonClick("participantes")}
+          >
             <FaUsers />
             <span>Participantes</span>
           </button>
-          <button className="flex items-center gap-4 py-2 px-4 rounded-md text-gray-600 hover:bg-gray-100">
+          <button
+            className={`flex items-center gap-4 py-2 px-4 rounded-md ${
+              activeButton === "conferencias"
+                ? "text-white bg-blue-900"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+            onClick={() => handleButtonClick("conferencias")}
+          >
             <FaLock />
             <span>Conferencias</span>
           </button>

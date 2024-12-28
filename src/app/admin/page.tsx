@@ -1,14 +1,15 @@
-import Sidebar from "./sidebar/components/sidebar";
+'use client'
+
+import Sidebar from "./components/sidebar";
+import TableComponent from "./home/components/participantes";
 
 
 const HomePage: React.FC = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="flex-1 p-6">
-        {/* Contenido principal */}
-        <h1 className="text-2xl font-bold">Bienvenido al Congreso</h1>
-        <p>Aquí va el contenido de la página principal.</p>
+      <main className="container mx-auto px-4 py-10">
+        <TableComponent/>
       </main>
     </div>
   );
