@@ -1,20 +1,30 @@
 'use client';
 
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import Button from "@/components/Button";
 import InputForm from "@/components/InputForm";
 import SelectForm from "@/components/SelectForm";
 
 import { RegisterFormInterface } from "@/types/form";
-import { validateNames, validateLastNames, validateBirthDate, validateConfirmPassword, validateDni, validateEmail, validateOrganizerCode, validatePassword, validatePhone, validateReceiptCode, validateStudentCode, validateGender } from "@/utils/registerFormValidators";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { validateNames, validateLastNames, validateBirthDate, validateConfirmPassword, validateDni, validateEmail, validateOrganizerCode, validatePassword, validatePhone, validateReceiptCode, validateStudentCode, validateGender, validateUniversity } from "@/utils/registerFormValidators";
+import { getUniversities } from "./actions";
+
+const genders = [
+    { id: 1, name: 'Hombre' },
+    { id: 2, name: 'Mujer' },
+    { id: 3, name: 'Other' }
+];
 
 const Register = () => {
     const router = useRouter();
 
     const [currentStep, setCurrentStep] = useState(1);
-    const [universityID, setUniversityID] = useState("");
+    const [universityID, setUniversityID] = useState<number>(-1);
+    const [universities, setUniversities] = useState<university[]>([]);
+    const [UNAHId, setUNAHId] = useState<number>(-1);
 
     /* estados de inputs */
     const [firstName, setFirstName] = useState("");
@@ -53,6 +63,42 @@ const Register = () => {
     });
 
 
+    useEffect(() => {
+        const getUniversitiesFromAPI = async () => {
+            const response = await getUniversities();
+            if (response.error) {
+                console.error('Error al obtener universidades:', response.error);
+                return;
+            }
+    
+            if (response.universities) {
+                setUniversities(response.universities);
+            }
+
+            console.log('Universidades:', response.universities);
+        };
+/* 
+                    const university = response.universities?.find((university) => university.name === "Universidad Nacional Autónoma de Honduras");
+
+                    if (university) {
+                        setUNAHId(university.id);
+                        console.log('UNAH:', university);
+                    } */
+
+
+
+        getUniversitiesFromAPI().then(() => {
+            const unah = universities.find((university) => university.name === "Universidad Nacional Autónoma de Honduras");
+            if (unah) {
+                setUNAHId(unah.id);
+            }
+        });
+
+
+    }, []);
+
+
+
     function handleFirstNameChange(e: React.ChangeEvent<HTMLInputElement>): void {
         errors.firstName = validateNames(e.target.value);
         setFirstName(e.target.value);
@@ -67,13 +113,14 @@ const Register = () => {
 
         setBirthDate(new Date(e.target.value));
     }
+
     function handleDniChange(e: React.ChangeEvent<HTMLInputElement>): void {
         if (!isNaN(Number(e.target.value))) { setDni(e.target.value); }
         errors.dni = validateDni(e.target.value);
     }
 
     function handleGenderChange(e: React.ChangeEvent<HTMLSelectElement>): void {
-        errors.gender = validateGender(e.target.value);
+        errors.gender = validateGender(Number(e.target.value));
         setGender(e.target.value);
     }
 
@@ -114,7 +161,8 @@ const Register = () => {
     }
 
     const handleUniversityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setUniversityID(event.target.value);
+        console.log(event.target.value);
+        setUniversityID(Number(event.target.value));
     };
 
     const handleNextStep = (event: React.FormEvent) => {
@@ -142,9 +190,11 @@ const Register = () => {
 
         /* Validación en tiempo real - Step 3 */
         if (currentStep === 3 && isStudent) {
-            newErrors.university = universityID === "" ? "El campo es requerido" : "";
-            newErrors.studentCode = validateStudentCode(studentCode, universityID);
-            hasErrors = newErrors.studentCode !== '';
+            newErrors.university =  validateUniversity(universityID);
+            if (universityID === UNAHId && universityID){
+                newErrors.studentCode = validateStudentCode(studentCode);
+            }
+            hasErrors = newErrors.studentCode !== '' || newErrors.university !== '';
         }
 
         /* Validación en tiempo real - Step 4 */
@@ -265,7 +315,7 @@ const Register = () => {
                         </div>
 
                         <div>
-                            <SelectForm id="gender" options={["Hombre", "Mujer"]} iconName="wc" legend="Selecciona tu genero" onChange={handleGenderChange} />
+                            <SelectForm id="gender" options={genders} iconName="wc" legend="Selecciona tu genero" onChange={handleGenderChange} />
                             {errors.gender && <p className="text-[#F8B133] text-sm">{errors.gender}</p>}
                         </div>
                     </div>
@@ -283,7 +333,7 @@ const Register = () => {
                                     id="student-yes"
                                     className="mr-2"
                                     onChange={() => setIsStudent(true)}
-                                    defaultChecked
+                                    checked={isStudent}
                                 />
                                 Sí
                             </label>
@@ -294,6 +344,7 @@ const Register = () => {
                                     id="student-no"
                                     className="mr-2"
                                     onChange={() => setIsStudent(false)}
+                                    checked={!isStudent}
                                 />
                                 No
                             </label>
@@ -302,21 +353,21 @@ const Register = () => {
                         {isStudent && (
                             <>
                                 <div>
-                                    <SelectForm
+                                    {universities.length === 0 ? (
+                                        <p className="text-white">Cargando universidades...</p>
+
+                                    ) : (<SelectForm
                                         id="university"
-                                        options={[
-                                            "Universidad Nacional de Ingeniería",
-                                            "Universidad Nacional Mayor de San Marcos",
-                                            "Universidad Nacional Agraria La Molina",
-                                            "UNAH"
-                                        ]}
+                                        options={universities}
                                         iconName="school"
                                         legend="Selecciona tu universidad"
                                         onChange={handleUniversityChange}
-                                    />
+                                        optionSelected={universityID}
+                                    />)}
+
                                     {errors.university && <p className="text-[#F8B133] text-sm">{errors.university}</p>}
                                 </div>
-                                {universityID === "UNAH" && (
+                                {universityID === UNAHId && (
 
                                     <div>
                                         <InputForm placeholder="Número de cuenta" iconName="school" type="text" id="studentCode" value={studentCode} onChange={handleStudentCodeChange} />
@@ -407,4 +458,11 @@ const Register = () => {
     );
 };
 
+interface university {
+    id: number;
+    name: string;
+}
+
+
 export default Register;
+

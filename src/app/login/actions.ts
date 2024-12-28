@@ -7,13 +7,14 @@ export const login = async (email: string, password: string): Promise<{ error?: 
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ correo: email, contrasenia: password }),
         });
 
         if (!response.ok) {
             const errorData = await response.json();
             return { error: errorData.message || 'An error occurred during login' };
         }
+        console.log('Login response:', response);
 
         const data = await response.json();
         return { token: data.token }; // Assuming the backend sends a token on successful login

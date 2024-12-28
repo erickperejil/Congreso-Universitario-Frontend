@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import Cookies from 'js-cookie';
 
@@ -13,6 +13,8 @@ import { isLoginInputsValids } from "@/utils/loginFormValidators";
 import { login } from "./actions";
 
 function Login() {
+    const router = useRouter();
+    
     /* estados de inputs */
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -32,7 +34,7 @@ function Login() {
         }
 
         // Limpiar el error si el login es exitoso
-        setLoginError(null);
+        setLoginError('');
         console.log('Login successful, token:', response.token);
 
         // Guardar el token en la cookie
@@ -41,7 +43,7 @@ function Login() {
         }
 
         // Redirigir a la página protegida (por ejemplo, al dashboard o página principal)
-        window.location.href = '/dashboard';
+        router.push('/login');
     };
 
 
