@@ -79,7 +79,7 @@ export default function Home() {
                 </div>
                 <div></div>
               </section>
-              <section id="conferencias">
+              <section id="conferencias" className="montserrat-font">
                 <Cronograma></Cronograma>
               </section>
             </div>
