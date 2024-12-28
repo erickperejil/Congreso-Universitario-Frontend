@@ -1,15 +1,28 @@
+"use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Conferencia } from "@/interfaces/conferencias"; 
+import { Conferencia } from "@/interfaces/conferencias";
 import { fetchConferencias } from "@/services/conferencias";
 import Button from "@/components/Button";
 
-interface ConferenciaProps {
+interface ConferenciaComponentProps {
   conferencia: Conferencia;
+  customStyles?: {
+    container?: string;
+    header?: string;
+    content?: string;
+    imageContainer?: string;
+    image?: string;
+    ponente?: string;
+    title?: string;
+    lugar?: string;
+    datosimportantes?: string;
+    button?: string;
+  };
 }
 
-const ConferenciaComponent = ({ conferencia }: ConferenciaProps) => {
+const ConferenciaComponent = ({ conferencia, customStyles }: ConferenciaComponentProps) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -24,42 +37,39 @@ const ConferenciaComponent = ({ conferencia }: ConferenciaProps) => {
   };
 
   return (
-    <div className="w-full border border-slate-100 border-b-[#ffffff82] flex flex-col mb-12 rounded-t-md rounded-b-md">
-      <div className="w-full h-14 flex items-center text-2xl p-3 font-bold montserrat-font">
+    <div className={`w-full border flex flex-col mb-12 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}>
+      <div className={`w-full h-14 flex items-center text-2xl p-3 font-bold montserrat-font ${customStyles?.header || ""}`}>
         {conferencia.horario}
       </div>
-      <div id="conferencia" className="w-full border border-slate-100 border-t-[#ffffff82] lg:h-48 lg:flex rounded-b-md">
-        <div id="hora" className="p-5 lg:w-1/4 flex flex-col items-center justify-center">
-          <div className="relative w-full lg:h-[80%] h-28 border border-slate-200">
+      <div className={`w-full border lg:h-48 lg:flex rounded-b-md ${customStyles?.content || "border-slate-100 border-t-[#ffffff82]"}`}>
+        <div className={`p-5 lg:w-1/4 flex flex-col items-center justify-center ${customStyles?.imageContainer || ""}`}>
+          <div className={`relative w-full lg:h-[80%] h-28 border ${customStyles?.image || "border-slate-200"}`}>
             <Image
-              src="/img/ponente.svg"
+              src={conferencia.img_ponente}
               alt={conferencia.nombre_ponente}
               fill
               className="object-cover object-top"
             />
           </div>
-          <div className="border border-slate-200 w-full text-center text-sm">
+          <div className={`border w-full text-center text-sm ${customStyles?.ponente || "border-slate-200"}`}>
             {conferencia.nombre_ponente}
           </div>
         </div>
-        <div id="data" className="lg:w-2/4 flex flex-col p-5">
-          <h2 className="text-lg font-bold">{conferencia.titulo}</h2>
-          <div className="text-base my-3">{conferencia.lugar}</div>
+        <div className={`lg:w-2/4 flex flex-col p-5 ${customStyles?.content || ""}`}>
+          <h2 className={`text-lg font-bold ${customStyles?.title || ""}`}>{conferencia.titulo}</h2>
+          <div className={`text-base my-3 ${customStyles?.lugar || ""}`}>{conferencia.lugar}</div>
           <Button
             text="Inscribirse"
             action={handleCupo}
             variant="secondary"
             styleType="outlined"
-            className="w-full md:w-max"
+            className={`w-full md:w-max ${customStyles?.button || ""}`}
           >
-            <span className="material-symbols-outlined">
-            how_to_reg
-            </span>
+            <span className="material-symbols-outlined">how_to_reg</span>
           </Button>
         </div>
         <div
-          id="datosimportantes"
-          className="overflow-hidden lg:w-1/4 relative p-4 cursor-pointer flex items-center"
+          className={`overflow-hidden lg:w-1/4 relative p-4 cursor-pointer flex items-center ${customStyles?.datosimportantes || ""}`}
           onClick={() =>
             setIndex((prev) => (prev + 1) % conferencia.datosimportantes.length)
           }
@@ -82,7 +92,17 @@ const ConferenciaComponent = ({ conferencia }: ConferenciaProps) => {
   );
 };
 
-export default function Cronograma() {
+interface CronogramaProps {
+  customStyles?: ConferenciaComponentProps["customStyles"];
+  dayButtonStyles?: {
+    default?: string;
+    selected?: string;
+    hover?: string;
+  };
+  titleStyles?: string;
+}
+
+export default function Cronograma({ customStyles, dayButtonStyles, titleStyles }: CronogramaProps) {
   const [diaSeleccionado, setDiaSeleccionado] = useState("24/01/2025");
   const [conferencias, setConferencias] = useState<Conferencia[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,7 +117,7 @@ export default function Cronograma() {
   useEffect(() => {
     async function fetchGets() {
       try {
-        const respuesta = await fetchConferencias(diaSeleccionado); 
+        const respuesta = await fetchConferencias(diaSeleccionado);
         setConferencias(respuesta);
       } catch (error) {
         console.error("Error al traer conferencias:", error);
@@ -107,21 +127,21 @@ export default function Cronograma() {
     }
 
     fetchGets();
-  }, [diaSeleccionado]); // Actualizamos las conferencias cada vez que cambie el día
+  }, [diaSeleccionado]);
 
   return (
     <div className="my-16 w-full flex flex-col items-center">
-      <h2 className="text-6xl mb-10">Conferencias</h2>
+      <h2 className={`text-6xl mb-10 ${titleStyles || ""}`}>Conferencias</h2>
       <div className="flex lg:w-3/5 w-4/5 justify-between">
         {dias.map((dia) => (
           <div
             key={dia.fecha}
             onClick={() => setDiaSeleccionado(dia.fecha)}
-            className={`border border-[#1f2257] w-[22%] lg:text-base text-sm text-center flex rounded-md h-10 items-center justify-center transition-all duration-300 cursor-pointer ${
+            className={`border w-[22%] lg:text-base text-sm text-center flex rounded-md h-10 items-center justify-center transition-all duration-300 cursor-pointer ${
               diaSeleccionado === dia.fecha
-                ? "bg-[#F2AE30] text-[#32378C]"
-                : "bg-[#32378C] hover:bg-[#F2AE30] hover:text-[#32378C]"
-            }`}
+                ? dayButtonStyles?.selected || "bg-[#F2AE30] text-[#32378C]"
+                : dayButtonStyles?.default || "bg-[#32378C]"
+            } ${diaSeleccionado !== dia.fecha ? dayButtonStyles?.hover || "hover:bg-[#F2AE30] hover:text-[#32378C]" : ""}`}
           >
             {dia.label}
           </div>
@@ -136,7 +156,11 @@ export default function Cronograma() {
           <div>Cargando...</div>
         ) : (
           conferencias.map((conferencia) => (
-            <ConferenciaComponent key={conferencia.horario} conferencia={conferencia} />
+            <ConferenciaComponent
+              key={conferencia.horario}
+              conferencia={conferencia}
+              customStyles={customStyles}
+            />
           ))
         )}
       </div>

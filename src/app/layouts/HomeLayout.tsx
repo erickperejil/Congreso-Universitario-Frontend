@@ -28,7 +28,7 @@ export default function HomeLayout({ children }: { children: ReactNode }) {
 
                 </div>
             </nav>
-            <main className="bg-gray-200 w-full py-6 px-8">{children}
+            <main className="sm:w-4/5 w-full h-full flex justify-center" >{children}
 
             </main>
         </div>
