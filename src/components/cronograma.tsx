@@ -148,7 +148,7 @@ export default function Cronograma({ customStyles, dayButtonStyles, titleStyles 
         ))}
       </div>
       <h3 className="text-4xl m-10">
-        {dias.find((dia) => dia.fecha === diaSeleccionado)?.label}
+        {dias.find((dia) => dia.fecha === diaSeleccionado)?.label} de Enero
       </h3>
 
       <div id="conferencias" className="w-4/6">

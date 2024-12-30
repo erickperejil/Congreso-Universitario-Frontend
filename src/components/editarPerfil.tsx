@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { User } from "@/interfaces/user";
+import Image from 'next/image';
 // import { useRouter } from 'next/navigation';
 import { fetchUser, updateUser } from "@/services/user";
 import { ActualizarUser } from "@/interfaces/user";
@@ -78,9 +79,18 @@ const UserProfile: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex ">
-      <div className="w-1/5 mt-16  bg-orange-600">aqui va el QR</div>
-      <div className=" w-4/5 flex flex-col justify-center lg:pr-12 pr-4 mt-16">
+    <div className="w-full flex lg:flex-row flex-col">
+      <div className="lg:w-1/4 w-full mt-16  p-4 flex items-start justify-center">
+        <div className="bg-orange-500 h-64 w-64 mt-2 relative">
+          <Image
+            src="/imagen.svg"
+            alt="Descripción de la imagen"
+            layout="fill"
+            objectFit="cover" 
+          />
+        </div>
+      </div>
+      <div className=" lg:w-3/4 w-full flex flex-col justify-center lg:pr-12 pr-4 mt-16">
         {/* datos */}
         <div className=" w-full h-3/4 flex flex-col p-4 justify-center">
           {/* nombre */}
