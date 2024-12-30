@@ -66,7 +66,7 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
                         className="w-full mb-5 flex items-start justify-start"
                     >
                         <img
-                            src="/logo_cit_completo_blanco.png"
+                            src="/logos/logo_cit_completo_blanco.png"
                             className=" w-full"
                             alt="Flowbite Logo"
                         />

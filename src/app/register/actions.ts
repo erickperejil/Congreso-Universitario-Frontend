@@ -1,3 +1,19 @@
+import { RegisterFormInterface } from '@/interfaces/RegisterForm';
+import { university, UniversityExtended } from '@/interfaces/University';
+import { register as registerUser, emailExists } from '@/services/userService';
+
+export const handleRegister = async (formData: RegisterFormInterface) => {
+    try {
+        const result = await registerUser(formData);
+        return result; // Devuelve la respuesta para ser manejada en el componente
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: error.message };
+        }
+        return { error: 'Error desconocido al registrar usuario' };
+    }
+};
+
 export const getUniversities = async () => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -17,7 +33,7 @@ export const getUniversities = async () => {
 
         const data = await response.json();
 
-        const universities: UniversityResponse[] = data.map((university: University) => {
+        const universities: university[] = data.map((university: UniversityExtended) => {
             return { id: university.id_universidad, name: university.universidad };
         });
         
@@ -28,19 +44,16 @@ export const getUniversities = async () => {
     }
 };
 
-interface University {
-    id_universidad: number;
-    universidad: string;
-    abreviatura: string;
-}
+export const checkEmailExists = async (email: string) => {
+    try {
+        const result = await emailExists(email);
+        return result;
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: error.message };
+        }
+        return { error: 'Error desconocido al verificar correo' };
+    }
+};
 
-interface UniversityResponse {
-    id: number;
-    name: string;
-}
 
-/* {
-    "id_universidad": 1,
-    "universidad": "Universidad Nacional Autónoma de Honduras",
-    "abreviatura": "UNAH"
-}, */

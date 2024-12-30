@@ -18,7 +18,7 @@ const SelectForm = ({ options, id, iconName, legend, optionSelected, onChange }:
                 name={id}
                 className="bg-transparent w-full py-2 focus:outline-none"
                 onChange={onChange}
-                value={optionSelected?.toString() || ""}
+                value={optionSelected}
             >
                 <option value="" hidden className="text-gray">
                     {legend}

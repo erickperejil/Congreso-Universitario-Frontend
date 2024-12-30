@@ -1,122 +1,337 @@
 'use client'
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 import Button from "@/components/Button";
 import InputForm from "@/components/InputForm";
+import InputFields from "@/components/InputCodeForm";
+import SuccessScreen from "@/components/SuccesScreenForms";
 
-import { validateEmailForgotPassword, validateForgotPasswordCode } from "@/utils/registerFormValidators";
-import { useRouter } from "next/navigation";
+import { validateConfirmPassword, validateEmailForgotPassword, validatePassword } from "@/utils/registerFormValidators";
+import { sendCodeToResetPasswordF, sendEmailToResetPasswordF, sendNewPasswordF } from "./actions";
 
 export default function ForgotPassword() {
-    const router = useRouter()
+  const router = useRouter()
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-    const [showInputCode, setShowInputCode] = useState(false);
+  const [showInputEmail, setShowInputEmail] = useState(true);
+  const [showInputCode, setShowInputCode] = useState(false);
+  const [showInputNewPassword, setShowInputNewPssword] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [finished, setFinished] = useState(false);
 
-    /* estados de inputs */
-    const [email, setEmail] = useState("");
-    const [code, setCode] = useState("");
+  /* estados de inputs */
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-    const [errors, setErrors] = useState({
-        email: "",
-        code: "",
-    });
+  const [errors, setErrors] = useState({
+    email: "",
+    code: "",
+    password: "",
+    confirmPassword: "",
+    general: ""
+  });
 
-    function handleSendEmail(e: React.FormEvent): void {
-        e.preventDefault();
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value)
+    setErrors((prev) => ({
+      ...prev,
+      password: validatePassword(e.target.value)
+    }))
+  }
 
-        const emailError = validateEmailForgotPassword(email);
-        setErrors((prevErrors) => ({ ...prevErrors, email: emailError }));
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
 
-        if (emailError) return;
+    setErrors((prev) => ({
+      ...prev,
+      confirmPassword: validateConfirmPassword(password, e.target.value),
+    }));
+  };
 
-        setShowInputCode(true);
-        alert("Email sent!");
+  const handleInputCodeChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const value = e.target.value;
+    if (/^[0-9]?$/.test(value)) {
+      e.target.value = value;
+      if (value && inputRefs.current[index + 1]) {
+        inputRefs.current[index + 1]?.focus();
+      }
+    } else {
+      e.target.value = "";
+    }
+  };
+
+  const handleSendEmail = async (e: React.FormEvent): Promise<void> => {
+    e.preventDefault();
+    setSending(true);
+    setErrors((prev) => ({
+      ...prev,
+      general: ""
+    }));
+
+    const emailError = validateEmailForgotPassword(email);
+    setErrors((prevErrors) => ({ ...prevErrors, email: emailError }));
+    setSending(false);
+
+    if (emailError) return;
+
+    try {
+      const response = await sendEmailToResetPasswordF(email)
+
+      if (response.error) {
+        setErrors((prev) => ({
+          ...prev,
+          email: response.error
+        }))
+        return;
+      }
+
+      setShowInputEmail(false);
+      setShowInputCode(true);
+    } catch {
+      setErrors((prev) => ({
+        ...prev,
+        general: "Ocurrió un error al enviar el código. Por favor, intenta de nuevo."
+      }))
+      console.error("Ocurrio problema al enviar codigo al correo FP")
+    } finally {
+      setSending(false);
+    }
+  }
+
+  const handleSendCode = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSending(true);
+    setErrors((prev) => ({
+      ...prev,
+      general: ""
+    }));
+
+    const errorElement = document.getElementById('error-paragraph');
+    if (errorElement) {
+      errorElement.classList.remove('shake');
+      void errorElement.offsetWidth;
     }
 
-    function handleSendCode(e: React.FormEvent): void {
-        e.preventDefault();
-
-        const codeError = validateForgotPasswordCode(code);
-        setErrors((prevErrors) => ({ ...prevErrors, code: codeError }));
-
-        if (codeError) return;
-
-        if (code === "123456") {
-            alert("Code validated successfully!");
-        } else {
-            setErrors((prevErrors) => ({ ...prevErrors, code: "Invalid code. Please try again." })); // Error personalizado
+    // Recorre los inputs y valida si están vacíos
+    for (const input of inputRefs.current) {
+      if (input?.value === "") {
+        if (errorElement) {
+          errorElement.classList.add('shake');
         }
+        setErrors((prev) => ({
+          ...prev,
+          code: "Por favor, ingresa el código completo"
+        }))
+        input?.focus();
+        setSending(false);
+        return;
+      }
     }
 
-    function handleCancel(e) {
-        e.preventDefault()
+    setErrors((prevErrors) => ({ ...prevErrors, code: "" }));
 
-        router.push('/login');
+    // Obtiene el código ingresado
+    const code = inputRefs.current.map((input) => input?.value).join("");
+    console.log('Código ingresado:', code);
+
+    // Valida si el correo está presente
+    if (!email) {
+      setErrors((prev) => ({
+        ...prev,
+        email: "Error al identificar el correo. Por favor, intenta de nuevo"
+      }));
+      return; // Detiene la ejecución
     }
 
-    return (
-        <>
-            <h1 className="text-4xl font-semibold">Recupera tu cuenta</h1>
+    try {
+      // Envía la petición para verificar el código
+      const response = await sendCodeToResetPasswordF(email, Number(code));
+      if ('error' in response) {
+        console.error('Error al verificar el código:', response.error);
+        setErrors((prev) => ({
+          ...prev,
+          code: "El código ingresado es incorrecto o ha expirado."
+        }));
+        return;
+      }
 
-            <form action="" className="flex justify-center flex-col gap-2 py-16 px-2 w-[80%] md:w-4/5 xl:w-3/5">
-                {!showInputCode ? (
-                    <>
-                        <p className="text-sm text-white leading-4">
-                            Ingresa tu correo electrónico para recibir un código de recuperación.
-                        </p>
+      setShowInputCode(false);
+      setShowInputNewPssword(true);
 
-                        <div>
-                            <InputForm
-                                placeholder="Correo Electrónico"
-                                iconName="email"
-                                type="email"
-                                id="email"
-                                value={email}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                            />
+    } catch (error) {
+      console.error('Error inesperado:', error);
+      setErrors((prev) => ({
+        ...prev,
+        code: "Ocurrió un error al verificar el código. Por favor, intenta de nuevo."
+      }));
+    } finally {
+      setSending(false);
+    }
+  };
 
-                            {errors.email && <p className="text-[#F8B133] text-sm">{errors.email}</p>}
+  const handleSendNewPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setErrors((prev) => ({
+      ...prev,
+      general: ""
+    }));
 
-                        </div>
-                    </>
-                ) : (
-                    <div>
-                        <div className="flex flex-col gap-2">
-                            <p className="leading-4">Ingresa el código que acabamos de enviarte</p>
-                            <InputForm
-                                placeholder="Código"
-                                iconName="lock"
-                                type="text"
-                                id="code"
-                                value={code}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCode(e.target.value)}
-                            />
-                        </div>
-                        {errors.code && <p className="text-[#F8B133] text-sm">{errors.code}</p>}
-                    </div>
+    const validation = validateConfirmPassword(password, confirmPassword);
+    const validationPassword = validatePassword(password);
 
-                )}
+    if (validation || validationPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: validation,
+        password: validationPassword
+      }))
+      setSending(false);
+      return;
+    }
 
-                {/* Botones de navegacion */}
-                <div className="flex flex-col gap-2">
-                    <Button
-                        text={!showInputCode ? "Enviar Correo" : "Validar Código"}
-                        action={!showInputCode ? handleSendEmail : handleSendCode}
-                        variant="primary"
-                        styleType="fill"
-                        className="w-full mt-6"
-                    />
-                    <Button
-                        text={"Cancelar"}
-                        action={handleCancel}
-                        variant="secondary" // Cambiado de 'type' a 'variant'
-                        styleType="fill"
-                    />
+    try {
+      const response = await sendNewPasswordF(email, password);
 
-                </div >
+      if (response.error) {
+        console.error('Error al enviar la nueva contraseña:', response.error);
+        return;
+      }
 
-            </form >
-        </>
-    )
+      setShowInputNewPssword(false);
+      setFinished(true)
+    } catch {
+      setErrors((prev) => ({
+        ...prev,
+        general: "Ocurrió un error al enviar la nueva contraseña. Por favor, intenta de nuevo."
+      }))
+      console.error("Ocurrio problema al enviar nueva contrasena FP")
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function handleCancel(e: React.FormEvent): void {
+    e.preventDefault();
+    router.push('/login');
+  }
+
+  return (
+    <>
+      {!finished && <>
+        <h1 className="text-4xl font-semibold">Recupera tu cuenta</h1>
+        <form action="" className="flex justify-center flex-col gap-2 py-16 px-2 w-[80%] md:w-4/5 xl:w-3/5">
+          {/* Muestra input para ingresar email y luego codigo */}
+          {showInputEmail && (
+            <>
+              <p className="text-sm text-[#ab9a9a] leading-4">
+                Ingresa tu correo electrónico para recibir un código de recuperación.
+              </p>
+
+              <div>
+                <InputForm
+                  placeholder="Correo Electrónico"
+                  iconName="email"
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                />
+
+                {errors.email && <p className="text-[#F8B133] text-sm">{errors.email}</p>}
+
+              </div>
+            </>
+          )}
+
+          {showInputCode && (
+            <div>
+              <div className="flex flex-col gap-2">
+                <p className="leading-4 text-[#ab9a9a] text-center">Ingresa el código que acabamos de enviarte a
+                  <span className="text-white font-semibold">{" "}{email}</span> para verificar que eres tú</p>
+                <InputFields inputRefs={inputRefs} handleInputChange={handleInputCodeChange} />
+
+              </div>
+              {errors.code && <p className="text-[#F8B133] text-sm mt-3" id="error-paragraph">{errors.code}</p>}
+            </div>
+
+          )}
+
+
+
+          {/* Muestra campos para cambio de contraseña */}
+          {showInputNewPassword && (
+            <div>
+              <div className="flex flex-col gap-4">
+                <p className="leading-4 text-[#ab9a9a] text-center">Cambia tu contraseña</p>
+                <div>
+                  <InputForm
+                    placeholder="Nueva Contraseña"
+                    iconName="password"
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                  {errors.password && <p className="text-[#F8B133] text-sm">{errors.password}</p>}
+                </div>
+                <div>
+                  <InputForm
+                    placeholder="Confirmar Contraseña"
+                    iconName="password"
+                    type="password"
+                    id="confirmPassword"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                  />
+                  {errors.confirmPassword && <p className="text-[#F8B133] text-sm">{errors.confirmPassword}</p>}
+                </div>
+
+              </div>
+              {errors.code && <p className="text-[#F8B133] text-sm mt-3" id="error-paragraph">{errors.code}</p>}
+            </div>
+
+          )}
+
+          {/* Botones de navegacion */}
+          {!finished && (
+            <div className="flex flex-col gap-2 mt-6">
+              <Button
+                text={showInputEmail ? "Buscar Correo" : showInputCode ? "Verificar" : "Cambiar Contraseña"}
+                action={showInputEmail ? handleSendEmail : showInputCode ? handleSendCode : handleSendNewPassword}
+                variant="primary"
+                styleType="fill"
+                className="w-full mt-6"
+                disabled={sending}
+              />
+              <Button
+                text={"Cancelar"}
+                action={handleCancel}
+                variant="secondary"
+                styleType="fill"
+                disabled={sending}
+              />
+
+            </div >
+          )}
+        </form >
+      </>}
+
+      {errors.general && <p className="text-[#F8B133] text-sm mt-3">{errors.general}</p>}
+
+      {/* Mostrar pantalla de exito cuando haya finalizado todo el proceso */}
+      {finished && !showInputCode && !showInputNewPassword && (
+        <SuccessScreen
+          title="Contraseña cambiada exitosamente"
+          comment="Tu contraseña ha sido cambiada correctamente. Ahora puedes iniciar sesión con tu nueva contraseña."
+          buttonTitle="Iniciar Sesión"
+          redirectionRoute="/login"
+          router={router}
+        />
+      )}
+    </>
+  )
 }

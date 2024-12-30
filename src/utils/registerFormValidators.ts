@@ -14,19 +14,15 @@
         return "";
     }
     
-    export function validateBirthDate(birthDate: string): string {
-        if (birthDate === "") {
+    export function validateBirthDate(birthDate: string | null): string {
+        if (!birthDate || birthDate === "") {
             return "El campo es requerido";
-        }
-    
+        } 
+
         //solo fechas entre 1925 y 2010
         const birthDateObj = new Date(birthDate);
-        const minDate = new Date("1925-01-01");
+        const minDate = new Date("1935-01-01");
         const maxDate = new Date("2010-12-31");
-    
-        if (birthDateObj < minDate || birthDateObj > maxDate) {
-            return "La fecha de nacimiento debe estar entre 1925 y 2010";
-        }
     
         //mayor de 15
         const now = new Date();
@@ -34,6 +30,10 @@
         const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
         if (age < 15) {
             return "Debes ser mayor de 15 años";
+        } 
+
+        if (birthDateObj < minDate || birthDateObj > maxDate) {
+            return "Fecha de nacimiento invalida";
         }
     
         return "";
@@ -44,7 +44,7 @@
             return "El campo es requerido";
         }
     
-        if (dni.length !== 13 || !/^\d+$/.test(dni)) {
+        if (dni.length > 25 || !/^\d+$/.test(dni)) {
             return "El DNI es invalido";
         }
         return "";
@@ -105,7 +105,7 @@
             return "El campo  es requerido";
         }
     
-        if (receiptCode.length !== 11) {
+        if (receiptCode.length !==2) {
             return "Numero de recibo invalido";
         }
     
@@ -113,7 +113,7 @@
     }
     
     export function validateOrganizerCode(organizerCode: string): string {
-        if (organizerCode.length && organizerCode.length !== 11) {
+        if (organizerCode.length !== 4) {
             return "Codigo de organizador invalido";
         }
     
@@ -134,10 +134,8 @@
         return "";
     }
 
-    export function validateGender(genderId: number = 0): string {
-        const genderArray = ["Hombre", "Mujer"];
-
-        if(genderId === 0){
+    export function validateGender(genderId: number): string {
+        if(genderId === -1){
             return "Seleccione un género";
         }
 
@@ -167,6 +165,22 @@
     export function validateUniversity(universityId: number): string {
         if(universityId === -1){
             return "Seleccione una universidad";
+        }
+
+        return "";
+    }
+
+    export function validateReceiptImage(receipt : File | null){
+        if(!receipt){
+            return "Seleccione una imagen";
+        }
+
+        if(receipt.type !== "image/jpeg" && receipt.type !== "image/png"){
+            return "Formato de imagen no válido";
+        }
+
+        if(receipt.size > 5000000){
+            return "La imagen es muy grande";
         }
 
         return "";

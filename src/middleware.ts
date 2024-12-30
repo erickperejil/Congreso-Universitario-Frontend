@@ -1,8 +1,9 @@
-/* import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 export function middleware(request: NextRequest) {
+    console.log('Middleware:', request.nextUrl.pathname);
     const token = request.cookies.get('authToken')?.value;
 
     // Define las rutas públicas (que no requieren autenticación)
@@ -27,6 +28,19 @@ export function middleware(request: NextRequest) {
             // Si el token ha expirado, redirige al login
             return NextResponse.redirect(new URL('/login', request.url));
         }
+
+        // Redirigir según el rol
+        if (decoded.tipo_usuario === 'admin' || decoded.tipo_usuario === 'organizador') {
+            // Administradores y organizadores solo pueden acceder a /admin
+            if (!request.nextUrl.pathname.startsWith('/admin')) {
+                return NextResponse.redirect(new URL('/admin', request.url));
+            }
+        } else if (decoded.tipo_usuario === 'comun') {
+            // Los usuarios solo pueden acceder a /my
+            if (!request.nextUrl.pathname.startsWith('/my')) {
+                return NextResponse.redirect(new URL('/my', request.url));
+            }
+        }
     } catch (error) {
         // Si la decodificación falla, redirige al login
         console.error('Invalid token:', error);
@@ -39,6 +53,9 @@ export function middleware(request: NextRequest) {
 
 // Configura el middleware para aplicarlo a todas las rutas
 export const config = {
-    matcher: ['/((?!api|_next|public/|login|register).*)'], // Excluye api, _next, public/, login y register
+    matcher: [
+        '/((?!api|_next|img/|logos/|fonts/|public/|login|register).*)' // Excluye api, _next, public, favicon.ico, logo_cit_blanco.webp, login y register
+    ],
 };
- */
+
+

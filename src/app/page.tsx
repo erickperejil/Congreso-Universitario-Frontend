@@ -25,7 +25,7 @@ export default function Home() {
       {/* imagen promocional de inicio */}
       <header className="relative w-full h-screen overflow-hidden">
         <img
-          src="/header.webp"
+          src="/img/landing/header.webp"
           alt="Imagen del congreso"
           className="w-full h-full object-cover scale-x-[-1] opacity-0 animate-fade-in"
         />
@@ -45,7 +45,7 @@ export default function Home() {
         {/* seccion de invitacion a descargar cronograma */}
         <section className="w-full mt-12 xl:mt-0 xl:h-screen flex flex-col md:flex-row items-center justify-center gap-12 px-8">
           <img
-            src="/promo.enc"
+            src="/img/landing/promo.enc"
             alt="Cronograma del evento"
             className="rounded-lg w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
           />
