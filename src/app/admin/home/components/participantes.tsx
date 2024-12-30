@@ -95,7 +95,7 @@ const TableComponent = () => {
     </div>
   </div>
 
-      <div className="overflow-y-auto max-h-[500px] border border-gray-300 rounded-lg">
+      <div className="overflow-y-auto max-h-[700px] border border-gray-300 rounded-lg">
         <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-gray-100">
