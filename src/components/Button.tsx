@@ -7,10 +7,11 @@ interface PrimaryButtonProps {
     className?: string;
     variant: "primary" | "secondary" | "danger" | "success" | "warning" | "info" | "light" | "dark";
     styleType: "fill" | "outlined";
-    disabled?: boolean
+    disabled?: boolean,
+    type?: "button" | "submit" | "reset";
 }
 
-export default function Button({ text, action, children, className, variant, styleType, disabled = false }: PrimaryButtonProps){
+export default function Button({ text, action, children, className, variant, styleType, disabled = false, type = "submit" }: PrimaryButtonProps){
 
     const typeButtons = {
         primary: {
@@ -50,9 +51,10 @@ export default function Button({ text, action, children, className, variant, sty
 
     return (
         <button
+            type={type}
             className={`flex justify-center items-center gap-1 px-4 py-2 text-sm capitalize rounded-md font-semibold transition-all 
         ${typeButtons[variant][styleType]} 
-        ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-[#F8B133] hover:text-[#101017]"}
+        ${disabled ? "opacity-50" : "hover:bg-[#F8B133] hover:text-[#101017]"}
         ${className}
     `}
             onClick={disabled ? () => { } : action}

@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const favicon = "/logo_cit_blanco.png";
+const favicon = "/logos/logo_cit_blanco.png";
 
 export const metadata: Metadata = {
   title: "CIT",
