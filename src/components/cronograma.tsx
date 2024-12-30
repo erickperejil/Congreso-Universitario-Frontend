@@ -48,7 +48,7 @@ const ConferenciaComponent = ({ conferencia, customStyles }: ConferenciaComponen
               src={conferencia.img_ponente}
               alt={conferencia.nombre_ponente}
               fill
-              className="object-cover object-top"
+              className="object-cover object-center"
             />
           </div>
           <div className={`border w-full text-center text-sm ${customStyles?.ponente || "border-slate-200"}`}>
