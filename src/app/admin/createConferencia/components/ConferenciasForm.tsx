@@ -202,7 +202,7 @@ const ConferenciaForm: React.FC = () => {
                 <input
                   type="number"
                   value={hora_inicio}
-                  onChange={(e) => setnombres_ponente(e.target.value)}
+                  onChange={(e) => sethora_inicio(e.target.value)}
                   required
                   className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full"
                   placeholder="12:00"
@@ -213,7 +213,7 @@ const ConferenciaForm: React.FC = () => {
                 <input
                   type="number"
                   value={hora_final}
-                  onChange={(e) => setapellidos_ponente(e.target.value)}
+                  onChange={(e) => sethora_final(e.target.value)}
                   required
                   className="mt-2 p-2 border text-black border-gray-300 rounded-lg w-full"
                   placeholder="1:00"
@@ -248,7 +248,7 @@ const ConferenciaForm: React.FC = () => {
             <label className="block text-sm font-medium text-gray-700">Descripcion Conferencia</label>
             <textarea
               value={descripcion_conferencia}
-              onChange={(e) => setcupos(e.target.value)}
+              onChange={(e) => setdescripcion_conferencia(e.target.value)}
               className="mt-2 p-2 border text-black border-gray-300 rounded-lg w-full"
               placeholder="Describe la Conferencia"
             />
@@ -257,7 +257,7 @@ const ConferenciaForm: React.FC = () => {
             <label className="block text-sm font-medium text-gray-700">Descripcion Ponente</label>
             <textarea
               value={descripcion_ponente}
-              onChange={(e) => setcupos(e.target.value)}
+              onChange={(e) => setdescripcion_ponente(e.target.value)}
               className="mt-2 p-2 border text-black border-gray-300 rounded-lg w-full"
               placeholder="Describe el Ponente"
             />
