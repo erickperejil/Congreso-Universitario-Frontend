@@ -16,7 +16,7 @@ const ConferenciaForm: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"main" | "gallery" | "pdf">();
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
-  const [pdfKit, setPdfKit] = useState<string | null>(null);
+  const [archivo, setarchivo] = useState<string | null>(null);
   const [direccion, setdireccion] = useState("");
   const [fecha_conferencia, setfecha_conferencia] = useState("");
   const [ hora_inicio, sethora_inicio] = useState("");
@@ -53,7 +53,7 @@ const ConferenciaForm: React.FC = () => {
 
       // Función para manejar la URL del PDF cargado
       const handlePdfUpload = (url: string) => {
-        setPdfKit(url);
+        setarchivo(url);
         handleClosePdfModal();
       };
 
@@ -75,7 +75,7 @@ const ConferenciaForm: React.FC = () => {
     } else if (modalType === "main") {
       setMainImage(urls[0] || null);
     } else if (modalType === "pdf") {
-      setPdfKit(urls[0] || null);
+      setarchivo(urls[0] || null);
     }
     handleCloseModal();
   };
@@ -103,6 +103,7 @@ const ConferenciaForm: React.FC = () => {
           hora_final,
           cupos,
           descripcion_conferencia,
+          archivo: archivo || "",
         };
         console.log("Creando Conferencia", newProduct);
         const response = await crearConferencia(newProduct);
@@ -123,7 +124,7 @@ const ConferenciaForm: React.FC = () => {
       return; // Detén la ejecución si no hay imagen
     }
 
-    if (!pdfKit) {
+    if (!archivo) {
         alert("Debes cargar un tutorial antes de continuar");
         return; // Detén la ejecución si no hay imagen
       }
@@ -146,7 +147,7 @@ const ConferenciaForm: React.FC = () => {
     setcupos("");
     setMainImage(null);
     setGalleryImages([]);
-    setPdfKit(null);
+    setarchivo(null);
 
   };
 
@@ -324,7 +325,7 @@ const ConferenciaForm: React.FC = () => {
               className="mt-2 border-dashed border-2 border-gray-300 p-4 text-center cursor-pointer"
               onClick={handleOpenPdfModal} // Función para abrir el modal del PDF
             >
-              {pdfKit ? (
+              {archivo ? (
                 <p className="text-sm text-gray-600">Archivo subido</p>
               ) : (
                 <p>Click para cargar los archivos</p>
@@ -334,7 +335,7 @@ const ConferenciaForm: React.FC = () => {
               {/* Modal exclusivo para cargar el PDF */}
             <Modal isVisible={isPdfModalOpen} onClose={handleClosePdfModal}>
               <SubirPdf onSubmit={handlePdfUpload} nombre_prod={nombre_conferencia} setNombre_prod={setnombre_conferencia}
-              initialUploadedFileUrl={pdfKit} />
+              initialUploadedFileUrl={archivo} />
             </Modal>
           </div>
         </div>
@@ -380,8 +381,8 @@ const ConferenciaForm: React.FC = () => {
                     ? mainImage
                     ? [mainImage]
                     : []
-                    : pdfKit
-                    ? [pdfKit]
+                    : archivo
+                    ? [archivo]
                     : []
                 } // Decide qué imágenes o PDF mostrar según el modalType
                 isGallery={modalType === "gallery"} // Define si es galería para lógica de múltiples archivos

@@ -8,11 +8,10 @@ type SubirPdfProps = {
   nombre_prod: string;// URL inicial del archivo cargado
 };
 
-export default function SubirPdf({ onSubmit, initialUploadedFileUrl,nombre_prod }: SubirPdfProps) {
+export default function SubirPdf({ onSubmit, initialUploadedFileUrl, nombre_prod }: SubirPdfProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(initialUploadedFileUrl || null); // Estado inicial
   const [isLoading, setIsLoading] = useState(false);
-  
 
   useEffect(() => {
     setUploadedFileUrl(initialUploadedFileUrl || null); // Sincronizar estado si cambia la prop
@@ -32,24 +31,26 @@ export default function SubirPdf({ onSubmit, initialUploadedFileUrl,nombre_prod 
     if (!file || uploadedFileUrl) return; // Evitar subir nuevamente si ya hay un archivo cargado
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('nombre_archivo', nombre_prod);
+    formData.append('recurso', file); // Cambiar el nombre del campo a "recurso"
+    formData.append('nombre_archivo', nombre_prod); // Si el backend lo requiere
 
     setIsLoading(true);
 
     try {
-      const res = await fetch('https://deploybackenddiancrochet.onrender.com/admin/uploadFile', {
+      const res = await fetch('https://backend-congreso.vercel.app/conferencias/subirRecurso', {
         method: 'POST',
         body: formData,
       });
 
-      const data = await res.json();
+      const data = await res.json(); // Intentar parsear la respuesta como JSON
       if (res.ok) {
-        setUploadedFileUrl(data.fileUrl); // Guardar la URL del archivo cargado
-        onSubmit(data.fileUrl); // Pasar la URL al componente padre
+        setUploadedFileUrl(data.recursoSubido.webContentLink); // Guardar la URL del archivo cargado
+        onSubmit(data.recursoSubido.webContentLink); // Pasar la URL al componente padre
+      } else {
+        console.error('Error en la respuesta del servidor:', data);
       }
     } catch (error) {
-      console.error(error);
+      console.error('Error al realizar la petición:', error);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +65,7 @@ export default function SubirPdf({ onSubmit, initialUploadedFileUrl,nombre_prod 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Selecciona un archivo PDF</label>
+        <label className="block text-sm font-medium text-gray-700">Selecciona un archivo Zip</label>
         <input
           type="file"
           accept=".pdf"
@@ -76,7 +77,7 @@ export default function SubirPdf({ onSubmit, initialUploadedFileUrl,nombre_prod 
         />
         {uploadedFileUrl && (
           <div className="text-sm text-green-600 mt-2">
-            <p>Archivo ya cargado: <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer" className="underline">Ver archivo</a></p>
+            <p>Archivo ya cargado: <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer" className="underline">Descargar Archivo</a></p>
             <button
               type="button"
               onClick={handleResetFile}
