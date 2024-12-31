@@ -21,6 +21,7 @@ export function middleware(request: NextRequest) {
 
     try {
         // Decodificar el token sin verificar la firma
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const decoded: any = jwt.decode(token);
 
         // Verificar expiración del token
