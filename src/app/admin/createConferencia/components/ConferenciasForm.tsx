@@ -1,7 +1,7 @@
 import React, { useState, useRef,useEffect } from "react";
 import Image from 'next/image';
 import { crearConferencia } from "@/services/conferencias/conferencia";
-import { Conferencia } from "@/interfaces/conferencias";
+import {CreateConferencia } from "@/interfaces/conferencias";
 import Modal from "./modal";
 import SubirPdf from "./subirArchivo";
 import UploadModal from "./subirFoto";
@@ -90,7 +90,7 @@ const ConferenciaForm: React.FC = () => {
   
     try {
        
-        const newProduct: Conferencia = {
+        const newProduct: CreateConferencia = {
           nombre_conferencia,
           nombres_ponente,
           apellidos_ponente,

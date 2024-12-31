@@ -1,4 +1,4 @@
-import { Conferencia } from "@/interfaces/conferencias";
+import {CreateConferencia } from "@/interfaces/conferencias";
 import axios from "axios";
 const BASE_URL = "https://backend-congreso.vercel.app";
 
@@ -25,7 +25,7 @@ export const uploadImage = async (file: File) => {
   };
   
 
-  export const crearConferencia = async (data: Conferencia) => {
+  export const crearConferencia = async (data: CreateConferencia) => {
     try {
       const response = await axios.post(`${BASE_URL}/conferencias/insertar`, data, {
         headers: {
