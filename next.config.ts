@@ -13,7 +13,9 @@ const nextConfig = {
         hostname: 'ik.imagekit.io',     // Si necesitas otro dominio, agrégalo aquí
         pathname: '/**',
       },
+      
     ],
+    domains: ['1.bp.blogspot.com','res.cloudinary.com'],
   },
 };
 

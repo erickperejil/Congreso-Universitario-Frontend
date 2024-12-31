@@ -1,5 +1,4 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
-import { MouseEvent, useState } from "react";
 import { useRouter } from 'next/navigation';
 
 import Button from "./Button";
