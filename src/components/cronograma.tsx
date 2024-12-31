@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Conferencia } from "@/interfaces/conferencias";
 import { fetchConferencias } from "@/services/conferencias";
 import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
 
 interface ConferenciaComponentProps {
   conferencia: Conferencia;
@@ -23,6 +24,7 @@ interface ConferenciaComponentProps {
 }
 
 const ConferenciaComponent = ({ conferencia, customStyles }: ConferenciaComponentProps) => {
+  const router = useRouter();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -33,6 +35,7 @@ const ConferenciaComponent = ({ conferencia, customStyles }: ConferenciaComponen
   }, [conferencia.datosimportantes]);
 
   const handleCupo = () => {
+    router.push("/login");
     console.log("Cronograma descargado");
   };
 

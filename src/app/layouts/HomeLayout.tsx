@@ -3,8 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ReactNode } from "react";
+import { logout } from "@/services/userService";
+import Cookies from 'js-cookie'; // Paquete para manejar cookies en cliente
+import { useRouter } from "next/navigation";
 
 export default function HomeLayout({ navOptions, children }: { navOptions: { name: string; icon: string; link: string; }[]; children: ReactNode }) {
+    const router = useRouter();
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [optionSelected, setOptionSelected] = useState("Conferencias");
 
@@ -27,6 +31,35 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
             document.removeEventListener("click", handleClickOutside);
         };
     }, [isSidebarOpen]);
+
+    async function handleLogout(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>): Promise<void> {
+        event.preventDefault();
+
+        try {
+            // Obtén el token de la cookie
+            const token = Cookies.get('authToken');
+            if (!token) {
+                console.warn('No token found in cookies.');
+                router.push('/login');
+                return;
+            }
+
+            // Decodifica el token para obtener información como el email
+            const { correo } = JSON.parse(atob(token.split('.')[1]));
+
+            const response = await logout(correo);
+            if (response?.error) {
+                console.error('Error during logout:', response.error);
+                return;
+            }
+
+            Cookies.remove('authToken');
+            router.push('/login');
+        } catch (error) {
+            console.error('Unexpected error during logout:', error);
+        }
+    }
+
 
     return (
         <>
@@ -66,7 +99,7 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
                         className="w-full mb-5 flex items-start justify-start"
                     >
                         <img
-                            src="/logos/logo_cit_completo_blanco.png"
+                            src="/logos/logo_cit_completo_blanco.webp"
                             className=" w-full"
                             alt="Flowbite Logo"
                         />
@@ -78,7 +111,10 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
                                     <Link
                                         href={option.link}
                                         className={`flex items-center p-2 rounded-lg group ${optionSelected === option.name ? "bg-[#F8B133] text-black hover:bg-[#F8B133]" : "text-white hover:bg-gray-700 dark:hover:bg-gray-700"}`}
-                                        onClick={() => setOptionSelected(option.name)}
+                                        onClick={() => {
+                                            setOptionSelected(option.name);
+                                            setSidebarOpen(false); // Cerrar el sidebar en dispositivos pequeños
+                                        }}
                                     >
                                         <span className="material-symbols-outlined">
                                             {option.icon}
@@ -86,11 +122,13 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
                                         <span className="ms-3">{option.name}</span>
                                     </Link>
                                 </li>
+
                             ))}
                             <li>
                                 <Link
                                     href="/"
                                     className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                                    onClick={handleLogout}
                                 >
                                     <span className="material-symbols-outlined">
                                         logout

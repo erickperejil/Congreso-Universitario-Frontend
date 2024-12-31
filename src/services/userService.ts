@@ -1,6 +1,36 @@
-import { RegisterFormInterface } from '@/types/form';
+import { RegisterFormInterface } from "@/interfaces/RegisterForm";
 
 import { genders } from '@/app/constants/genders';
+
+export const logout = async (email: string) => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    if (!API_URL) {
+        throw new Error('API_URL is not defined');
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/usuario/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({correo : email}),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { error: errorData.message || `Error ${response.status}: ${response.statusText}` };
+        }
+
+        const responseData = await response.json();
+        return { responseData };
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: error.message };
+        }
+        return { error: 'Network error or server unavailable' };
+    }
+}
 
 export const register = async (formData: RegisterFormInterface) => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -80,8 +110,8 @@ export const emailExists = async (email: string) => {
     }
 
     try {
-        const response = await fetch(`${API_URL}//usuario/verificacion/existe`, {
-            method: 'GET',
+        const response = await fetch(`${API_URL}/usuario/verificacion/existe`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -226,3 +256,6 @@ export const sendNewPassword = async (email : string, password : string) => {
         return { error: 'Network error or server unavailable' };
     }
 }
+
+/* obtiene el usuario actual directo de las cookies */
+

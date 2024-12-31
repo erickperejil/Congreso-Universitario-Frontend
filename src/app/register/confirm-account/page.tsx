@@ -97,7 +97,6 @@ export default function ConfirmAccount() {
     }
   };
 
-
   const handleResendEmail = () => {
     console.log('Reenviando correo...');
     if (sendingCode) {
@@ -138,8 +137,8 @@ export default function ConfirmAccount() {
         />
       ) : (
         <SuccessScreen
-          title="¡Cuenta confirmada!"
-          comment="Tu cuenta ha sido confirmada exitosamente. Inicia sesión para disfrutar de las conferencias."
+          title="¡Cuenta confirmada exitosamente!"
+          comment="Tu cuenta ha sido confirmada. Estamos verificando la validez de tu recibo y te notificaremos en cuanto esté todo listo. Luego, podrás acceder a tu cuenta."
           buttonTitle="Iniciar sesión"
           redirectionRoute="/login"
           router={router}

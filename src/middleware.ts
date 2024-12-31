@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 export function middleware(request: NextRequest) {
-    console.log('Middleware:', request.nextUrl.pathname);
+/*     console.log('Middleware:', request.nextUrl.pathname);
     const token = request.cookies.get('authToken')?.value;
 
     // Define las rutas públicas (que no requieren autenticación)
@@ -49,12 +49,12 @@ export function middleware(request: NextRequest) {
 
     // Si el token es válido y no ha expirado, permite continuar
     return NextResponse.next();
-}
+ */}
 
 // Configura el middleware para aplicarlo a todas las rutas
 export const config = {
     matcher: [
-        '/((?!api|_next|img/|logos/|fonts/|public/|login|register).*)' // Excluye api, _next, public, favicon.ico, logo_cit_blanco.webp, login y register
+        '/((?!api|_next|img/|logos/|fonts/|public/|login|register|$).*)' // Excluye api, _next, img, logos, fonts, public, login, register y la ruta raíz (/)
     ],
 };
 

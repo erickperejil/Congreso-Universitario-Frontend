@@ -101,7 +101,7 @@ function Login() {
                     <Button text="Iniciar Sesión" action={handleLogin} variant='primary' styleType="fill" className="w-[100%] mb-2" disabled={!areInputsValids || sendingLogin} />
                 </div>
 
-                <p className="text-sm text-white text-center">No tengo cuenta, <Link href="/register" className="text-[#f8b133] underline decoration-solid">registrarme</Link></p>
+                <p className="text-sm text-white text-center">No tengo cuenta, <Link href="/register" className="text-[#f8b133] underline decoration-solid">Registrarme</Link></p>
             </form>
 
             {/* Modal de advertencia */}

@@ -227,7 +227,7 @@ const Register = () => {
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const file = e.target.files ? e.target.files[0] : null;
+        const file  = e.target.files ? e.target.files[0] : null;
 
         if (file) {
             const error = validateReceiptImage(file);
@@ -270,7 +270,8 @@ const Register = () => {
             },
             4: async () => {
                 newErrors.email = validateEmail(email);
-                const exists = await checkEmailExistsF(email); // Asumimos que retorna true o false
+                if (newErrors.email) return; 
+                const exists = await checkEmailExistsF(email);
                 if (exists) {
                     newErrors.email = "El correo ya está registrado";
                 }
@@ -344,7 +345,7 @@ const Register = () => {
             contrasena: password,
             codigo_recibo: receiptCode,
             codigo_organizador: organizerCode !== "" ? organizerCode : null,
-            recibo: rec ? rec.name : null,
+            recibo: rec || null,
         };
         console.log("Datos a enviar:", formData);
 
@@ -375,7 +376,7 @@ const Register = () => {
                 return false; // Considerar como fallo en caso de error
             }
 
-            return !!response?.responseData; // Retorna true si el correo ya está registrado
+            return response.responseData.resultado;
         } catch (error) {
             console.error('Error inesperado:', error);
             return false; // Retorna false si ocurre un error inesperado
@@ -678,7 +679,7 @@ const Register = () => {
                                         className="mr-2"
                                         onChange={() => {setIsOrganizer(false); setErrors((prev) => ({
                                             ...prev, organizerCode: ""
-                                        }))
+                                        })); setRec(null); setPreview(null)
                                         }}
                                         checked={!isOrganizer}
                                     />
@@ -734,7 +735,7 @@ const Register = () => {
                                         <img
                                             src={preview}
                                             alt="Vista previa del recibo"
-                                            className="max-w-full h-auto rounded-md"
+                                            className="max-w-full h-auto rounded-lg"
                                         />
                                     </div>
                                 )}

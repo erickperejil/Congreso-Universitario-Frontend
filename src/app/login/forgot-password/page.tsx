@@ -73,9 +73,11 @@ export default function ForgotPassword() {
 
     const emailError = validateEmailForgotPassword(email);
     setErrors((prevErrors) => ({ ...prevErrors, email: emailError }));
-    setSending(false);
 
-    if (emailError) return;
+    if (emailError) {
+      setSending(false);
+      return;
+    }
 
     try {
       const response = await sendEmailToResetPasswordF(email)
@@ -83,7 +85,7 @@ export default function ForgotPassword() {
       if (response.error) {
         setErrors((prev) => ({
           ...prev,
-          email: response.error
+          email: "Lo sentimos, no pudimos encontrar tu correo. Por favor, intenta de nuevo."
         }))
         return;
       }
@@ -227,8 +229,8 @@ export default function ForgotPassword() {
           {/* Muestra input para ingresar email y luego codigo */}
           {showInputEmail && (
             <>
-              <p className="text-sm text-[#ab9a9a] leading-4">
-                Ingresa tu correo electrónico para recibir un código de recuperación.
+              <p className="text-sm text-[#ab9a9a] leading-4 mb-6 text-center">
+                Ingresa tu correo electrónico para enviarte un código de verificación y recuperar tu cuenta.
               </p>
 
               <div>
@@ -241,7 +243,7 @@ export default function ForgotPassword() {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 />
 
-                {errors.email && <p className="text-[#F8B133] text-sm">{errors.email}</p>}
+                {errors.email && <p className="text-[#F8B133] text-sm leading-4">{errors.email}</p>}
 
               </div>
             </>
@@ -266,11 +268,11 @@ export default function ForgotPassword() {
           {showInputNewPassword && (
             <div>
               <div className="flex flex-col gap-4">
-                <p className="leading-4 text-[#ab9a9a] text-center">Cambia tu contraseña</p>
+                <p className="leading-4 text-[#ab9a9a] text-center">Establece una nueva contraseña para acceder a tu cuenta.</p>
                 <div>
                   <InputForm
                     placeholder="Nueva Contraseña"
-                    iconName="password"
+                    iconName="lock"
                     type="password"
                     id="password"
                     value={password}
@@ -281,7 +283,7 @@ export default function ForgotPassword() {
                 <div>
                   <InputForm
                     placeholder="Confirmar Contraseña"
-                    iconName="password"
+                    iconName="lock"
                     type="password"
                     id="confirmPassword"
                     value={confirmPassword}
@@ -325,9 +327,9 @@ export default function ForgotPassword() {
       {/* Mostrar pantalla de exito cuando haya finalizado todo el proceso */}
       {finished && !showInputCode && !showInputNewPassword && (
         <SuccessScreen
-          title="Contraseña cambiada exitosamente"
-          comment="Tu contraseña ha sido cambiada correctamente. Ahora puedes iniciar sesión con tu nueva contraseña."
-          buttonTitle="Iniciar Sesión"
+          title="Cambio de contraseña exitoso"
+          comment="Tu contraseña se ha actualizado correctamente. Ahora puedes iniciar sesión utilizando tus nuevas credenciales."
+          buttonTitle="Ir a Iniciar Sesión"
           redirectionRoute="/login"
           router={router}
         />
