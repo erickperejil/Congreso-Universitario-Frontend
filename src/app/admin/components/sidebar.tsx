@@ -34,7 +34,7 @@ const Sidebar: React.FC = () => {
         <div className="p-6">
           <div className="flex flex-col items-center">
             <Image
-              src="/logocongreso.svg" // Cambia esta ruta por la ruta de tu logo
+              src="/logos/logocongreso.svg" // Cambia esta ruta por la ruta de tu logo
               alt="Logo"
               width={195} // Tamaño del logo (en píxeles)
               height={68}
