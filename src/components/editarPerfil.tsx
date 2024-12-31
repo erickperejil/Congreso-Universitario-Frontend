@@ -108,7 +108,7 @@ const UserProfile: React.FC = () => {
             />
           </div>
 
-          <div className=" w-full h-12 mt-4 flex flex-row">
+          {/* <div className=" w-full h-12 mt-4 flex flex-row">
             <label className="w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">
               APELLIDO
             </label>
@@ -120,9 +120,9 @@ const UserProfile: React.FC = () => {
               disabled={!editing}
               className="flex-1 text-xl px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
             />
-          </div>
+          </div> */}
 
-          <div className=" w-full h-12 mt-4 flex flex-row">
+          {/* <div className=" w-full h-12 mt-4 flex flex-row">
             <label className="w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">
               TELEFONO
             </label>
@@ -134,7 +134,7 @@ const UserProfile: React.FC = () => {
               disabled={!editing}
               className="flex-1 text-xl px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
             />
-          </div>
+          </div> */}
 
           <div className=" w-full h-12 mt-4 flex flex-row">
             <label className="w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">
@@ -149,7 +149,7 @@ const UserProfile: React.FC = () => {
             />
           </div>
 
-          <div className=" w-full sm:h-12 h-24 mt-4 flex sm:flex-row flex-col sm:justify-between">
+          {/* <div className=" w-full sm:h-12 h-24 mt-4 flex sm:flex-row flex-col sm:justify-between">
             <div className=" sm:w-2/5 w-full h-12 flex flex-row">
               <label className="text-center w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">
                 FECHA DE NACIMIENTO
@@ -194,7 +194,7 @@ const UserProfile: React.FC = () => {
                 />
               )}
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* botones */}
