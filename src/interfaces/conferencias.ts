@@ -1,4 +1,4 @@
-export interface Conferencia {
+export interface CreateConferencia {
     nombre_conferencia: string;
     nombres_ponente: string;
     apellidos_ponente: string;
