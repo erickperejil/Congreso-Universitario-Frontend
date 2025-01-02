@@ -12,13 +12,14 @@ export interface CreateConferencia {
     cupos: string; // Puede mantenerse como string o cambiarse a número según cómo lo manejes
     img_conferecia: string[] | null;
   }
+
   export interface Conferencia {
     nombre_ponente: string;
     img_ponente: string;
     titulo: string;
     lugar: string;
     horario: string;
-    datosimportantes: string;
+    datosimportantes: string[];
     fecha: string;
     cupos_disponibles: number;
     finalizado: boolean;

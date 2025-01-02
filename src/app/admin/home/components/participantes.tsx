@@ -21,7 +21,7 @@ const TableComponent = () => {
         setUsuarios(data);
         setFilteredData(data);
         setActions(data.map(() => "Enviar"));
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         setError("Error al cargar los usuarios.");
       } finally {
@@ -72,28 +72,28 @@ const TableComponent = () => {
   return (
     <div className="overflow-x-auto p-4">
       <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
-    <h1 className="text-lg font-bold">Participantes</h1>
-    <div className="flex items-center w-full sm:w-1/3 bg-gray-100 rounded-full px-4 py-1">
-      <input
-        type="text"
-        placeholder="Buscar..."
-        value={searchTerm}
-        onChange={(e) => handleSearch(e.target.value)}
-        className="w-full bg-transparent border-none text-gray-600 focus:outline-none"
-      />
-      <button title="buscar" className="ml-2">
-        <FaSearch className="text-blue-500" />
-      </button>
-    </div>
-    <div className="relative">
-      <button
-        onClick={toggleSortOrder}
-        className="bg-gray-200 px-4 py-2 rounded-lg shadow hover:bg-gray-300"
-      >
-        Ordenar por: {sortOrder}
-      </button>
-    </div>
-  </div>
+        <h1 className="text-lg font-bold">Participantes</h1>
+        <div className="flex items-center w-full sm:w-1/3 bg-gray-100 rounded-full px-4 py-1">
+          <input
+            type="text"
+            placeholder="Buscar..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-full bg-transparent border-none text-gray-600 focus:outline-none"
+          />
+          <button title="buscar" className="ml-2">
+            <FaSearch className="text-blue-500" />
+          </button>
+        </div>
+        <div className="relative">
+          <button
+            onClick={toggleSortOrder}
+            className="bg-gray-200 px-4 py-2 rounded-lg shadow hover:bg-gray-300"
+          >
+            Ordenar por: {sortOrder}
+          </button>
+        </div>
+      </div>
 
       <div className="overflow-y-auto max-h-[700px] border border-gray-300 rounded-lg">
         <table className="min-w-full bg-white">
@@ -105,7 +105,7 @@ const TableComponent = () => {
               <th className="px-4 py-2 text-center border-b">Certificado</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="font-thin">
             {filteredData.map((usuario, index) => (
               <tr
                 key={usuario.id_usuario}
@@ -118,7 +118,7 @@ const TableComponent = () => {
                   <div className="flex items-center justify-center space-x-4">
                     <button
                       className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
-                      onClick={() => {}}
+                      onClick={() => { }}
                     >
                       {actions[index]}
                     </button>
