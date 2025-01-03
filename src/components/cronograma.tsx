@@ -46,7 +46,7 @@ const ConferenciaComponent = ({
   }, [datosFiltrados]);
 
   const handleCupo = () => {
-    router.push("/login");
+    // router.push("/login");
     console.log("Cronograma descargado");
   };
 
