@@ -3,7 +3,7 @@ import Cronograma from "@/components/cronograma";
 export default function Conferences() {
     return (
     <div className="h-screen w-full overflow-y-scroll">
-      <h2 className="md:w-4/6 w-11/12 mx-auto text-3xl mt-10">
+      <h2 className="md:w-4/6 w-11/12 mx-auto text-3xl md:mt-10 mt-14">
         Conferencias
       </h2>
       <Cronograma

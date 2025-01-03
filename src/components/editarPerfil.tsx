@@ -8,9 +8,11 @@ import { fetchUsuarioById, updateUser } from "@/services/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Cookies from 'js-cookie';
+import Loader from "./Loading";
 
 
 const UserProfile: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<UsuarioRecibo | null>(null);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({ nombres: "", apellidos: "", correo: "", dni: null, contrasena: null});
@@ -32,6 +34,7 @@ const UserProfile: React.FC = () => {
   
     const loadUser = async (idUsuario:number) => {
       try {
+        setIsLoading(true);
         if (idUsuario) {
           const userData = await fetchUsuarioById(idUsuario);
           if (userData) {
@@ -50,6 +53,8 @@ const UserProfile: React.FC = () => {
         }
       } catch (error) {
         console.error("Error al cargar el usuario:", error);
+      } finally {
+        setIsLoading(false); // Finaliza el estado de carga
       }
     };
   
@@ -77,16 +82,32 @@ const UserProfile: React.FC = () => {
 
   const handleSave = async () => {
     if (!user) return;
-
-    const updatedUser = await updateUser(user.id_usuario, formData);
-    if (updatedUser) {
-      setUser(updatedUser);
-      setEditing(false);
-      window.location.reload(); // Recarga la página después de guardar
-    } else {
-      console.error("No se pudo actualizar la información del usuario.");
+  
+    try {
+      setIsLoading(true);
+      const updatedUser = await updateUser(user.id_usuario, formData);
+  
+      if (updatedUser) {
+        setUser((prevUser) =>
+          prevUser
+            ? {
+                ...prevUser,
+                ...formData, 
+              }
+            : null
+        );
+        setEditing(false);
+      } else {
+        console.error("No se pudo actualizar la información del usuario.");
+      }
+    } catch (error) {
+      console.error("Error al intentar actualizar el usuario:", error);
+    } finally {
+      setIsLoading(false); // Finaliza el estado de carga
     }
   };
+  
+  
 
   const handleCancel = () => {
     setEditing(false);
@@ -101,19 +122,27 @@ const UserProfile: React.FC = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader/>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex lg:flex-row flex-col">
-      <div className="lg:w-1/4 w-full mt-16  p-4 flex items-start justify-center">
+      <div className="lg:w-1/4 w-full md:mt-16 mt-10 p-4 flex items-start justify-center">
         <div className="bg-orange-500 h-64 w-64 mt-2 relative">
           <Image
             src={user?.url_qr || "/imagen.svg"}
-            alt="Descripción de la imagen"
+            alt="UserQR"
             layout="fill"
             objectFit="cover" 
           />
         </div>
       </div>
-      <div className=" lg:w-3/4 w-full flex flex-col justify-center lg:pr-12 pr-4 mt-16">
+      <div className=" lg:w-3/4 w-full flex flex-col justify-center lg:pr-12 pr-4 md:mt-16 mt-8">
         {/* datos */}
         <div className=" w-full h-3/4 flex flex-col p-4 justify-center">
           {/* nombre */}
@@ -259,6 +288,10 @@ const UserProfile: React.FC = () => {
               </button> */}
             </div>
           )}
+        </div>
+
+        <div className="montserrat-font p-4">
+          <h2>Recuerda: los datos proporcionados serán usados en la elaboración de certificados</h2>
         </div>
       </div>
     </div>

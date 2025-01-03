@@ -4,6 +4,7 @@ import Cronograma from "@/components/cronograma";
 import Cookies from "js-cookie";
 import { fetchAsistenciasByUsuarioId } from "@/services/user";
 import { motion } from "framer-motion";
+import Loader from "@/components/Loading";
 
 export default function MyInscriptions() {
   const [idUsuario, setIdUsuario] = useState<number | null>(null);
@@ -39,7 +40,7 @@ export default function MyInscriptions() {
   if (isLoading) {
     return (
       <div className="h-screen w-full flex justify-center items-center">
-        <p>Cargando inscripciones...</p>
+        <Loader/>
       </div>
     );
   }
@@ -55,7 +56,7 @@ export default function MyInscriptions() {
   if (idUsuario === null) {
     return (
       <div className="h-screen w-full flex justify-center items-center">
-        <p>Cargando inscripciones...</p>
+        <Loader/>
       </div>
     );
   }
@@ -67,7 +68,7 @@ export default function MyInscriptions() {
       </h2>
 
       <div className="md:w-4/6 w-11/12 h-40 mx-auto flex flex-col">
-        <div className="relative mt-4 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
+        <div className="relative mt-10 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
           <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
             {asistenciasInfo.cantidad_asistencias}/
             {asistenciasInfo.cantidad_total_conferencias}

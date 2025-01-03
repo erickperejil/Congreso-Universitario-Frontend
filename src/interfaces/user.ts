@@ -32,12 +32,13 @@ export interface ResetPwdResponse {
 }
 
 export interface UsuarioRecibo {
-  id_usuario: number;
-  dni: string;
   nombres: string;
   apellidos: string;
   correo: string;
-  img_recibo: string;
-  codigo_recibo: string;
-  url_qr: string;
+  dni: string | null; // Actualizado para aceptar `null`
+  contrasena: string | null; // Actualizado para aceptar `null`
+  id_usuario: number;
+  img_recibo?: string;
+  codigo_recibo?: string;
+  url_qr?: string;
 }

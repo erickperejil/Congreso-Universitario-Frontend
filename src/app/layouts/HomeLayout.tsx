@@ -6,7 +6,15 @@ import { ReactNode } from "react";
 
 export default function HomeLayout({ navOptions, children }: { navOptions: { name: string; icon: string; link: string; }[]; children: ReactNode }) {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const [optionSelected, setOptionSelected] = useState("Conferencias");
+    const [optionSelected, setOptionSelected] = useState(
+        sessionStorage.getItem("optionSelected") || "Mi Perfil"
+    );
+
+    const handleOptionChange = (newOption:string) => {
+        setOptionSelected(newOption);
+        sessionStorage.setItem("optionSelected", newOption);
+        setSidebarOpen(false);
+      };
 
     // Manejador para cerrar el sidebar al hacer clic fuera
     const handleClickOutside = (event: MouseEvent) => {
@@ -78,7 +86,7 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
                                     <Link
                                         href={option.link}
                                         className={`flex items-center p-2 rounded-lg group ${optionSelected === option.name ? "bg-[#F8B133] text-black hover:bg-[#F8B133]" : "text-white hover:bg-gray-700 dark:hover:bg-gray-700"}`}
-                                        onClick={() => setOptionSelected(option.name)}
+                                        onClick={() => handleOptionChange(option.name)}
                                     >
                                         <span className="material-symbols-outlined">
                                             {option.icon}

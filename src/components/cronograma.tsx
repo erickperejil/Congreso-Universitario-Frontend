@@ -8,6 +8,7 @@ import {
   fetchConferenciasPorUsuario,
 } from "@/services/conferencias";
 import Button from "@/components/Button";
+import Loader from "./Loading";
 
 interface ConferenciaComponentProps {
   conferencia: Conferencia;
@@ -211,7 +212,7 @@ export default function Cronograma({
 
       <div id="conferencias" className="md:w-4/6 w-11/12">
         {loading ? (
-          <div>Cargando...</div>
+          <div className="mt-10 h-full w-full flex justify-center"><Loader/></div>
         ) : (
           conferencias.map((conferencia) => (
             <ConferenciaComponent
