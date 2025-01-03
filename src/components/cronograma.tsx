@@ -86,8 +86,8 @@ const ConferenciaComponent = ({
           <h2 className={`text-lg font-bold ${customStyles?.title || ""}`}>
             {conferencia.titulo}
           </h2>
-          <div className={`text-base my-3 ${customStyles?.lugar || ""}`}>
-            {conferencia.lugar}
+          <div className={`text-base flex my-3${customStyles?.lugar || ""}`}>
+          <span className="material-symbols-outlined">location_on</span>{conferencia.lugar}
           </div>
           <Button
             text="Inscribirse"
