@@ -2,13 +2,13 @@ import { useState } from 'react';
 import Button from './Button';
 
 export default function ModalWarning({ title, isOpen, setIsOpen }: { title: string; isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
-    
+
 
     return (
         <>
             {isOpen && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
                     aria-modal="true"
                     role="dialog"
                 >
@@ -60,10 +60,10 @@ export default function ModalWarning({ title, isOpen, setIsOpen }: { title: stri
                                 styleType="fill"
                                 className="w-full"
                             />
-
                         </div>
                     </div>
                 </div>
+
             )}
         </>
     );

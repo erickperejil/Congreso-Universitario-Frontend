@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import  Button from "@/components/Button"; // Adjust the import path as necessary
 import { FaEdit, FaSearch } from "react-icons/fa";
 import { obtenerConferencias } from "@/services/conferencias/conferencia";
 import { Conferencia } from "@/interfaces/conferencias";
@@ -10,24 +9,23 @@ const TableComponent = () => {
   const [conferencias, setConferencias] = useState<Conferencia[]>([]);
   const [filteredData, setFilteredData] = useState<Conferencia[]>([]);
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
+  const [actions, setActions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const [isMounted, setIsMounted] = useState<boolean>(false); // Para evitar problemas de hidratación
-
-  // Fetch data from backend
   useEffect(() => {
     const fetchConferencias = async () => {
       try {
         setLoading(true);
         const data = await obtenerConferencias();
-        console.log(data);
         setConferencias(data);
+        console.log(data);
         setFilteredData(data);
+        setActions(data.map(() => "Enviar"));
+
       } catch (err) {
-        setError("Error al cargar las conferencias.");
+        setError("Error al cargar los conferencias.");
       } finally {
         setLoading(false);
       }
@@ -36,14 +34,9 @@ const TableComponent = () => {
     fetchConferencias();
   }, []);
 
-  // Marcar que el componente se montó
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const toggleSortOrder = () => {
     const sortedData = [...filteredData].sort((a, b) => {
-      const comparison = a.nombre_completo.localeCompare(b.nombre_completo);
+      const comparison = a.nombre_ponente.localeCompare(b.nombre_ponente);
       return sortOrder === "ASC" ? -comparison : comparison;
     });
 
@@ -57,14 +50,18 @@ const TableComponent = () => {
       (conferencia) =>
         conferencia.titulo.toLowerCase().includes(term.toLowerCase()) ||
         conferencia.nombre_ponente.toLowerCase().includes(term.toLowerCase()) ||
-        conferencia.lugar.includes(term)
+        conferencia.datosimportantes.join(", ").toLowerCase().includes(term.toLowerCase())
     );
     setFilteredData(filtered);
   };
 
-  if (!isMounted) {
-    return null; // Evitar el renderizado hasta que el componente esté montado
-  }
+  const handleActionChange = (index: number) => {
+    setActions((prev) => {
+      const updatedActions = [...prev];
+      updatedActions[index] = updatedActions[index] === "Enviar" ? "Editar" : "Enviar";
+      return updatedActions;
+    });
+  };
 
   if (loading) {
     return <p className="text-center">Cargando...</p>;
@@ -86,7 +83,7 @@ const TableComponent = () => {
             onChange={(e) => handleSearch(e.target.value)}
             className="w-full bg-transparent border-none text-gray-600 focus:outline-none"
           />
-          <button title="buscar" className="ml-2">
+          <button title="Buscar" className="ml-2">
             <FaSearch className="text-blue-500" />
           </button>
         </div>
@@ -104,15 +101,15 @@ const TableComponent = () => {
         <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-2 text-left border-b">Titulo</th>
+              <th className="px-4 py-2 text-left border-b">Título</th>
               <th className="px-4 py-2 text-left border-b">Ponente</th>
               <th className="px-4 py-2 text-left border-b">Lugar</th>
-              <th className="px-4 py-2 text-center border-b">Horario</th>
-              <th className="px-4 py-2 text-center border-b">Descripción</th>
-              <th className="px-4 py-2 text-center border-b">Fecha</th>
-              <th className="px-4 py-2 text-center border-b">Cupos Disponibles</th>
-              <th className="px-4 py-2 text-center border-b">Finalizado</th>
-              <th className="px-4 py-2 text-center border-b">Acciones</th>
+              <th className="px-4 py-2 text-left border-b">Horario</th>
+              <th className="px-4 py-2 text-left border-b">Fecha</th>
+              <th className="px-4 py-2 text-left border-b">Cupos</th>
+              <th className="px-4 py-2 text-left border-b">Finalizado</th>
+              <th className="px-4 py-2 text-left border-b">Datos importantes</th>
+              <th className="px-4 py-2 text-left border-b">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -125,31 +122,27 @@ const TableComponent = () => {
                 <td className="px-4 py-2 border-b">{conferencia.nombre_ponente}</td>
                 <td className="px-4 py-2 border-b">{conferencia.lugar}</td>
                 <td className="px-4 py-2 border-b">{conferencia.horario}</td>
-                <td className="px-4 py-2 border-b">
-                  {Array.isArray(conferencia.datosimportantes) ? (
-                    conferencia.datosimportantes.map((dato, i) => (
-                      <p key={i}>{dato}</p>
-                    ))
-                  ) : (
-                    <p>{conferencia.datosimportantes}</p>
-                  )}
-                </td>
                 <td className="px-4 py-2 border-b">{conferencia.fecha}</td>
                 <td className="px-4 py-2 border-b">{conferencia.cupos_disponibles}</td>
                 <td className="px-4 py-2 border-b">{conferencia.finalizado ? "Sí" : "No"}</td>
+                <td className="px-4 py-2 border-b">
+                  {conferencia.datosimportantes.join(", ")}
+                </td>
                 <td className="px-4 py-2 border-b text-center">
-                  <Button
-                  text="Editar"
-                  action={() => {}}
-                  variant="primary"
-                  styleType="fill"
-                  
-                    
-
-                    className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
-                    />
-
-
+                  <div className="flex items-center justify-center space-x-4">
+                    <button
+                      className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+                      onClick={() => {}}
+                    >
+                      {actions[index]}
+                    </button>
+                    <button
+                      onClick={() => handleActionChange(index)}
+                      className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
+                      <FaEdit size={20} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

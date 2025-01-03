@@ -1,4 +1,4 @@
-export const login = async (email: string, password: string): Promise<{ error?: string; token?: string; statusCode?: number }> => {
+export const login = async (email: string, password: string): Promise<{ error?: string; codigoResultado?: number; token?: string; statusCode?: number }> => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
     try {
@@ -14,12 +14,12 @@ export const login = async (email: string, password: string): Promise<{ error?: 
 
         if (!response.ok) {
             const errorData = await response.json();
-            return { error: errorData.message || 'An error occurred during login', statusCode: response.status };
+            return { error: errorData.message || 'Error', statusCode: response.status, codigoResultado: errorData.codigoResultado }; 
         }
         console.log('Login response:', response);
 
         const data = await response.json();
-        return { token: data.token }; // Assuming the backend sends a token on successful login
+        return { token: data.token }; 
     } catch (error) {
         console.error('Login error:', error);
         return { error: 'Network error or server unavailable' };

@@ -1,4 +1,4 @@
-import { CreateConferencia } from "@/interfaces/conferencias";
+import { Conferencia, CreateConferencia } from "@/interfaces/conferencias";
 import axios from "axios";
 const BASE_URL = "https://backend-congreso.vercel.app";
 
@@ -44,20 +44,28 @@ export const crearConferencia = async (data: CreateConferencia) => {
   }
 };
 
-export const obtenerConferencias = async () => {
-  try {
-    const response = await axios.put(`${BASE_URL}/conferencias`);
-    return response.data;
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Error al obtener las conferencias:", error.response?.data || error.message);
-      throw new Error(error.response?.data?.message || "Error al obtener las conferencias");
-    } else {
-      console.error("Error inesperado:", error);
-      throw new Error("Error inesperado al obtener las conferencias");
+
+export async function obtenerConferencias(): Promise<Conferencia[]> {
+    try {
+      const response = await fetch(`${BASE_URL}/conferencias`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log(data);
+      return data as Conferencia[];
+    } catch (error) {
+      console.error('Error al obtener los usuarios:', error);
+      throw error;
     }
   }
-}
 
 
 

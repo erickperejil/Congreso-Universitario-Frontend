@@ -134,6 +134,36 @@ export const emailExists = async (email: string) => {
     }
 }
 
+export const uploadReceiptImage = async (image: File) => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    if (!API_URL) {
+        throw new Error('API_URL is not defined');
+    }
+
+    const formData = new FormData();
+    formData.append('file', image);
+
+    try {
+        const response = await fetch(`${API_URL}/image/upload`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { error: errorData.message || `Error ${response.status}: ${response.statusText}` };
+        }
+
+        const responseData = await response.json();
+        return { responseData };
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: error.message };
+        }
+        return { error: 'Network error or server unavailable' };
+    }
+}
+
 /* Para cambio de contraseña (forgot-password) */
 export const sendEmailToResetPassword = async (email: string) => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
