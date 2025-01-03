@@ -17,3 +17,22 @@ export const fetchConferencias = async (dia: string): Promise<Conferencia[]> => 
   console.log("data",data)
   return data.conferencias;
 };
+
+
+export const fetchConferenciasPorUsuario = async (idUsuario: number, dia: string | null): Promise<Conferencia[]> => {
+  const response = await fetch("https://backend-congreso.vercel.app/conferencias/usuario", {
+    method: "POST", // Cambié el método a POST porque coincide con el ejemplo que proporcionaste.
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ idUsuario, dia }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al obtener las conferencias del usuario");
+  }
+
+  const data = await response.json();
+  console.log("data de usuario", data);
+  return data.conferencias;
+};

@@ -1,41 +1,64 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { User } from "@/interfaces/user";
+import { UsuarioRecibo } from "@/interfaces/user";
 import Image from 'next/image';
 // import { useRouter } from 'next/navigation';
-import { fetchUser, updateUser } from "@/services/user";
-import { ActualizarUser } from "@/interfaces/user";
+import { fetchUsuarioById, updateUser } from "@/services/user";
+// import { ActualizarUser } from "@/interfaces/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
+import Cookies from 'js-cookie';
+
 
 const UserProfile: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UsuarioRecibo | null>(null);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState<ActualizarUser>({
-    Nuevo_nombre: "",
-    Nuevo_apellido: "",
-    Nuevo_genero: "",
-    Nuevo_telefono: "",
-    Nuevo_fechaNacimiento: "",
-  });
+  const [formData, setFormData] = useState({ nombres: "", apellidos: "", correo: "", dni: null, contrasena: null});
 
   useEffect(() => {
-    const loadUser = async () => {
-      const userData = await fetchUser("correo de usuario");
-      if (userData) {
-        setUser(userData);
-        setFormData({
-          Nuevo_nombre: userData.nombre,
-          Nuevo_apellido: userData.apellido,
-          Nuevo_genero: userData.genero,
-          Nuevo_telefono: userData.telefono,
-          Nuevo_fechaNacimiento: userData.fecha_nacimiento,
-        });
+    const processToken = () => {
+      const token = Cookies.get("authToken");
+      if (token) {
+        try {
+          const parts = token.split(".");
+          const payload = JSON.parse(atob(parts[1]));
+          return payload.id_usuario;
+        } catch (error) {
+          console.error("Error al decodificar el token:", error);
+        }
+      }
+      return null; // Retornar `null` si no hay token o no es válido
+    };
+  
+    const loadUser = async (idUsuario:number) => {
+      try {
+        if (idUsuario) {
+          const userData = await fetchUsuarioById(idUsuario);
+          if (userData) {
+            setUser(userData);
+            setFormData({
+              nombres: userData.nombres,
+              apellidos: userData.apellidos,
+              correo: userData.correo,
+              contrasena: null,
+              dni: null
+            });
+            console.log("Usuario cargado:", userData);
+          }
+        } else {
+          console.warn("No se encontró un ID de usuario válido.");
+        }
+      } catch (error) {
+        console.error("Error al cargar el usuario:", error);
       }
     };
-
-    loadUser();
+  
+    const idUsuario = processToken();
+    loadUser(idUsuario);
   }, []);
+  
+
+
 
   // const router = useRouter();
   // const GotoChangePasswd = () => {
@@ -55,7 +78,7 @@ const UserProfile: React.FC = () => {
   const handleSave = async () => {
     if (!user) return;
 
-    const updatedUser = await updateUser(user.correo, formData);
+    const updatedUser = await updateUser(user.id_usuario, formData);
     if (updatedUser) {
       setUser(updatedUser);
       setEditing(false);
@@ -69,11 +92,11 @@ const UserProfile: React.FC = () => {
     setEditing(false);
     if (user) {
       setFormData({
-        Nuevo_nombre: user.nombre,
-        Nuevo_apellido: user.apellido,
-        Nuevo_genero: user.genero,
-        Nuevo_telefono: user.telefono,
-        Nuevo_fechaNacimiento: user.fecha_nacimiento,
+        nombres: user.nombres,
+        apellidos: user.apellidos,
+        correo: user.correo,
+        contrasena: null,
+        dni: null
       });
     }
   };
@@ -83,7 +106,7 @@ const UserProfile: React.FC = () => {
       <div className="lg:w-1/4 w-full mt-16  p-4 flex items-start justify-center">
         <div className="bg-orange-500 h-64 w-64 mt-2 relative">
           <Image
-            src="/imagen.svg"
+            src={user?.url_qr || "/imagen.svg"}
             alt="Descripción de la imagen"
             layout="fill"
             objectFit="cover" 
@@ -96,31 +119,31 @@ const UserProfile: React.FC = () => {
           {/* nombre */}
           <div className=" w-full h-12 mt-4 flex flex-row">
             <label className="w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">
-              NOMBRE
+              NOMBRES
             </label>
             <input
               type="text"
-              name="Nuevo_nombre"
-              value={editing ? formData.Nuevo_nombre : user?.nombre || ""}
+              name="nombres"
+              value={editing ? formData.nombres : user?.nombres || ""}
               onChange={handleInputChange}
               disabled={!editing}
               className="flex-1 text-xl px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
             />
           </div>
 
-          {/* <div className=" w-full h-12 mt-4 flex flex-row">
+          <div className=" w-full h-12 mt-4 flex flex-row">
             <label className="w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">
-              APELLIDO
+              APELLIDOS
             </label>
             <input
               type="text"
-              name="Nuevo_apellido"
-              value={editing ? formData.Nuevo_apellido : user?.apellido || ""}
+              name="apellidos"
+              value={editing ? formData.apellidos : user?.apellidos || ""}
               onChange={handleInputChange}
               disabled={!editing}
               className="flex-1 text-xl px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
             />
-          </div> */}
+          </div>
 
           {/* <div className=" w-full h-12 mt-4 flex flex-row">
             <label className="w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">

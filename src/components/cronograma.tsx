@@ -3,7 +3,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Conferencia } from "@/interfaces/conferencias";
-import { fetchConferencias } from "@/services/conferencias";
+import {
+  fetchConferencias,
+  fetchConferenciasPorUsuario,
+} from "@/services/conferencias";
 import Button from "@/components/Button";
 
 interface ConferenciaComponentProps {
@@ -28,12 +31,18 @@ const ConferenciaComponent = ({
 }: ConferenciaComponentProps) => {
   const [index, setIndex] = useState(0);
 
+  const datosFiltrados = conferencia.datosimportantes.filter(
+    (dato) => dato.trim() !== ""
+  );
+
   useEffect(() => {
-    const intervalo = setInterval(() => {
-      setIndex((prev) => (prev + 1) % conferencia.datosimportantes.length);
-    }, 7500);
-    return () => clearInterval(intervalo);
-  }, [conferencia.datosimportantes]);
+    if (datosFiltrados.length > 0) {
+      const intervalo = setInterval(() => {
+        setIndex((prev) => (prev + 1) % datosFiltrados.length);
+      }, 7500);
+      return () => clearInterval(intervalo);
+    }
+  }, [datosFiltrados]);
 
   const handleCupo = () => {
     console.log("Cronograma descargado");
@@ -90,9 +99,9 @@ const ConferenciaComponent = ({
           </Button>
         </div>
         <div
-          className={`overflow-hidden lg:w-1/4 relative p-4 cursor-pointer flex items-center ${customStyles?.datosimportantes || ""}`}
+          className={`overflow-hidden lg:w-1/4 relative p-4 pt-0 md:pt-4 cursor-pointer flex items-center`}
           onClick={() =>
-            setIndex((prev) => (prev + 1) % conferencia.datosimportantes.length)
+            setIndex((prev) => (prev + 1) % datosFiltrados.length)
           }
         >
           <AnimatePresence mode="wait">
@@ -102,7 +111,7 @@ const ConferenciaComponent = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="text-slate-200 font-medium text-sm"
+              className={`text-slate-200 font-medium pt-0 text-sm  ${customStyles?.datosimportantes || ""}`}
             >
               {conferencia.datosimportantes[index]}
             </motion.div>
@@ -114,6 +123,8 @@ const ConferenciaComponent = ({
 };
 
 interface CronogramaProps {
+  fetchPrompt?: "usuario" | "todos";
+  idUsuario?: number;
   customStyles?: ConferenciaComponentProps["customStyles"];
   dayButtonStyles?: {
     default?: string;
@@ -121,12 +132,16 @@ interface CronogramaProps {
     hover?: string;
   };
   titleStyles?: string;
+  subtitleStyles?: string;
 }
 
 export default function Cronograma({
+  fetchPrompt = "todos",
+  idUsuario,
   customStyles,
   dayButtonStyles,
   titleStyles,
+  subtitleStyles,
 }: CronogramaProps) {
   const [diaSeleccionado, setDiaSeleccionado] = useState("24/01/2025");
   const [conferencias, setConferencias] = useState<Conferencia[]>([]);
@@ -141,9 +156,17 @@ export default function Cronograma({
 
   useEffect(() => {
     async function fetchGets() {
+      setLoading(true);
       try {
-        const respuesta = await fetchConferencias(diaSeleccionado);
-        setConferencias(respuesta);
+        if (fetchPrompt === "usuario" && idUsuario !== undefined) {
+          console.log(idUsuario);
+          const respuesta = await fetchConferenciasPorUsuario(idUsuario, null);
+          console.log("conferencias de usuario", respuesta);
+          setConferencias(respuesta);
+        } else {
+          const respuesta = await fetchConferencias(diaSeleccionado);
+          setConferencias(respuesta);
+        }
       } catch (error) {
         console.error("Error al traer conferencias:", error);
       } finally {
@@ -152,32 +175,37 @@ export default function Cronograma({
     }
 
     fetchGets();
-  }, [diaSeleccionado]);
+  }, [diaSeleccionado, fetchPrompt, idUsuario]);
 
   return (
-    <div className="my-16 w-full flex flex-col items-center">
-      <h2 className={`sm:text-6xl text-5xl mb-10 ${titleStyles || ""}`}>Conferencias</h2>
-<div className="flex lg:w-3/5 w-full flex-nowrap justify-between overflow-x-auto">
-  {dias.map((dia) => (
-    <div
-      key={dia.fecha}
-      onClick={() => setDiaSeleccionado(dia.fecha)}
-      className={`border whitespace-nowrap flex-shrink-0 lg:text-base text-sm text-center flex rounded-md h-10 items-center justify-center 
+    <div className="my-16 w-full flex flex-col items-center select-none">
+      <h2 className={`sm:text-6xl text-5xl mb-10 ${titleStyles || ""}`}>
+        Conferencias
+      </h2>
+      <div className="flex lg:w-3/5 w-full flex-nowrap justify-between overflow-x-auto">
+        {dias.map((dia) => (
+          <div
+            key={dia.fecha}
+            onClick={() => setDiaSeleccionado(dia.fecha)}
+            className={`border whitespace-nowrap flex-shrink-0 lg:text-base text-sm text-center flex rounded-md h-10 items-center justify-center 
       transition-all duration-300 cursor-pointer sm:w-1/5 sm:max-w-[22%] w-1/3
-      ${diaSeleccionado === dia.fecha ? 
-        dayButtonStyles?.selected || "bg-[#F2AE30] text-[#32378C]" 
-        : dayButtonStyles?.default || "bg-[#32378C]"} 
-      ${diaSeleccionado !== dia.fecha ? 
-        dayButtonStyles?.hover || "hover:bg-[#F2AE30] hover:text-[#32378C]" 
-        : ""}`}
-    >
-      {dia.label}
-    </div>
-  ))}
-</div>
+      ${
+        diaSeleccionado === dia.fecha
+          ? dayButtonStyles?.selected || "bg-[#F2AE30] text-[#32378C]"
+          : dayButtonStyles?.default || "bg-[#32378C]"
+      } 
+      ${
+        diaSeleccionado !== dia.fecha
+          ? dayButtonStyles?.hover || "hover:bg-[#F2AE30] hover:text-[#32378C]"
+          : ""
+      }`}
+          >
+            {dia.label}
+          </div>
+        ))}
+      </div>
 
-
-      <h3 className="text-4xl m-10">
+      <h3 className={`text-4xl m-10 ${subtitleStyles || ""}`}>
         {dias.find((dia) => dia.fecha === diaSeleccionado)?.label} de Enero
       </h3>
 

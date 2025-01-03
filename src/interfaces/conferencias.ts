@@ -4,7 +4,7 @@ export interface Conferencia {
     titulo: string;
     lugar: string;
     horario: string;
-    datosimportantes: string;
+    datosimportantes: string[];
     fecha: string;
     cupos_disponibles: number;
     finalizado: boolean;
