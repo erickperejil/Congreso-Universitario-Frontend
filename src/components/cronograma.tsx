@@ -3,9 +3,12 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Conferencia } from "@/interfaces/conferencias";
-import { fetchConferencias } from "@/services/conferencias";
+import {
+  fetchConferencias,
+  fetchConferenciasPorUsuario,
+} from "@/services/conferencias";
 import Button from "@/components/Button";
-import { useRouter } from "next/navigation";
+import Loader from "./Loading";
 
 interface ConferenciaComponentProps {
   conferencia: Conferencia;
@@ -23,16 +26,24 @@ interface ConferenciaComponentProps {
   };
 }
 
-const ConferenciaComponent = ({ conferencia, customStyles }: ConferenciaComponentProps) => {
-  const router = useRouter();
+const ConferenciaComponent = ({
+  conferencia,
+  customStyles,
+}: ConferenciaComponentProps) => {
   const [index, setIndex] = useState(0);
 
+  const datosFiltrados = conferencia.datosimportantes.filter(
+    (dato) => dato.trim() !== ""
+  );
+
   useEffect(() => {
-    const intervalo = setInterval(() => {
-      setIndex((prev) => (prev + 1) % conferencia.datosimportantes.length);
-    }, 7500);
-    return () => clearInterval(intervalo);
-  }, [conferencia.datosimportantes]);
+    if (datosFiltrados.length > 0) {
+      const intervalo = setInterval(() => {
+        setIndex((prev) => (prev + 1) % datosFiltrados.length);
+      }, 7500);
+      return () => clearInterval(intervalo);
+    }
+  }, [datosFiltrados]);
 
   const handleCupo = () => {
     router.push("/login");
@@ -40,27 +51,45 @@ const ConferenciaComponent = ({ conferencia, customStyles }: ConferenciaComponen
   };
 
   return (
-    <div className={`w-full border flex flex-col mb-12 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}>
-      <div className={`w-full h-14 flex items-center text-2xl p-3 font-bold montserrat-font ${customStyles?.header || ""}`}>
+    <div
+      className={`w-full border flex flex-col mb-12 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}
+    >
+      <div
+        className={`w-full h-14 flex items-center text-2xl p-3 font-bold montserrat-font ${customStyles?.header || ""}`}
+      >
         {conferencia.horario}
       </div>
-      <div className={`w-full border lg:h-48 lg:flex rounded-b-md ${customStyles?.content || "border-slate-100 border-t-[#ffffff82]"}`}>
-        <div className={`p-5 lg:w-1/4 flex flex-col items-center justify-center ${customStyles?.imageContainer || ""}`}>
-          <div className={`relative w-full lg:h-[80%] h-28 border ${customStyles?.image || "border-slate-200"}`}>
+      <div
+        className={`w-full border lg:h-48 lg:flex rounded-b-md ${customStyles?.content || "border-slate-100 border-t-[#ffffff82]"}`}
+      >
+        <div
+          className={`p-5 lg:w-1/4 flex flex-col items-center justify-center ${customStyles?.imageContainer || ""}`}
+        >
+          <div
+            className={`relative w-full lg:h-[80%] h-28 border ${customStyles?.image || "border-slate-200"}`}
+          >
             <Image
               src={conferencia.img_ponente}
               alt={conferencia.nombre_ponente}
               fill
-              className="object-cover object-top"
+              className="object-cover object-center"
             />
           </div>
-          <div className={`border w-full text-center text-sm ${customStyles?.ponente || "border-slate-200"}`}>
+          <div
+            className={`border w-full text-center text-sm ${customStyles?.ponente || "border-slate-200"}`}
+          >
             {conferencia.nombre_ponente}
           </div>
         </div>
-        <div className={`lg:w-2/4 flex flex-col p-5 ${customStyles?.content || ""}`}>
-          <h2 className={`text-lg font-bold ${customStyles?.title || ""}`}>{conferencia.titulo}</h2>
-          <div className={`text-base my-3 ${customStyles?.lugar || ""}`}>{conferencia.lugar}</div>
+        <div
+          className={`lg:w-2/4 flex flex-col p-5 ${customStyles?.content || ""}`}
+        >
+          <h2 className={`text-lg font-bold ${customStyles?.title || ""}`}>
+            {conferencia.titulo}
+          </h2>
+          <div className={`text-base flex my-3${customStyles?.lugar || ""}`}>
+          <span className="material-symbols-outlined">location_on</span>{conferencia.lugar}
+          </div>
           <Button
             text="Inscribirse"
             action={handleCupo}
@@ -72,9 +101,9 @@ const ConferenciaComponent = ({ conferencia, customStyles }: ConferenciaComponen
           </Button>
         </div>
         <div
-          className={`overflow-hidden lg:w-1/4 relative p-4 cursor-pointer flex items-center ${customStyles?.datosimportantes || ""}`}
+          className={`overflow-hidden lg:w-1/4 relative p-4 pt-0 md:pt-4 cursor-pointer flex items-center`}
           onClick={() =>
-            setIndex((prev) => (prev + 1) % conferencia.datosimportantes.length)
+            setIndex((prev) => (prev + 1) % datosFiltrados.length)
           }
         >
           <AnimatePresence mode="wait">
@@ -84,7 +113,7 @@ const ConferenciaComponent = ({ conferencia, customStyles }: ConferenciaComponen
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="text-slate-200 font-medium text-sm"
+              className={`text-slate-200 font-medium pt-0 text-sm  ${customStyles?.datosimportantes || ""}`}
             >
               {conferencia.datosimportantes[index]}
             </motion.div>
@@ -96,6 +125,8 @@ const ConferenciaComponent = ({ conferencia, customStyles }: ConferenciaComponen
 };
 
 interface CronogramaProps {
+  fetchPrompt?: "usuario" | "todos";
+  idUsuario?: number;
   customStyles?: ConferenciaComponentProps["customStyles"];
   dayButtonStyles?: {
     default?: string;
@@ -103,9 +134,17 @@ interface CronogramaProps {
     hover?: string;
   };
   titleStyles?: string;
+  subtitleStyles?: string;
 }
 
-export default function Cronograma({ customStyles, dayButtonStyles, titleStyles }: CronogramaProps) {
+export default function Cronograma({
+  fetchPrompt = "todos",
+  idUsuario,
+  customStyles,
+  dayButtonStyles,
+  titleStyles,
+  subtitleStyles,
+}: CronogramaProps) {
   const [diaSeleccionado, setDiaSeleccionado] = useState("24/01/2025");
   const [conferencias, setConferencias] = useState<Conferencia[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,9 +158,17 @@ export default function Cronograma({ customStyles, dayButtonStyles, titleStyles 
 
   useEffect(() => {
     async function fetchGets() {
+      setLoading(true);
       try {
-        const respuesta = await fetchConferencias(diaSeleccionado);
-        setConferencias(respuesta);
+        if (fetchPrompt === "usuario" && idUsuario !== undefined) {
+          console.log(idUsuario);
+          const respuesta = await fetchConferenciasPorUsuario(idUsuario, null);
+          console.log("conferencias de usuario", respuesta);
+          setConferencias(respuesta);
+        } else {
+          const respuesta = await fetchConferencias(diaSeleccionado);
+          setConferencias(respuesta);
+        }
       } catch (error) {
         console.error("Error al traer conferencias:", error);
       } finally {
@@ -130,33 +177,43 @@ export default function Cronograma({ customStyles, dayButtonStyles, titleStyles 
     }
 
     fetchGets();
-  }, [diaSeleccionado]);
+  }, [diaSeleccionado, fetchPrompt, idUsuario]);
 
   return (
-    <div className="my-16 w-full flex flex-col items-center">
-      <h2 className={`text-6xl mb-10 ${titleStyles || ""}`}>Conferencias</h2>
-      <div className="flex lg:w-3/5 w-4/5 justify-between">
+    <div className="my-16 w-full flex flex-col items-center select-none">
+      <h2 className={`sm:text-6xl text-5xl mb-10 ${titleStyles || ""}`}>
+        Conferencias
+      </h2>
+      <div className="flex lg:w-3/5 w-full flex-nowrap justify-between overflow-x-auto">
         {dias.map((dia) => (
           <div
             key={dia.fecha}
             onClick={() => setDiaSeleccionado(dia.fecha)}
-            className={`border w-[22%] lg:text-base text-sm text-center flex rounded-md h-10 items-center justify-center transition-all duration-300 cursor-pointer ${
-              diaSeleccionado === dia.fecha
-                ? dayButtonStyles?.selected || "bg-[#F2AE30] text-[#32378C]"
-                : dayButtonStyles?.default || "bg-[#32378C]"
-            } ${diaSeleccionado !== dia.fecha ? dayButtonStyles?.hover || "hover:bg-[#F2AE30] hover:text-[#32378C]" : ""}`}
+            className={`border whitespace-nowrap flex-shrink-0 lg:text-base text-sm text-center flex rounded-md h-10 items-center justify-center 
+      transition-all duration-300 cursor-pointer sm:w-1/5 sm:max-w-[22%] w-1/3
+      ${
+        diaSeleccionado === dia.fecha
+          ? dayButtonStyles?.selected || "bg-[#F2AE30] text-[#32378C]"
+          : dayButtonStyles?.default || "bg-[#32378C]"
+      } 
+      ${
+        diaSeleccionado !== dia.fecha
+          ? dayButtonStyles?.hover || "hover:bg-[#F2AE30] hover:text-[#32378C]"
+          : ""
+      }`}
           >
             {dia.label}
           </div>
         ))}
       </div>
-      <h3 className="text-4xl m-10">
-        {dias.find((dia) => dia.fecha === diaSeleccionado)?.label}
+
+      <h3 className={`text-4xl m-10 ${subtitleStyles || ""}`}>
+        {dias.find((dia) => dia.fecha === diaSeleccionado)?.label} de Enero
       </h3>
 
-      <div id="conferencias" className="w-4/6">
+      <div id="conferencias" className="md:w-4/6 w-11/12">
         {loading ? (
-          <div>Cargando...</div>
+          <div className="mt-10 h-full w-full flex justify-center"><Loader/></div>
         ) : (
           conferencias.map((conferencia) => (
             <ConferenciaComponent

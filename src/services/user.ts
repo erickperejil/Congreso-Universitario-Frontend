@@ -1,25 +1,12 @@
-import { User, ActualizarUser } from "@/interfaces/user";
+import { ActualizarUser, UsuarioRecibo } from "@/interfaces/user";
 
-export const fetchUser = async (correo: string): Promise<User | null> => {
-  try {
-    const response = await fetch(`https://deploybackenddiancrochet.onrender.com/user/detalle/${correo}`);
-    const data = await response.json();
 
-    if (data?.Usuario) {
-      return data.Usuario;
-    } else {
-      console.error("No se encontró información del usuario en la respuesta.");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error al obtener los datos del usuario:", error);
-    return null;
-  }
-};
 
-export const updateUser = async (correo: string, formData: ActualizarUser): Promise<User | null> => {
+export const updateUser = async (id_usuario:number, formData: ActualizarUser): Promise<UsuarioRecibo | null> => {
+  console.log("enviando ", JSON.stringify(formData))
+  console.log(id_usuario)
     try {
-        const response = await fetch(`https://deploybackenddiancrochet.onrender.com/user/actualizar/${correo}`, {
+        const response = await fetch(`https://backend-congreso.vercel.app/admin/actualizar/usuario/${id_usuario}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -29,7 +16,6 @@ export const updateUser = async (correo: string, formData: ActualizarUser): Prom
         });
 
         if (!response.ok) {
-            // Muestra el status y texto de error para investigar
             console.error(`Error: ${response.status} - ${response.statusText}`);
             const errorText = await response.text();
             console.error('Response text:', errorText);
@@ -60,5 +46,91 @@ export const resetPwd = async (correo: string, nuevaContrasena: string) => {
   }
 
   return response.json();
+};
+
+export const fetchUsuarioById = async (id: number): Promise<UsuarioRecibo | null> => {
+  try {
+    const response = await fetch(`https://backend-congreso.vercel.app/admin/user/${id}`);
+    
+    if (!response.ok) {
+      console.error(`Error al obtener los datos: ${response.status} - ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Response text:', errorText);
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (data?.resultado) {
+      console.log(data.resultado)
+      return data.resultado[0] as UsuarioRecibo;
+    } else {
+      console.error("No se encontró información del usuario en la respuesta.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener los datos del usuario:", error);
+    return null;
+  }
+};
+
+export const updateUsuarioById = async (id_usuario: number, formData: ActualizarUser): Promise<UsuarioRecibo | null> => {
+  try {
+    const response = await fetch(`https://backend-congreso.vercel.app/admin/user/${id_usuario}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      console.error(`Error al actualizar el usuario: ${response.status} - ${response.statusText}`);
+      const errorText = await response.text();
+      console.error("Response text:", errorText);
+      return null;
+    }
+
+    const updatedUsuario = await response.json();
+
+    if (updatedUsuario?.resultado) {
+      return updatedUsuario.resultado[0] as UsuarioRecibo;
+    } else {
+      console.error("No se encontró la información actualizada en la respuesta.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al actualizar la información del usuario:", error);
+    return null;
+  }
+};
+
+export const fetchAsistenciasByUsuarioId = async (id_usuario: number): Promise<{ cantidad_asistencias: number; cantidad_total_conferencias: number } | null> => {
+  try {
+    const response = await fetch(`https://backend-congreso.vercel.app/conferencias/usuario/${id_usuario}/asistencias`);
+
+    if (!response.ok) {
+      console.error(`Error al obtener las asistencias: ${response.status} - ${response.statusText}`);
+      const errorText = await response.text();
+      console.error("Response text:", errorText);
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (data?.conferencias) {
+      return {
+        cantidad_asistencias: data.conferencias.cantidad_asistencias,
+        cantidad_total_conferencias: data.conferencias.cantidad_total_conferencias,
+      };
+    } else {
+      console.error("No se encontró información de las asistencias en la respuesta.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener las asistencias del usuario:", error);
+    return null;
+  }
 };
 

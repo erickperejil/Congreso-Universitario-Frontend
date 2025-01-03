@@ -12,11 +12,11 @@ export interface EditPerfilProps {
 }
 
 export interface ActualizarUser{
-  Nuevo_nombre: string;
-  Nuevo_apellido: string;
-  Nuevo_genero: string;
-  Nuevo_telefono: string;
-  Nuevo_fechaNacimiento: string;
+  nombres: string, 
+  apellidos: string, 
+  correo: string, 
+  dni : number|null,
+  contrasena : number| null,
 }
 
 export interface resetPsw{
@@ -29,4 +29,16 @@ export interface resetPsw{
 export interface ResetPwdResponse {
   codigo: number;
   mensaje: string;
+}
+
+export interface UsuarioRecibo {
+  nombres: string;
+  apellidos: string;
+  correo: string;
+  dni: string | null; // Actualizado para aceptar `null`
+  contrasena: string | null; // Actualizado para aceptar `null`
+  id_usuario: number;
+  img_recibo?: string;
+  codigo_recibo?: string;
+  url_qr?: string;
 }
