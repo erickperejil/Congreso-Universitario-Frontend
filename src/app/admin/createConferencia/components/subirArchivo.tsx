@@ -44,8 +44,8 @@ export default function SubirPdf({ onSubmit, initialUploadedFileUrl, nombre_prod
 
       const data = await res.json(); // Intentar parsear la respuesta como JSON
       if (res.ok) {
-        setUploadedFileUrl(data.recursoSubido.webContentLink); // Guardar la URL del archivo cargado
-        onSubmit(data.recursoSubido.webContentLink); // Pasar la URL al componente padre
+        setUploadedFileUrl(data.recursoSubido.webViewLink); // Guardar la URL del archivo cargado
+        onSubmit(data.recursoSubido.webViewLink); // Pasar la URL al componente padre
       } else {
         console.error('Error en la respuesta del servidor:', data);
       }
@@ -77,7 +77,7 @@ export default function SubirPdf({ onSubmit, initialUploadedFileUrl, nombre_prod
         />
         {uploadedFileUrl && (
           <div className="text-sm text-green-600 mt-2">
-            <p>Archivo ya cargado: <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer" className="underline">Descargar Archivo</a></p>
+            <p>Archivo ya cargado: <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer" className="underline">Ver Archivo</a></p>
             <button
               type="button"
               onClick={handleResetFile}
