@@ -9,9 +9,10 @@ export interface RegisterFormInterface {
     identificador_unah: string | null;
     correo: string;
     contrasena: string;
-    codigo_recibo: string;
+    codigo_recibo?: string | null;
     codigo_organizador: string | null;
-    recibo: File | null;
+    img_recibo?: string | null;
+    recibo?: File | null;
 }
 
 /* export interface RegisterFormInterface {

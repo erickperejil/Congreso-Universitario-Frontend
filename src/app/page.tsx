@@ -57,22 +57,23 @@ export default function Home() {
           alt="Imagen del congreso"
           className="w-full h-full object-cover scale-x-[-1] opacity-0 animate-fade-in"
         />
-        <h1 className="absolute top-1/4 -translate-y-1/2 transform text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight text-white text-shadow-lg opacity-0 translate-y-10 animate-slide-up px-4 ml-8 tracking-widest ">
+        <h1 className="absolute top-1/4 -translate-y-1/2 transform text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight text-white text-shadow-lg opacity-0 translate-y-10 animate-slide-up px-4 ml-8 tracking-widest">
           CONGRESO DE <br />
           INNOVACIÓN Y <br />
           TECNOLOGÍA <br />
-          <span className="text-[#f8b133] text-shadow-none montserrat-font">
+          <span className="text-[#f8b133] text-shadow-none montserrat-font typing-effect">
             UNAH 2025
           </span>
-        <Button
-          text="Iniciar sesión"
-          variant="primary"
-          styleType="fill"
-          action={() => router.push("/login")}
-          className="xl:hidden mt-8 "
-        />      
+          <Button
+            text="Iniciar sesión"
+            variant="primary"
+            styleType="fill"
+            action={() => router.push("/login")}
+            className="xl:hidden mt-8"
+          />
         </h1>
-        </header>
+
+      </header>
       <div className="h-16 w-full bg-gradient-to-b from-[#020202] to-[#101017]"></div>
 
       {/* Contenido principal */}

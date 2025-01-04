@@ -1,40 +1,42 @@
+'use client'
+
 import { useState, useEffect } from "react";
 import { FaEdit, FaSearch } from "react-icons/fa";
-import { obtenerUsuarios } from "@/services/participantes/participantes"; // Importa el servicio
-import { Participantes } from "@/interfaces/participantes";
+import { obtenerConferencias } from "@/services/conferencias/conferencia";
+import { Conferencia } from "@/interfaces/conferencias";
 
 const TableComponent = () => {
-  const [usuarios, setUsuarios] = useState<Participantes[]>([]);
-  const [filteredData, setFilteredData] = useState<Participantes[]>([]);
+  const [conferencias, setConferencias] = useState<Conferencia[]>([]);
+  const [filteredData, setFilteredData] = useState<Conferencia[]>([]);
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
   const [actions, setActions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch data from backend
   useEffect(() => {
-    const fetchUsuarios = async () => {
+    const fetchConferencias = async () => {
       try {
         setLoading(true);
-        const data = await obtenerUsuarios();
-        setUsuarios(data);
+        const data = await obtenerConferencias();
+        setConferencias(data);
+        console.log(data);
         setFilteredData(data);
         setActions(data.map(() => "Enviar"));
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       } catch (err) {
-        setError("Error al cargar los usuarios.");
+        setError("Error al cargar los conferencias.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsuarios();
+    fetchConferencias();
   }, []);
 
   const toggleSortOrder = () => {
     const sortedData = [...filteredData].sort((a, b) => {
-      const comparison = a.nombre_completo.localeCompare(b.nombre_completo);
+      const comparison = a.nombre_ponente.localeCompare(b.nombre_ponente);
       return sortOrder === "ASC" ? -comparison : comparison;
     });
 
@@ -44,11 +46,11 @@ const TableComponent = () => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
-    const filtered = usuarios.filter(
-      (usuario) =>
-        usuario.nombre_completo.toLowerCase().includes(term.toLowerCase()) ||
-        usuario.correo.toLowerCase().includes(term.toLowerCase()) ||
-        usuario.dni.includes(term)
+    const filtered = conferencias.filter(
+      (conferencia) =>
+        conferencia.titulo.toLowerCase().includes(term.toLowerCase()) ||
+        conferencia.nombre_ponente.toLowerCase().includes(term.toLowerCase()) ||
+        conferencia.datosimportantes.join(", ").toLowerCase().includes(term.toLowerCase())
     );
     setFilteredData(filtered);
   };
@@ -72,7 +74,7 @@ const TableComponent = () => {
   return (
     <div className="overflow-x-auto p-4">
       <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
-        <h1 className="text-lg font-bold">Participantes</h1>
+        <h1 className="text-lg font-bold">Conferencias</h1>
         <div className="flex items-center w-full sm:w-1/3 bg-gray-100 rounded-full px-4 py-1">
           <input
             type="text"
@@ -81,7 +83,7 @@ const TableComponent = () => {
             onChange={(e) => handleSearch(e.target.value)}
             className="w-full bg-transparent border-none text-gray-600 focus:outline-none"
           />
-          <button title="buscar" className="ml-2">
+          <button title="Buscar" className="ml-2">
             <FaSearch className="text-blue-500" />
           </button>
         </div>
@@ -99,26 +101,38 @@ const TableComponent = () => {
         <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-2 text-left border-b">DNI</th>
-              <th className="px-4 py-2 text-left border-b">Nombre</th>
-              <th className="px-4 py-2 text-left border-b">Correo</th>
-              <th className="px-4 py-2 text-center border-b">Certificado</th>
+              <th className="px-4 py-2 text-left border-b">Título</th>
+              <th className="px-4 py-2 text-left border-b">Ponente</th>
+              <th className="px-4 py-2 text-left border-b">Lugar</th>
+              <th className="px-4 py-2 text-left border-b">Horario</th>
+              <th className="px-4 py-2 text-left border-b">Fecha</th>
+              <th className="px-4 py-2 text-left border-b">Cupos</th>
+              <th className="px-4 py-2 text-left border-b">Finalizado</th>
+              <th className="px-4 py-2 text-left border-b">Datos importantes</th>
+              <th className="px-4 py-2 text-left border-b">Acciones</th>
             </tr>
           </thead>
-          <tbody className="font-thin">
-            {filteredData.map((usuario, index) => (
+          <tbody>
+            {filteredData.map((conferencia, index) => (
               <tr
-                key={usuario.id_usuario}
+                key={index}
                 className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
               >
-                <td className="px-4 py-2 border-b">{usuario.dni}</td>
-                <td className="px-4 py-2 border-b">{usuario.nombre_completo}</td>
-                <td className="px-4 py-2 border-b">{usuario.correo}</td>
+                <td className="px-4 py-2 border-b">{conferencia.titulo}</td>
+                <td className="px-4 py-2 border-b">{conferencia.nombre_ponente}</td>
+                <td className="px-4 py-2 border-b">{conferencia.lugar}</td>
+                <td className="px-4 py-2 border-b">{conferencia.horario}</td>
+                <td className="px-4 py-2 border-b">{conferencia.fecha}</td>
+                <td className="px-4 py-2 border-b">{conferencia.cupos_disponibles}</td>
+                <td className="px-4 py-2 border-b">{conferencia.finalizado ? "Sí" : "No"}</td>
+                <td className="px-4 py-2 border-b">
+                  {conferencia.datosimportantes.join(", ")}
+                </td>
                 <td className="px-4 py-2 border-b text-center">
                   <div className="flex items-center justify-center space-x-4">
                     <button
                       className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
-                      onClick={() => { }}
+                      onClick={() => {}}
                     >
                       {actions[index]}
                     </button>

@@ -1,7 +1,8 @@
-export default function Home() {
+import UserProfile from "@/components/editarPerfil";
+export default function Conferences() {
     return (
-        <div>
-            <h1>Home</h1>
+        <div className='h-screen w-full'>
+        <UserProfile/>
         </div>
     );
 }
