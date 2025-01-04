@@ -220,7 +220,7 @@ function ConfirmationScreen({ handleSendCode, handleResendEmail, inputRefs, hand
         {error && <p className="text-[#F8B133] shake" id="error-paragraph">{error}</p>}
         <div className="flex flex-col gap-2 w-full mt-8">
           <Button text="Confirmar" action={handleSendCode} variant="primary" styleType="fill" disabled={sending || timeLeft === 0} />
-          <Button text="Reenviar correo" action={handleResendEmailF} variant="secondary" styleType="outlined" disabled={sending} />
+          <Button text="Reenviar correo" action={handleResendEmailF} variant="secondary" styleType="outlined" disabled={timeLeft > 0} />
         </div>
 
         <p className="text-sm text-white text-center">
