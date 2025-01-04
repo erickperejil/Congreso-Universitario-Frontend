@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import InputForm from "@/components/InputForm";
 import SelectForm from "@/components/SelectForm";
 import ModalWarning from "@/components/ModalWarning";
+import Loader from "@/components/Loading";
 
 import { RegisterFormInterface } from "@/interfaces/RegisterForm";
 import { university } from "@/interfaces/University";
@@ -38,7 +39,7 @@ const Register = () => {
     const [universities, setUniversities] = useState<university[]>([]);
     const [UNAHId, setUNAHId] = useState<number>(-1);
     const [isOrganizer, setIsOrganizer] = useState<boolean>(false);
-    const [sending, setSending] = useState(false);
+    const [sending, setSending] = useState(true);
     const [preview, setPreview] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
@@ -416,16 +417,14 @@ const Register = () => {
                 console.error('Error al registrar usuario:', response.error);
 
                 if (response.error.statusCode === 500) {
-                    setShowModal(true); // Mostrar el modal
-                    setSending(false);
-                    return;
+                    setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. ¡Gracias por tu paciencia!");
+                    setShowModal(true);
+
                 }
                 return;
             }
 
-            if (response.responseData.status)
-
-                localStorage.setItem('registerEmail', email);
+            localStorage.setItem('registerEmail', email);
             router.push(`/register/confirm-account`);
         } catch (error) {
             setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. ¡Gracias por tu paciencia!");
@@ -435,6 +434,14 @@ const Register = () => {
             setSending(false);
         }
     };
+
+    if (sending) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader />
+            </div>
+        );
+    }
 
     return (
         <>
@@ -838,7 +845,7 @@ const Register = () => {
                     </Link>
                 </p>
             </form>
-            
+
             {/* Modal de informacion */}
             {showModal && (
                 <ModalWarning
