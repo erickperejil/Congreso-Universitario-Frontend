@@ -1,6 +1,6 @@
 'use client'
 
-import Sidebar from "../components/sidebar";
+
 import TableComponent from "./components/participantes";
 
 const HomePage: React.FC = () => {
