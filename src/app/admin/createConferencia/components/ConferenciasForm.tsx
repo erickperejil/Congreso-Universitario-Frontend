@@ -12,11 +12,11 @@ const ConferenciaForm: React.FC = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isCreatingProduct, setIsCreatingProduct] = useState(false);
   const [mainImage, setMainImage] = useState<string | null>(null);
-  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [galleryImages, setGalleryImages] = useState<string | null>(null);;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"main" | "gallery" | "pdf">();
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
-  const [archivo, setarchivo] = useState<string | null>(null);
+  const [url_carpeta_zip, seturl_carpeta_zip] = useState<string | null>(null);
   const [direccion, setdireccion] = useState("");
   const [fecha_conferencia, setfecha_conferencia] = useState("");
   const [ hora_inicio, sethora_inicio] = useState("");
@@ -53,14 +53,21 @@ const ConferenciaForm: React.FC = () => {
 
       // Función para manejar la URL del PDF cargado
       const handlePdfUpload = (url: string) => {
-        setarchivo(url);
+        seturl_carpeta_zip(url);
         handleClosePdfModal();
       };
 
 
-  const handleRemoveGalleryImage = (url: string) => {
-    setGalleryImages((prevImages) => prevImages.filter((img) => img !== url));
-  };
+      const handleRemoveGalleryImage = (url: string) => {
+        setGalleryImages((prevImages) => {
+          if (typeof prevImages === "string") {
+            // Si el estado es una cadena única, la eliminamos solo si coincide con `url`
+            return prevImages === url ? null : prevImages;
+          }
+          // Si `prevImages` es null, no hacemos cambios
+          return prevImages;
+        });
+      };
 
   const handleOpenModal = (type: "main" | "gallery" | "pdf") => {
     setModalType(type);
@@ -71,14 +78,16 @@ const ConferenciaForm: React.FC = () => {
   
   const handleUpload = (urls: string[]) => {
     if (modalType === "gallery") {
-      setGalleryImages(urls);
+      // Solo guardamos la primera URL, ya que `galleryImages` es de tipo `string | null`
+      setGalleryImages(urls[0] || null);
     } else if (modalType === "main") {
       setMainImage(urls[0] || null);
     } else if (modalType === "pdf") {
-      setarchivo(urls[0] || null);
+      seturl_carpeta_zip(urls[0] || null);
     }
     handleCloseModal();
   };
+  
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,34 +98,63 @@ const ConferenciaForm: React.FC = () => {
     }
   
     try {
-       
-        const newProduct: CreateConferencia = {
-          nombre_conferencia,
-          nombres_ponente,
-          apellidos_ponente,
-          descripcion_ponente,
-          img_perfil_ponente: mainImage || "",
-          img_conferecia: galleryImages.length > 0 ? galleryImages : null,
-          direccion,
-          fecha_conferencia,
-          hora_inicio,
-          hora_final,
-          cupos,
-          descripcion_conferencia,
-          archivo: archivo || "",
-        };
-        console.log("Creando Conferencia", newProduct);
-        const response = await crearConferencia(newProduct);
-        console.log("Respuesta del servidor kit", response);
-      
+      // Validamos que la fecha y las horas no estén vacías
+      if (!fecha_conferencia || !hora_inicio || !hora_final) {
+        alert("Por favor, completa todos los campos de fecha y hora.");
+        return;
+      }
   
-      // Resetea el formulario tras la creación exitosa
+      // Convertimos la fecha y combinamos las horas
+      const fechaConvertida = convertirFechaParaServidor(fecha_conferencia); // YYYY-MM-DD -> DD/MM/YYYY
+      const horaInicioConvertida = combinarFechaYHora(fecha_conferencia, hora_inicio); // DD/MM/YYYY HH:mm
+      const horaFinalConvertida = combinarFechaYHora(fecha_conferencia, hora_final); // DD/MM/YYYY HH:mm
+  
+      // Creamos el objeto para enviar al backend
+      const newProduct: CreateConferencia = {
+        nombre_conferencia,
+        nombres_ponente,
+        apellidos_ponente,
+        descripcion_ponente,
+        img_perfil_ponente: mainImage || "",
+        img_conferecia: galleryImages || "",
+        direccion,
+        fecha_conferencia: fechaConvertida,
+        hora_inicio: horaInicioConvertida,
+        hora_final: horaFinalConvertida,
+        cupos,
+        descripcion_conferencia,
+        url_carpeta_zip: url_carpeta_zip || "",
+      };
+  
+      console.log("Creando Conferencia", newProduct);
+  
+      // Llamada al backend
+      const response = await crearConferencia(newProduct);
+      console.log("Respuesta del servidor", response);
+  
+      // Reseteamos el estado y formulario
       setIsCreatingProduct(false);
       resetForm();
     } catch (error) {
       console.error("Error al crear conferencia", error);
     }
   };
+  
+  // Función para convertir la fecha de YYYY-MM-DD a DD/MM/YYYY
+  const convertirFechaParaServidor = (fecha: string) => {
+    if (!fecha) return ""; // Retorna vacío si no hay fecha
+    const partes = fecha.split('-');
+    return `${partes[2]}/${partes[1]}/${partes[0]}`; // Formato DD/MM/YYYY
+  };
+  
+  // Función para combinar la fecha (DD/MM/YYYY) con la hora (HH:mm)
+  const combinarFechaYHora = (fecha: string, hora: string) => {
+    if (!fecha || !hora) return ""; // Retorna vacío si falta fecha o hora
+    const partesFecha = fecha.split('-'); // YYYY-MM-DD
+    return `${partesFecha[2]}/${partesFecha[1]}/${partesFecha[0]} ${hora}`; // DD/MM/YYYY HH:mm
+  };
+  
+  
 
   const handleCreateProduct = () => {
     if (!mainImage) {
@@ -124,7 +162,7 @@ const ConferenciaForm: React.FC = () => {
       return; // Detén la ejecución si no hay imagen
     }
 
-    if (!archivo) {
+    if (!url_carpeta_zip) {
         alert("Debes cargar un tutorial antes de continuar");
         return; // Detén la ejecución si no hay imagen
       }
@@ -146,8 +184,8 @@ const ConferenciaForm: React.FC = () => {
     sethora_final("");
     setcupos("");
     setMainImage(null);
-    setGalleryImages([]);
-    setarchivo(null);
+    setGalleryImages(null);
+    seturl_carpeta_zip(null);
 
   };
 
@@ -198,39 +236,47 @@ const ConferenciaForm: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Hora Inicio</label>
-                <input
-                  type="number"
-                  value={hora_inicio}
-                  onChange={(e) => sethora_inicio(e.target.value)}
-                  required
-                  className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full"
-                  placeholder="12:00"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Hora Final</label>
-                <input
-                  type="number"
-                  value={hora_final}
-                  onChange={(e) => sethora_final(e.target.value)}
-                  required
-                  className="mt-2 p-2 border text-black border-gray-300 rounded-lg w-full"
-                  placeholder="1:00"
-                  min="0"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Hora Inicio</label>
+              <input
+                type="time"
+                value={hora_inicio}
+                onChange={(e) => sethora_inicio(e.target.value)}
+                required
+                className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full"
+              />
             </div>
             <div>
-            <label className="block text-sm font-medium text-gray-700">Fecha</label>
+              <label className="block text-sm font-medium text-gray-700">Hora Final</label>
+              <input
+                type="time"
+                value={hora_final}
+                onChange={(e) => sethora_final(e.target.value)}
+                required
+                className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full"
+              />
+            </div>
+
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Fecha</label>
+              <input
+                type="date"
+                value={fecha_conferencia}
+                onChange={(e) => setfecha_conferencia(e.target.value)}
+                required
+                className="mt-2 p-2 border border-gray-300 rounded-lg w-full text-black"
+              />
+            </div>
+            <div>
+            <label className="block text-sm font-medium text-gray-700">Cupos</label>
             <input
               type="text"
-              value={fecha_conferencia}
-              onChange={(e) => setfecha_conferencia(e.target.value)}
+              value={cupos}
+              onChange={(e) => setcupos(e.target.value)}
               required
               className="mt-2 p-2 border border-gray-300 rounded-lg w-full text-black"
-              placeholder="25 de Noviembre"
+              placeholder="Ingresa los Cupos necesarios"
             />
             </div>
             <div>
@@ -291,30 +337,29 @@ const ConferenciaForm: React.FC = () => {
               className="mt-2 border-dashed border-2 border-gray-300 p-4 text-center cursor-pointer"
               onClick={() => handleOpenModal("gallery")}
             >
-              {galleryImages.length > 0 ? (
-                <div className="grid grid-cols-3 gap-2">
-                  {galleryImages.map((imgUrl, index) => (
-                    <div key={index} className="relative">
+              {galleryImages ? (
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="relative">
                       <Image
-                        src={imgUrl}
-                        alt={`Gallery Preview ${index + 1}`}
+                        src={galleryImages}
+                        alt="Gallery Preview"
                         width={100}
                         height={100}
                         className="w-full max-w-[100px]"
                         style={{ width: 'auto', height: 'auto' }}
                       />
                       <button
-                        onClick={() => handleRemoveGalleryImage(imgUrl)}
+                        onClick={() => handleRemoveGalleryImage(galleryImages)}
                         className="absolute top-0 right-0 bg-red-500 text-white px-1 rounded-full"
                       >
                         ✕
                       </button>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p>Click para cargar la imagen</p>
-              )}
+                  </div>
+                ) : (
+                  <p>No images to display</p>
+                )}
+
             </div>
           </div>
           {/* PDF UPLOAD */}
@@ -325,7 +370,7 @@ const ConferenciaForm: React.FC = () => {
               className="mt-2 border-dashed border-2 border-gray-300 p-4 text-center cursor-pointer"
               onClick={handleOpenPdfModal} // Función para abrir el modal del PDF
             >
-              {archivo ? (
+              {url_carpeta_zip ? (
                 <p className="text-sm text-gray-600">Archivo subido</p>
               ) : (
                 <p>Click para cargar los archivos</p>
@@ -335,7 +380,7 @@ const ConferenciaForm: React.FC = () => {
               {/* Modal exclusivo para cargar el PDF */}
             <Modal isVisible={isPdfModalOpen} onClose={handleClosePdfModal}>
               <SubirPdf onSubmit={handlePdfUpload} nombre_prod={nombre_conferencia} setNombre_prod={setnombre_conferencia}
-              initialUploadedFileUrl={archivo} />
+              initialUploadedFileUrl={url_carpeta_zip} />
             </Modal>
           </div>
         </div>
@@ -370,24 +415,27 @@ const ConferenciaForm: React.FC = () => {
 
       {/* Upload Modal */}
       {isModalOpen && (
-            <UploadModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onImageUpload={handleUpload} // Cambiado para manejar todos los tipos (main, gallery, pdf)
-                existingImages={
-                modalType === "gallery"
-                    ? galleryImages
-                    : modalType === "main"
-                    ? mainImage
-                    ? [mainImage]
-                    : []
-                    : archivo
-                    ? [archivo]
-                    : []
-                } // Decide qué imágenes o PDF mostrar según el modalType
-                isGallery={modalType === "gallery"} // Define si es galería para lógica de múltiples archivos
-            />
-            )}
+          <UploadModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            onImageUpload={handleUpload} // Maneja todos los tipos (main, gallery, pdf)
+            existingImages={
+              modalType === "gallery"
+                ? galleryImages
+                  ? [galleryImages] // Convierte `galleryImages` en un arreglo si no es `null`
+                  : []
+                : modalType === "main"
+                ? mainImage
+                  ? [mainImage] // Convierte `mainImage` en un arreglo si no es `null`
+                  : []
+                : url_carpeta_zip
+                ? [url_carpeta_zip] // Convierte `url_carpeta_zip` en un arreglo si no es `null`
+                : []
+            } // Determina qué imágenes o PDF mostrar según el modalType
+            isGallery={modalType === "gallery"} // Define si es galería para lógica de múltiples archivos
+          />
+        )}
+
     </div>
   );
 };

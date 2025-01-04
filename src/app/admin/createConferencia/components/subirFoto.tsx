@@ -73,7 +73,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onImageUploa
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-md max-w-lg w-full">
-        <h2 className="text-xl font-semibold mb-4">{isGallery ? "Upload Gallery Images" : "Upload Main Image"}</h2>
+        <h2 className="text-xl font-semibold mb-4">{isGallery ? "Subir Foto de la Conferencia" : "Subir Foto del Ponente"}</h2>
         
         {/* Mostrar error si existe */}
         {error && <p className="text-red-500 mb-4">{error}</p>}
