@@ -420,7 +420,7 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                                         />
                                     </div>
                                 ) : (
-                                    <p className="text-gray-500">Click para cargar la imagen</p>
+                                    <p className="text-gray-500">{isVisualizing ? "No hay archivos por mostrar" : "Click para cargar la imagen"}</p>
                                 )}
                             </div>
 

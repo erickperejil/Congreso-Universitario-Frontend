@@ -1,14 +1,17 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import ConferenciaForm from "./components/EditConferenceForm";
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const EditarConferenciaPage: React.FC = () => {
   // Usar useParams para obtener el ID desde la URL
-  const router = useRouter();
   const { id } = useParams();
-  const { visualizar } = router.query;
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const visualizar = searchParams.get('visualizar');
   const isVisualizing = visualizar === 'true';
 
   return (
