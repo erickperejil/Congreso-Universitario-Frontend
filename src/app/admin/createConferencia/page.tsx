@@ -1,9 +1,6 @@
 'use client'
 
-import Sidebar from "../components/sidebar";
 import ConferenciaForm from "./components/ConferenciasForm";
-
-
 
 const HomePage: React.FC = () => {
   return (

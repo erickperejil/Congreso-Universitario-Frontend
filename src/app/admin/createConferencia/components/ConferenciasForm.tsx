@@ -191,8 +191,8 @@ const ConferenciaForm: React.FC = () => {
 
 
   return (
-    <div className="p-8 bg-gray-50 rounded-lg shadow-lg max-w-5xl mx-auto">
-      <h2 className="text-2xl font-koulen mb-6 text-black">Agregar una Nueva Conferencia</h2>
+    <div className="rounded-lg max-w-5xl mx-auto">
+      <h2 className="text-3xl text-black border-b-[1px] border-gray-300 pb-1 font-koulen mb-6">Agregar una Nueva Conferencia</h2>
       <form className="grid grid-cols-1 md:grid-cols-2 gap-6" ref={formRef} onSubmit={handleFormSubmit}>
         <div className="space-y-6">
           {/* Nombre de la Conferencia */}

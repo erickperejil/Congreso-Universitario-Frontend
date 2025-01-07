@@ -1,7 +1,6 @@
 import { RegisterFormInterface } from '@/interfaces/RegisterForm';
 import { university, UniversityExtended } from '@/interfaces/University';
 import { register as registerUser, emailExists, uploadReceiptImage } from '@/services/userService';
-import { form } from 'framer-motion/client';
 
 export const handleRegister = async (formData: RegisterFormInterface) => {
     console.log('formData:', formData);
@@ -71,6 +70,33 @@ export const getUniversities = async () => {
         return { error: 'Network error or server unavailable' };
     }
 };
+
+export const getCareers = async () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+        const response = await fetch(`${API_URL}/usuario/carreras`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { error: errorData.message || 'Error' };
+        }
+        console.log('Login response:', response);
+
+        const data = await response.json();
+
+        return { data };
+    } catch (error) {
+        console.error('get careers error:', error);
+        return { error: 'Network error or server unavailable' };
+    }
+}
+
 
 export const checkEmailExists = async (email: string) => {
     try {

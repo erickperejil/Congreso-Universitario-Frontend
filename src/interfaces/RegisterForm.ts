@@ -7,6 +7,7 @@ export interface RegisterFormInterface {
     genero: number;
     id_universidad: number | null;
     identificador_unah: string | null;
+    carrera?: string | null;
     correo: string;
     contrasena: string;
     codigo_recibo?: string | null;
