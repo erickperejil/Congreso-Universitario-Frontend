@@ -59,11 +59,11 @@ const TableComponent = () => {
 
 
   const handleView = (index: number) => {
-    router.push(`/home/${index}?visualizar=true`);
+    router.push(`/admin/conferencias/${index}?visualizar=true`);
   };
 
   const handleEdit = (index: number) => {
-    router.push(`/home/${index}?visualizar=false`);
+    router.push(`/admin/conferencias/${index}?visualizar=false`);
   };
 
   const handleDelete = async (id: number) => {
