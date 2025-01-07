@@ -87,13 +87,14 @@ export async function obtenerConferencia(id : string): Promise<ConferenciaComple
 }
 
 
-export async function obtenerConferencias(): Promise<Conferencia[]> {
+export const obtenerConferencias = async (dia: string|null): Promise<Conferencia[]> =>{
     try {
       const response = await fetch(`${BASE_URL}/conferencias`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ dia }),
       });
   
       if (!response.ok) {
@@ -102,12 +103,28 @@ export async function obtenerConferencias(): Promise<Conferencia[]> {
   
       const data = await response.json();
       console.log(data);
-      return data as Conferencia[];
+      return data.conferencias;
     } catch (error) {
       console.error('Error al obtener los usuarios:', error);
       throw error;
     }
   }
 
+
+  export const eliminarConferencia = async (id: number): Promise<{ message: string }> => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/conferencias/eliminar/${id}`);
+      console.log(response)
+      return response.data; // Retorna el mensaje de la respuesta
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error al eliminar la conferencia:", error.response?.data || error.message);
+        throw new Error(error.response?.data?.message || "Error al eliminar la conferencia");
+      } else {
+        console.error("Error inesperado:", error);
+        throw new Error("Error inesperado al eliminar la conferencia");
+      }
+    }
+  };
 
 
