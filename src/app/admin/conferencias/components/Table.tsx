@@ -11,30 +11,29 @@ const TableComponent = () => {
   const [conferencias, setConferencias] = useState<Conferencia[]>([]);
   const [filteredData, setFilteredData] = useState<Conferencia[]>([]);
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
-  const [, setActions] = useState<string[]>([]);
+  const [actions, setActions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const fetchConferencias = async () => {
+    try {
+      setLoading(true);
+      const data = await obtenerConferencias(null);
+      setConferencias(data);
+      setFilteredData(data);
+      setActions(data.map(() => "Enviar"));
+    } catch (err) {
+      setError("Error al cargar los conferencias.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   useEffect(() => {
-    const fetchConferencias = async () => {
-      try {
-        setLoading(true);
-        const data = await obtenerConferencias(null);
-        setConferencias(data);
-        setFilteredData(data);
-        setActions(data.map(() => "Enviar"));
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (err) {
-        setError("Error al cargar los conferencias.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchConferencias();
   }, []);
+  
 
   const toggleSortOrder = () => {
     const sortedData = [...filteredData].sort((a, b) => {
@@ -71,6 +70,7 @@ const TableComponent = () => {
     try {
       const result = await eliminarConferencia(id);
       console.log(result.message);
+      await fetchConferencias();
     } catch (error) {
       console.error("No se pudo eliminar la conferencia:", error);
     }
@@ -129,7 +129,6 @@ const TableComponent = () => {
               <th className="px-4 py-2 text-left border-b">Horario</th>
               <th className="px-4 py-2 text-left border-b">Fecha</th>
               <th className="px-4 py-2 text-left border-b">Cupos</th>
-              <th className="px-4 py-2 text-left border-b">Finalizado</th>
               <th className="px-4 py-2 text-left border-b">Acciones</th>
             </tr>
           </thead>
@@ -145,7 +144,6 @@ const TableComponent = () => {
                 <td className="px-4 py-2 border-b">{conferencia.horario}</td>
                 <td className="px-4 py-2 border-b">{conferencia.fecha}</td>
                 <td className="px-4 py-2 border-b">{conferencia.cupos_disponibles}</td>
-                <td className="px-4 py-2 border-b">{conferencia.finalizado ? "Sí" : "No"}</td>
                 <td className="px-4 py-2 border-b text-center">
                   <div className="flex items-center justify-center space-x-4">
                     {/* <button
@@ -156,21 +154,24 @@ const TableComponent = () => {
                     </button> */}
                     <button
                       onClick={() => handleView(conferencia.id_conferencia)}
-                      className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                      className={`bg-blue-500 text-white px-2 py-1 rounded shadow hover:bg-blue-600 text-sm font-300 flex items-center gap-1 w-full`}
                     >
                       <FaEye size={20} />
+                      Ver
                     </button>
                     <button
                       onClick={() => handleEdit(conferencia.id_conferencia)}
-                      className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                      className={`bg-[#f8b133] text-white px-2 py-1 rounded shadow hover:bg-blue-600 text-sm font-300 flex items-center gap-1 w-full`}
                     >
                       <FaEdit size={20} />
+                      Editar
                     </button>
                     <button
                       onClick={() => handleDelete(conferencia.id_conferencia)}
-                      className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                      className={`bg-red-400 text-white px-2 py-1 rounded shadow hover:bg-blue-600 text-sm font-300 flex items-center gap-1 w-full`}
                     >
                       <FaFolderMinus size={20} />
+                      Ocultar
                     </button>
                   </div>
                 </td>
