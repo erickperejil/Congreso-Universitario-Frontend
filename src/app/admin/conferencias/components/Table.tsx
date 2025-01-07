@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import { FaEdit, FaSearch } from "react-icons/fa";
-import { obtenerConferencias } from "@/services/conferencias/conferencia";
+import { FaEdit, FaSearch, FaEye, FaFolderMinus } from "react-icons/fa";
+import { eliminarConferencia, obtenerConferencias } from "@/services/conferencias/conferencia";
 import { Conferencia } from "@/interfaces/conferencias";
+import { useRouter } from "next/navigation";
 
 const TableComponent = () => {
+  const router = useRouter();
   const [conferencias, setConferencias] = useState<Conferencia[]>([]);
   const [filteredData, setFilteredData] = useState<Conferencia[]>([]);
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
-  const [actions, setActions] = useState<string[]>([]);
+  const [, setActions] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,9 +20,8 @@ const TableComponent = () => {
     const fetchConferencias = async () => {
       try {
         setLoading(true);
-        const data = await obtenerConferencias();
+        const data = await obtenerConferencias(null);
         setConferencias(data);
-        console.log(data);
         setFilteredData(data);
         setActions(data.map(() => "Enviar"));
 
@@ -56,13 +57,33 @@ const TableComponent = () => {
     setFilteredData(filtered);
   };
 
-  const handleActionChange = (index: number) => {
-    setActions((prev) => {
-      const updatedActions = [...prev];
-      updatedActions[index] = updatedActions[index] === "Enviar" ? "Editar" : "Enviar";
-      return updatedActions;
-    });
+
+  const handleView = (index: number) => {
+    router.push(`/home/${index}?visualizar=true`);
   };
+
+  const handleEdit = (index: number) => {
+    router.push(`/home/${index}?visualizar=false`);
+  };
+
+  const handleDelete = async (id: number) => {
+    console.log(id)
+    try {
+      const result = await eliminarConferencia(id);
+      console.log(result.message);
+    } catch (error) {
+      console.error("No se pudo eliminar la conferencia:", error);
+    }
+  };
+  
+  
+  // const handleActionChange = (index: number) => {
+  //   setActions((prev) => {
+  //     const updatedActions = [...prev];
+  //     updatedActions[index] = updatedActions[index] === "Enviar" ? "Editar" : "Enviar";
+  //     return updatedActions;
+  //   });
+  // };
 
   if (loading) {
     return <p className="text-center">Cargando...</p>;
@@ -109,7 +130,6 @@ const TableComponent = () => {
               <th className="px-4 py-2 text-left border-b">Fecha</th>
               <th className="px-4 py-2 text-left border-b">Cupos</th>
               <th className="px-4 py-2 text-left border-b">Finalizado</th>
-              <th className="px-4 py-2 text-left border-b">Datos importantes</th>
               <th className="px-4 py-2 text-left border-b">Acciones</th>
             </tr>
           </thead>
@@ -126,22 +146,31 @@ const TableComponent = () => {
                 <td className="px-4 py-2 border-b">{conferencia.fecha}</td>
                 <td className="px-4 py-2 border-b">{conferencia.cupos_disponibles}</td>
                 <td className="px-4 py-2 border-b">{conferencia.finalizado ? "Sí" : "No"}</td>
-                <td className="px-4 py-2 border-b">
-                  {conferencia.datosimportantes.join(", ")}
-                </td>
                 <td className="px-4 py-2 border-b text-center">
                   <div className="flex items-center justify-center space-x-4">
-                    <button
+                    {/* <button
                       className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
                       onClick={() => {}}
                     >
                       {actions[index]}
+                    </button> */}
+                    <button
+                      onClick={() => handleView(conferencia.id_conferencia)}
+                      className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
+                      <FaEye size={20} />
                     </button>
                     <button
-                      onClick={() => handleActionChange(index)}
+                      onClick={() => handleEdit(conferencia.id_conferencia)}
                       className="text-gray-500 hover:text-gray-700 focus:outline-none"
                     >
                       <FaEdit size={20} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(conferencia.id_conferencia)}
+                      className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
+                      <FaFolderMinus size={20} />
                     </button>
                   </div>
                 </td>

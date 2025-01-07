@@ -16,6 +16,7 @@ export interface CreateConferencia {
 
 
   export interface Conferencia {
+    id_conferencia: number;
     nombre_ponente: string;
     img_ponente: string;
     titulo: string;
