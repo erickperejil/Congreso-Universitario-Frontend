@@ -1,9 +1,24 @@
 import { RegisterFormInterface } from '@/interfaces/RegisterForm';
 import { university, UniversityExtended } from '@/interfaces/University';
-import { register as registerUser, emailExists } from '@/services/userService';
+import { register as registerUser, emailExists, uploadReceiptImage } from '@/services/userService';
 
 export const handleRegister = async (formData: RegisterFormInterface) => {
+    console.log('formData:', formData);
+    console.log('image:', formData.recibo);
     try {
+        if (formData.recibo) {
+            const response = await handleUploadReceiptImage(formData.recibo);
+            if ('error' in response) {
+                throw new Error(response.error);
+            }
+
+            console.log('response:', response);
+
+            formData = { ...formData, img_recibo: response.responseData.imageUrl };
+        }
+
+        console.log('formData 2:', formData);
+
         const result = await registerUser(formData);
         return result; // Devuelve la respuesta para ser manejada en el componente
     } catch (error) {
@@ -14,6 +29,18 @@ export const handleRegister = async (formData: RegisterFormInterface) => {
     }
 };
 
+const handleUploadReceiptImage = async (image: File) => {
+    try {
+        const result = await uploadReceiptImage(image);
+        return result;
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: error.message };
+        }
+        return { error: 'Error desconocido al subir la imagen' };
+    }
+}
+
 export const getUniversities = async () => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -23,7 +50,7 @@ export const getUniversities = async () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            });
+        });
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -36,13 +63,40 @@ export const getUniversities = async () => {
         const universities: university[] = data.map((university: UniversityExtended) => {
             return { id: university.id_universidad, name: university.universidad };
         });
-        
-        return { universities }; 
+
+        return { universities };
     } catch (error) {
         console.error('get universities error:', error);
         return { error: 'Network error or server unavailable' };
     }
 };
+
+export const getCareers = async () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+        const response = await fetch(`${API_URL}/usuario/carreras`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { error: errorData.message || 'Error' };
+        }
+        console.log('Login response:', response);
+
+        const data = await response.json();
+
+        return { data };
+    } catch (error) {
+        console.error('get careers error:', error);
+        return { error: 'Network error or server unavailable' };
+    }
+}
+
 
 export const checkEmailExists = async (email: string) => {
     try {

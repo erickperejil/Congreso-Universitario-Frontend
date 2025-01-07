@@ -36,3 +36,5 @@ export const fetchConferenciasPorUsuario = async (idUsuario: number, dia: string
   console.log("data de usuario", data);
   return data.conferencias;
 };
+
+

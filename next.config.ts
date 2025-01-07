@@ -13,7 +13,14 @@ const nextConfig = {
         hostname: 'ik.imagekit.io',     // Si necesitas otro dominio, agrégalo aquí
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.masmovil.es',
+        pathname: '/**',
+      },
+      
     ],
+    domains: ['1.bp.blogspot.com','res.cloudinary.com'],
   },
 };
 

@@ -10,58 +10,82 @@ import InputForm from "@/components/InputForm";
 
 import { isLoginInputsValids } from "@/utils/loginFormValidators";
 import { login } from "./actions";
-import { Warning } from "postcss";
 import ModalWarning from "@/components/ModalWarning";
 
 function Login() {
     const router = useRouter();
     const [sendingLogin, setSendingLogin] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
 
     /* estados de inputs */
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [areInputsValids, setAreInputsValids] = useState(false);
     const [loginError, setLoginError] = useState("");
-
+    
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setSendingLogin(true);
 
-        // Llamada al servicio de login
-        const response = await login(email, password);
+        try {
+            // Llamada al servicio de login
+            const response = await login(email, password);
 
-        if (response.error) {
-            // Mostrar modal si no ha sido validado
-            if (response.statusCode === 403) {
-                console.log('Mostrar modal de 403 pq no ha sido validado del lado del admin');
-                setShowModal(true); // Mostrar el modal
+            if (response.error) {
+                if (response.statusCode === 403) {
+                    switch (response.codigoResultado) {
+                        case -1:
+                            setModalMessage(
+                                'Tu recibo de pago ha sido rechazado. Si crees que fue un error, por favor contáctanos en congresofacultadingenieriaunah@gmail.com.'
+                            );
+                            break;
+                        case -2:
+                            setModalMessage(
+                                'Ocurrió un error inesperado. Por favor, inténtalo más tarde o contáctanos en congresofacultadingenieriaunah@gmail.com.'
+                            );
+                            break;
+                        case 2:
+                            setModalMessage(
+                                'Estamos procesando la validación de tu recibo de pago. Te notificaremos tan pronto como esté listo. Gracias por tu paciencia.'
+                            );
+                            break;
+                        default:
+                            setModalMessage(
+                                'Se produjo un error desconocido. Por favor, contacta al soporte.'
+                            );
+                            break;
+                    }
+
+                    setShowModal(true);
+                } else {
+                    setLoginError(response.error);
+                }
+
                 setSendingLogin(false);
                 return;
             }
-            setLoginError(response.error);
-            console.error('Login failed:', response.error);
+
+            // Limpiar errores y resetear formulario
+            setLoginError('');
+            setEmail('');
+            setPassword('');
+            setAreInputsValids(false);
+
+            // Guardar el token
+            if (response.token) {
+                Cookies.set('authToken', response.token, { expires: 1, secure: process.env.NODE_ENV === 'production' });
+            }
+
+            // Redirigir a la página principal
+            router.push('/my');
+        } catch (err) {
+            console.error('Unexpected error during login:', err);
+            setLoginError('Ocurrió un error inesperado. Intenta nuevamente.');
+        } finally {
             setSendingLogin(false);
-            return;
         }
-
-        // Limpiar el error si el login es exitoso
-        setLoginError('');
-        setEmail('');
-        setPassword('');
-        setAreInputsValids(false);
-        console.log('Login successful, token:', response.token);
-
-        // Guardar el token en la cookie
-        if (response.token) {
-            Cookies.set('authToken', response.token, { expires: 1, secure: process.env.NODE_ENV === 'production' });
-        }
-
-
-        // Redirigir a la página protegida (por ejemplo, al dashboard o página principal)
-        router.push('/my');
     };
-
 
 
 
@@ -101,13 +125,13 @@ function Login() {
                     <Button text="Iniciar Sesión" action={handleLogin} variant='primary' styleType="fill" className="w-[100%] mb-2" disabled={!areInputsValids || sendingLogin} />
                 </div>
 
-                <p className="text-sm text-white text-center">No tengo cuenta, <Link href="/register" className="text-[#f8b133] underline decoration-solid">registrarme</Link></p>
+                <p className="text-sm text-white text-center">No tengo cuenta, <Link href="/register" className="text-[#f8b133] underline decoration-solid">Registrarme</Link></p>
             </form>
 
             {/* Modal de advertencia */}
             {showModal && (
                 <ModalWarning
-                    title="Estamos procesando la validación de tu recibo de pago. Por favor, espera la aprobación del administrador. Te notificaremos tan pronto como esté listo. ¡Gracias por tu paciencia!"
+                    title={modalMessage}
                     setIsOpen={setShowModal}
                     isOpen={showModal}
                 />

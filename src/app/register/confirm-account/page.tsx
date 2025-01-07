@@ -97,32 +97,20 @@ export default function ConfirmAccount() {
     }
   };
 
-
-  const handleResendEmail = () => {
-    console.log('Reenviando correo...');
-    if (sendingCode) {
-      return;
-    }
-
-    setSendingCode(true);
-    resendVerificationEmail(email)
+  const handleResendEmail = (): Promise<void> => {
+    return resendVerificationEmail(email)
       .then((response) => {
         if ('error' in response) {
-          console.error('Error al reenviar el correo:', response.error);
-          setError("Ocurrió un error al reenviar el correo. Por favor, intenta de nuevo.");
-          return;
+          throw new Error("Error al reenviar el correo");
         }
-
-        localStorage.setItem('timerEndTime', new Date().getTime().toString());
         setError("El correo ha sido reenviado exitosamente.");
       })
       .catch((error) => {
-        console.error('Error inesperado:', error);
         setError("Ocurrió un error al reenviar el correo. Por favor, intenta de nuevo.");
-      })
-      .finally(() => setSendingCode(false));
-
+        throw error; // Lanza el error para que `catch` lo capture en `handleResendEmailF`
+      });
   };
+  
 
   return (
     <>
@@ -138,8 +126,8 @@ export default function ConfirmAccount() {
         />
       ) : (
         <SuccessScreen
-          title="¡Cuenta confirmada!"
-          comment="Tu cuenta ha sido confirmada exitosamente. Inicia sesión para disfrutar de las conferencias."
+          title="¡Cuenta confirmada exitosamente!"
+          comment="Tu cuenta ha sido confirmada. Estamos verificando la validez de tu recibo y te notificaremos en cuanto esté todo listo. Luego, podrás acceder a tu cuenta."
           buttonTitle="Iniciar sesión"
           redirectionRoute="/login"
           router={router}
@@ -150,10 +138,17 @@ export default function ConfirmAccount() {
 }
 
 /** Subcomponentes */
-
-function ConfirmationScreen({ handleSendCode, handleResendEmail, inputRefs, handleInputChange, email, error, sending }: {
+function ConfirmationScreen({
+  handleSendCode,
+  handleResendEmail,
+  inputRefs,
+  handleInputChange,
+  email,
+  error,
+  sending,
+}: {
   handleSendCode: () => void;
-  handleResendEmail: () => void;
+  handleResendEmail: () => Promise<void>;
   inputRefs: React.MutableRefObject<(HTMLInputElement | null)[]>;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>, index: number) => void;
   email: string;
@@ -161,18 +156,23 @@ function ConfirmationScreen({ handleSendCode, handleResendEmail, inputRefs, hand
   sending?: boolean;
 }) {
   const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [resendingEmail, setResendingEmail] = useState(false);
 
-  useEffect(() => {
-    const timerEndTime = localStorage.getItem("timerEndTime");
-    const now = new Date().getTime();
+  const setTimer = () => {
+    const initializeTimer = () => {
+      const now = new Date().getTime();
+      const timerEndTime = localStorage.getItem("timerEndTime");
 
-    if (timerEndTime && parseInt(timerEndTime) > now) {
-      setTimeLeft(Math.floor((parseInt(timerEndTime) - now) / 1000));
-    } else {
-      const newEndTime = now + 10 * 60 * 1000; // 10 minutos
-      localStorage.setItem("timerEndTime", newEndTime.toString());
-      setTimeLeft(10 * 60);
-    }
+      if (timerEndTime && parseInt(timerEndTime) > now) {
+        setTimeLeft(Math.floor((parseInt(timerEndTime) - now) / 1000));
+      } else {
+        const newEndTime = now + 10 * 60 * 1000; // 10 minutos
+        localStorage.setItem("timerEndTime", newEndTime.toString());
+        setTimeLeft(10 * 60);
+      }
+    };
+
+    initializeTimer();
 
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
@@ -183,8 +183,10 @@ function ConfirmationScreen({ handleSendCode, handleResendEmail, inputRefs, hand
         return prev - 1;
       });
     }, 1000);
+  };
 
-    return () => clearInterval(interval);
+  useEffect(() => {
+    setTimer();
   }, []);
 
   const formatTime = (seconds: number): string => {
@@ -193,16 +195,22 @@ function ConfirmationScreen({ handleSendCode, handleResendEmail, inputRefs, hand
     return `${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleResendEmailF = () => {
-    handleResendEmail();
-    /* Reiniciar cronometro */
-    const now = new Date().getTime();
-    const newEndTime = now + 10 * 60 * 1000; // 10 minutos
-    localStorage.setItem("timerEndTime", newEndTime.toString());
-    setTimeLeft(10 * 60);
-  }
+  const handleResendEmailF = async () => {
+    setResendingEmail(true);
+    try {
+      await handleResendEmail();
 
-
+      const now = new Date().getTime();
+      const newEndTime = now + 10 * 60 * 1000; // 10 minutos
+      localStorage.setItem("timerEndTime", newEndTime.toString());
+      setTimeLeft(10 * 60); // Reiniciar el estado del temporizador
+      setTimer();
+    } catch (error) {
+      console.error("Error al reenviar el correo:", error);
+    } finally {
+      setResendingEmail(false);
+    }
+  };
 
   return (
     <>
@@ -220,8 +228,20 @@ function ConfirmationScreen({ handleSendCode, handleResendEmail, inputRefs, hand
         <InputFields inputRefs={inputRefs} handleInputChange={handleInputChange} />
         {error && <p className="text-[#F8B133] shake" id="error-paragraph">{error}</p>}
         <div className="flex flex-col gap-2 w-full mt-8">
-          <Button text="Confirmar" action={handleSendCode} variant="primary" styleType="fill" disabled={sending || timeLeft === 0} />
-          <Button text="Reenviar correo" action={handleResendEmailF} variant="secondary" styleType="outlined" disabled={sending} />
+          <Button
+            text="Confirmar"
+            action={handleSendCode}
+            variant="primary"
+            styleType="fill"
+            disabled={sending || timeLeft === 0}
+          />
+          <Button
+            text={!resendingEmail ? "Reenviar correo" + (timeLeft > 0 ? ` en ${formatTime(timeLeft)}` : "") : "Reenviando correo..."}
+            action={handleResendEmailF}
+            variant="secondary"
+            styleType="outlined"
+            disabled={timeLeft > 0 || resendingEmail}
+          />
         </div>
 
         <p className="text-sm text-white text-center">
@@ -232,7 +252,9 @@ function ConfirmationScreen({ handleSendCode, handleResendEmail, inputRefs, hand
           >
             Iniciar Sesión
           </Link>
-        </p>      </div>
+        </p>
+      </div>
     </>
   );
 }
+

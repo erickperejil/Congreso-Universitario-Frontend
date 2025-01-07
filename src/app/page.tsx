@@ -1,15 +1,43 @@
-"use client";
+"use client"; // Necesario para que el código se ejecute en el cliente
 
+import { useEffect } from "react";
 import Cronograma from "@/components/cronograma";
 import Carousel from "@/components/ejes_tematicos";
 import Navbar from "@/components/Navbar";
 import Ponentes from "@/components/ponentes";
 import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const animatedSections = document.querySelectorAll(".intersection-animate");
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("float-from-bottom");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0,
+    });
+
+    animatedSections.forEach((section) => {
+      observer.observe(section);
+    });
+
+    return () => {
+      animatedSections.forEach((section) => {
+        observer.unobserve(section);
+      });
+    };
+  }, []);
 
   const navbarOptions = [
-    { name: "Inicio", icon: "home", link: "#" },
+    { name: "Inicio", icon: "home", link: "#inicio" },
     { name: "Ponentes", icon: "group", link: "#ponentes" },
     { name: "Conferencias", icon: "import_contacts", link: "#conferencias" },
   ];
@@ -23,9 +51,9 @@ export default function Home() {
       <Navbar options={navbarOptions} />
 
       {/* imagen promocional de inicio */}
-      <header className="relative w-full h-screen overflow-hidden">
+      <header className="relative w-full h-screen overflow-hidden" id="inicio">
         <img
-          src="/img/landing/header.webp"
+          src="/img/landing/banner-vr.webp"
           alt="Imagen del congreso"
           className="w-full h-full object-cover scale-x-[-1] opacity-0 animate-fade-in"
         />
@@ -33,17 +61,25 @@ export default function Home() {
           CONGRESO DE <br />
           INNOVACIÓN Y <br />
           TECNOLOGÍA <br />
-          <span className="text-[#f8b133] text-shadow-none montserrat-font">
+          <span className="text-[#f8b133] text-shadow-none montserrat-font typing-effect">
             UNAH 2025
           </span>
+          <Button
+            text="Iniciar sesión"
+            variant="primary"
+            styleType="fill"
+            action={() => router.push("/login")}
+            className="xl:hidden mt-8"
+          />
         </h1>
+
       </header>
       <div className="h-16 w-full bg-gradient-to-b from-[#020202] to-[#101017]"></div>
 
       {/* Contenido principal */}
       <main className="w-4/5 mx-auto">
         {/* seccion de invitacion a descargar cronograma */}
-        <section className="w-full mt-12 xl:mt-0 xl:h-screen flex flex-col md:flex-row items-center justify-center gap-12 px-8">
+        <section className="w-full mt-12 xl:mt-0 xl:h-screen flex flex-col md:flex-row items-center justify-center gap-12 px-8 intersection-animate">
           <img
             src="/img/landing/promo.enc"
             alt="Cronograma del evento"
@@ -68,18 +104,18 @@ export default function Home() {
         <div className="w-full min-h-screen flex flex-col bg-[101017]">
           <div className="bg-[101017] flex-grow w-full mt-10">
             <div className="container flex flex-col gap-10 mx-auto px-4">
-              <section className="mt-12">
+              <section className="mt-12 intersection-animate">
                 <div>
                   <Carousel></Carousel>
                 </div>
               </section>
-              <section id="ponentes" className="pt-20">
+              <section id="ponentes" className="pt-20 intersection-animate">
                 <div className="flex justify-center">
                   <Ponentes></Ponentes>
                 </div>
                 <div></div>
               </section>
-              <section id="conferencias" className="montserrat-font">
+              <section id="conferencias" className="intersection-animate">
                 <Cronograma></Cronograma>
               </section>
             </div>

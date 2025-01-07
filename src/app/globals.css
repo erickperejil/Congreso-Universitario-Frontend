@@ -33,13 +33,108 @@ body {
   animation: shake 0.5s;
 }
 
-
-/* Opcional: elimina las flechas en campos de tipo number */
-input[type="number"] {
-  -moz-appearance: textfield; /* Para Firefox */
-  -webkit-appearance: none;  /* Para Safari y Chrome */
-  appearance: none;          /* Propiedad estándar */
+@keyframes floatFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(80px); /* Empieza desde abajo fuera de vista */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Llega a su posición normal */
+  }
 }
+
+.float-from-bottom {
+  animation: floatFromBottom 1.5s ease-in-out forwards; /* Animación suave y gradual */
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); /* Desplazamiento desde abajo */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Vuelve a su posición original */
+  }
+}
+
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px); /* Desplazamiento desde la izquierda */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0); /* Vuelve a su posición original */
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+.fade-in-left {
+  animation: fadeInLeft 1s ease-out forwards;
+}
+
+/* Animación de escritura */
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%; /* Limita el ancho al contenido real */
+  }
+}
+
+@keyframes blink-cursor {
+  0% {
+    border-right-color: white;
+  }
+  50% {
+    border-right-color: transparent;
+  }
+  100% {
+    border-right-color: white;
+  }
+}
+
+.typing-effect {
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  border-right: 2px solid white;
+  animation: typing 2s steps(11, end) 1 forwards, blink-cursor 0.5s step-end infinite;
+  width: 0; /* Inicia el ancho en 0 */
+}
+
+
+/* Estilos adicionales para asegurar que el texto se vea */
+.text-shadow-lg {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
 
 @keyframes shake {
   0% {

@@ -48,7 +48,6 @@ export default function Button({ text, action, children, className, variant, sty
         }
     };
 
-
     return (
         <button
             type={type}

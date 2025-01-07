@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import InputForm from "@/components/InputForm";
 import SelectForm from "@/components/SelectForm";
+import ModalWarning from "@/components/ModalWarning";
+import Loader from "@/components/Loading";
 
 import { RegisterFormInterface } from "@/interfaces/RegisterForm";
 import { university } from "@/interfaces/University";
@@ -25,19 +27,25 @@ import {
     validateReceiptImage,
     validateGender,
     validateUniversity,
+    validateCareer,
 } from "@/utils/registerFormValidators";
-import { checkEmailExists, getUniversities, handleRegister } from "./actions";
+import { checkEmailExists, getUniversities, getCareers, handleRegister } from "./actions";
 import { genders } from "../constants/genders";
+import { Career } from "@/interfaces/Career";
+import Image from "next/image";
 
 const Register = () => {
     const router = useRouter();
 
     const [currentStep, setCurrentStep] = useState(1);
     const [universities, setUniversities] = useState<university[]>([]);
+    const [carrers, setCarrers] = useState<Career[]>([{ id: 0, name: "" }, { id: 1, name: "Ingeniería en Sistemas" }, { id: 2, name: "Ingeniería Industrial" }, { id: 3, name: "Ingeniería Civil" }]);
     const [UNAHId, setUNAHId] = useState<number>(-1);
     const [isOrganizer, setIsOrganizer] = useState<boolean>(false);
     const [sending, setSending] = useState(false);
     const [preview, setPreview] = useState<string | null>(null);
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
 
     /* estados de inputs */
     const [firstName, setFirstName] = useState("");
@@ -51,6 +59,7 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [studentCode, setStudentCode] = useState("");
+    const [career, setCareer] = useState("");
     const [receiptCode, setReceiptCode] = useState("");
     const [organizerCode, setOrganizerCode] = useState("");
     const [isStudent, setIsStudent] = useState(true);
@@ -69,6 +78,7 @@ const Register = () => {
         password: "",
         confirmPassword: "",
         studentCode: "",
+        career: "",
         receiptCode: "",
         organizerCode: "",
         gender: "",
@@ -77,7 +87,7 @@ const Register = () => {
         receiptImage: "",
     });
 
-    /* Trae todas las universidades para el select */
+    /* Trae todas las universidades y carreras para el select */
     useEffect(() => {
         const getUniversitiesFromAPI = async () => {
             const response = await getUniversities();
@@ -92,8 +102,23 @@ const Register = () => {
             }
         };
 
+/*         const getCareersFromAPI = async () => {
+            const response = await getCareers();
+            if (response.error) {
+                console.error("Error al obtener carreras:", response.error);
+                return;
+            }
+
+            if (response.careers) {
+                setCarrers(response.careers);
+                console.log("Carreras:", response.careers);
+            }
+        } */
+
+
         getUniversitiesFromAPI();
-    }, []);
+/*         getCareersFromAPI();
+ */    }, []);
 
     /* Setea el ID de la UNAH para exigir numero de cuenta si el estudiante selecciona UNAH */
     useEffect(() => {
@@ -111,6 +136,8 @@ const Register = () => {
         }
     }, [universities]);
 
+
+    /*Funciones para setear errores en inputs en tiempo real */
     function handleFirstNameChange(e: React.ChangeEvent<HTMLInputElement>): void {
         setErrors((prev) => ({
             ...prev,
@@ -199,6 +226,22 @@ const Register = () => {
         setStudentCode(e.target.value);
     }
 
+    function handleChangeCarreer(e: React.ChangeEvent<HTMLInputElement>): void {
+        setCareer(e.target.value);
+        const error = validateCareer(carrers, e.target.value);
+        if (error === "") {
+            setErrors((prev) => ({
+                ...prev,
+                career: "",
+            }));
+        } else {
+            setErrors((prev) => ({
+                ...prev,
+                career: error,
+            }));
+        }    
+    }
+
     function handleReceiptCodeChange(
         e: React.ChangeEvent<HTMLInputElement>
     ): void {
@@ -243,6 +286,34 @@ const Register = () => {
         }
     };
 
+    const checkEmailExistsF = async (email: string): Promise<boolean> => {
+        try {
+            const response = await checkEmailExists(email);
+
+            if (response?.error) {
+                console.error('Error al verificar correo:', response.error);
+                return false; // Considerar como fallo en caso de error
+            }
+
+            return response.responseData.resultado;
+        } catch (error) {
+            console.error('Error inesperado:', error);
+            return false; // Retorna false si ocurre un error inesperado
+        }
+    };
+
+    const handleEmailBlur = async () => {
+
+        errors.email = validateEmail(email);
+        if (errors.email) {
+            return;
+        }
+
+        await checkEmailExistsF(email);
+
+    };
+
+    /* Funciones auxiliares de operacion */
     const handleNextStep = async (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -265,12 +336,14 @@ const Register = () => {
                     newErrors.university = validateUniversity(universityID);
                     if (universityID === UNAHId && universityID) {
                         newErrors.studentCode = validateStudentCode(studentCode);
+                        newErrors.career = validateCareer(carrers, career);
                     }
                 }
             },
             4: async () => {
                 newErrors.email = validateEmail(email);
-                const exists = await checkEmailExistsF(email); // Asumimos que retorna true o false
+                if (newErrors.email) return;
+                const exists = await checkEmailExistsF(email);
                 if (exists) {
                     newErrors.email = "El correo ya está registrado";
                 }
@@ -313,7 +386,7 @@ const Register = () => {
         const fieldsByStep: { [key: number]: string[] } = {
             1: ['firstName', 'lastName'],
             2: ['birthDate', 'dni', 'phone', 'gender'],
-            3: ['university', 'studentCode'],
+            3: ['university', 'studentCode', 'career'],
             4: ['email', 'password', 'confirmPassword'],
             5: ['organizerCode', 'receiptCode', 'receiptImage'],
         };
@@ -329,70 +402,89 @@ const Register = () => {
         console.log("Retrocediendo...", currentStep);
     }
 
-    const handleSubmit = async () => {
-        setSending(true);
-        const formData: RegisterFormInterface = {
+    const buildFormData = (): RegisterFormInterface => {
+        const getUniversityID = (): number | null => {
+            if (!isStudent) return null;
+            return universityID !== -1 ? universityID : null;
+        };
+
+        const getUNAHIdentifier = (): string | null => {
+            if (isStudent && universityID === UNAHId) return studentCode;
+            return null;
+        };
+
+        const getReceiptCode = (): string | null => {
+            return !isOrganizer ? receiptCode : null;
+        };
+
+        const getOrganizerCode = (): string | null => {
+            return isOrganizer ? organizerCode : null;
+        };
+
+        const getReceiptFile = (): File | null => {
+            return !isOrganizer ? rec : null;
+        };
+
+        const getCareer = (): string | null => {
+            if (isStudent && universityID === UNAHId) return career;
+            return null;
+        };
+
+        return {
             nombres: firstName,
             apellidos: lastName,
             telefono: phone,
             dni: dni,
             fecha_nacimiento: birthDate?.toISOString() || "",
             genero: gender,
-            id_universidad: universityID !== -1 ? universityID : null,
-            identificador_unah: universityID === UNAHId ? studentCode : null,
+            id_universidad: getUniversityID(),
+            identificador_unah: getUNAHIdentifier(),
+            carrera : getCareer(),
             correo: email,
             contrasena: password,
-            codigo_recibo: receiptCode,
-            codigo_organizador: organizerCode !== "" ? organizerCode : null,
-            recibo: rec ? rec.name : null,
+            codigo_recibo: getReceiptCode(),
+            codigo_organizador: getOrganizerCode(),
+            recibo: getReceiptFile()
         };
+    };
+
+    const handleSubmit = async () => {
+        setSending(true);
+        const formData: RegisterFormInterface = buildFormData();
         console.log("Datos a enviar:", formData);
 
         try {
             const response = await handleRegister(formData);
+
             if (response.error) {
                 console.error('Error al registrar usuario:', response.error);
+
+                if (response.error.statusCode === 500) {
+                    setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. ¡Gracias por tu paciencia!");
+                    setShowModal(true);
+
+                }
                 return;
             }
 
-            const datos = formData.correo;
             localStorage.setItem('registerEmail', email);
-
             router.push(`/register/confirm-account`);
         } catch (error) {
+            setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. ¡Gracias por tu paciencia!");
+            setShowModal(true); // Mostrar el modal
             console.error('Error inesperado:', error);
         } finally {
             setSending(false);
         }
     };
 
-    const checkEmailExistsF = async (email: string): Promise<boolean> => {
-        try {
-            const response: any = await checkEmailExists(email);
-
-            if (response?.error) {
-                console.error('Error al verificar correo:', response.error);
-                return false; // Considerar como fallo en caso de error
-            }
-
-            return !!response?.responseData; // Retorna true si el correo ya está registrado
-        } catch (error) {
-            console.error('Error inesperado:', error);
-            return false; // Retorna false si ocurre un error inesperado
-        }
-    };
-
-
-    const handleEmailBlur = async () => {
-
-        errors.email = validateEmail(email);
-        if (errors.email) {
-            return;
-        }
-
-        await checkEmailExistsF(email);
-
-    };
+    if (sending) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader />
+            </div>
+        );
+    }
 
     return (
         <>
@@ -464,6 +556,7 @@ const Register = () => {
                 {currentStep === 2 && (
                     <div className="flex flex-col gap-4">
                         <div>
+                            <p className="text-[#ab9a9a]">Fecha de nacimiento</p>
                             <InputForm
                                 placeholder="Fecha de Nacimiento"
                                 iconName="date_range"
@@ -523,7 +616,7 @@ const Register = () => {
                 {/* Estado 3 */}
                 {currentStep === 3 && (
                     <div className="flex flex-col gap-4">
-                        <p>Eres estudiante universitario actual?</p>
+                        <p className="text-[#ab9a9a]">¿Actualmente eres un estudiante universitario?</p>
                         <div className="flex gap-4">
                             <label htmlFor="student-yes" className="flex items-center">
                                 <input
@@ -545,7 +638,8 @@ const Register = () => {
                                     onChange={() => {
                                         setIsStudent(false); setErrors((prev) => ({
                                             ...prev, university: "",
-                                            studentCode: ""
+                                            studentCode: "",
+                                            career: ""
                                         }))
                                     }}
                                     checked={!isStudent}
@@ -577,21 +671,43 @@ const Register = () => {
                                     )}
                                 </div>
                                 {universityID === UNAHId && universityID !== -1 && (
-                                    <div>
-                                        <InputForm
-                                            placeholder="Número de cuenta"
-                                            iconName="school"
-                                            type="text"
-                                            id="studentCode"
-                                            value={studentCode}
-                                            onChange={handleStudentCodeChange}
-                                        />
-                                        {errors.studentCode && (
-                                            <p className="text-[#F8B133] text-sm">
-                                                {errors.studentCode}
-                                            </p>
-                                        )}
-                                    </div>
+                                    <>
+                                        <div>
+                                            <InputForm
+                                                placeholder="Número de cuenta"
+                                                iconName="school"
+                                                type="text"
+                                                id="studentCode"
+                                                value={studentCode}
+                                                onChange={handleStudentCodeChange}
+                                            />
+                                            {errors.studentCode && (
+                                                <p className="text-[#F8B133] text-sm">
+                                                    {errors.studentCode}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="bg-transparent border-[1px] border-[#ab9a9a] rounded-md flex items-center gap-2 pl-2 active:outline-none text-white text-base">
+                                                <span className="material-symbols-outlined">school</span>
+                                                <input
+                                                    list="carreers"
+                                                    id="carreers-input"
+                                                    name="carreers"
+                                                    placeholder="Elige tu carrera"
+                                                    className="bg-transparent placeholder:text-gray py-2 w-full focus:outline-none"
+                                                    value={career}
+                                                    onChange={handleChangeCarreer}
+                                                />
+                                                <datalist id="carreers">
+                                                    {carrers.map((carreer) => (
+                                                        <option key={carreer.id} value={carreer.name} />
+                                                    ))}
+                                                </datalist>
+                                            </div>
+                                            {errors.career && (<p className="text-[#F8B133] text-sm">{errors.career}</p>)}
+                                        </div>
+                                    </>
                                 )}
                             </>
                         )}
@@ -654,7 +770,7 @@ const Register = () => {
                 {currentStep === 5 && (
                     <div className="flex flex-col gap-4">
                         <div>
-                            <p>¿Eres parte del equipo organizador de la conferencia?</p>
+                            <p className="text-[#ab9a9a]">¿Eres parte del equipo organizador de la conferencia?</p>
                             <div className="flex gap-4">
                                 <label htmlFor="organizer-yes" className="flex items-center">
                                     <input
@@ -662,9 +778,10 @@ const Register = () => {
                                         name="organizer"
                                         id="organizer-yes"
                                         className="mr-2"
-                                        onChange={() => {setIsOrganizer(true); setErrors((prev) => ({
-                                            ...prev, receiptCode: "", receiptImage: ""
-                                        }))
+                                        onChange={() => {
+                                            setIsOrganizer(true); setErrors((prev) => ({
+                                                ...prev, receiptCode: "", receiptImage: ""
+                                            }))
                                         }}
                                         checked={isOrganizer}
                                     />
@@ -676,9 +793,10 @@ const Register = () => {
                                         name="organizer"
                                         id="organizer-no"
                                         className="mr-2"
-                                        onChange={() => {setIsOrganizer(false); setErrors((prev) => ({
-                                            ...prev, organizerCode: ""
-                                        }))
+                                        onChange={() => {
+                                            setIsOrganizer(false); setErrors((prev) => ({
+                                                ...prev, organizerCode: ""
+                                            })); setRec(null); setPreview(null)
                                         }}
                                         checked={!isOrganizer}
                                     />
@@ -690,10 +808,10 @@ const Register = () => {
                         {isOrganizer ? (
                             <>
                                 <div>
-                                    <p>Ingresa el codigo que te proporcionaron</p>
+                                    <p className="text-[#ab9a9a]">Ingresa el codigo que te proporcionaron</p>
                                     <InputForm
                                         placeholder="Codigo de organizador"
-                                        iconName="code"
+                                        iconName="123"
                                         type="text"
                                         id="organizerCode"
                                         value={organizerCode}
@@ -710,51 +828,51 @@ const Register = () => {
 
                         ) : (
                             <>
-                            <div>
-                                <legend>Sube tu recibo de inscripción</legend>
-                                <div className="bg-transparent border-[1px] border-[#ab9a9a] rounded-md flex items-center gap-2 pl-2 active:outline-none text-white text-base">
-                                    <label
-                                        htmlFor="file-upload"
-                                        className="bg-transparent active:border-none placeholder:text-gray py-2 w-full focus:outline-none flex items-center gap-2 cursor-pointer w-full"
-                                    >
-                                        <span className="material-symbols-outlined">upload</span>
-                                        <span>Subir recibo</span>
-                                    </label>
-                                    <input
-                                        id="file-upload"
-                                        type="file"
-                                        accept="image/png, image/jpeg"
-                                        className="hidden"
-                                        onChange={handleFileChange}
-                                    />
-                                </div>
-                                {preview && (
-                                    <div className="mt-4">
-                                        <p className="text-sm text-white">Vista previa:</p>
-                                        <img
-                                            src={preview}
-                                            alt="Vista previa del recibo"
-                                            className="max-w-full h-auto rounded-md"
+                                <div>
+                                    <legend className="text-[#ab9a9a]">Sube tu recibo de inscripción</legend>
+                                    <div className="bg-transparent border-[1px] border-[#ab9a9a] rounded-md flex items-center gap-2 pl-2 active:outline-none text-white text-base">
+                                        <label
+                                            htmlFor="file-upload"
+                                            className="bg-transparent active:border-none placeholder:text-gray py-2 w-full focus:outline-none flex items-center gap-2 cursor-pointer w-full"
+                                        >
+                                            <span className="material-symbols-outlined">upload</span>
+                                            <span>Subir recibo</span>
+                                        </label>
+                                        <input
+                                            id="file-upload"
+                                            type="file"
+                                            accept="image/png, image/jpeg"
+                                            className="hidden"
+                                            onChange={handleFileChange}
                                         />
                                     </div>
-                                )}
-                                {errors.receiptImage && (
-                                    <p className="text-[#F8B133] text-sm">{errors.receiptImage}</p>
-                                )}
-                            </div>
-                            <div>
-                                <InputForm
-                                    placeholder="Código de recibo"
-                                    iconName="numbers"
-                                    type="text"
-                                    id="receiptCode"
-                                    value={receiptCode}
-                                    onChange={handleReceiptCodeChange}
-                                />
-                                {errors.receiptCode && (
-                                    <p className="text-[#F8B133] text-sm">{errors.receiptCode}</p>
-                                )}
-                            </div>
+                                    {preview && (
+                                        <div className="mt-4">
+                                            <p className="text-sm text-[#ab9a9a]">Vista previa:</p>
+                                            <Image
+                                                src={preview}
+                                                alt="Vista previa del recibo"
+                                                className="max-w-full h-auto rounded-lg"
+                                            />
+                                        </div>
+                                    )}
+                                    {errors.receiptImage && (
+                                        <p className="text-[#F8B133] text-sm">{errors.receiptImage}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <InputForm
+                                        placeholder="Código de recibo"
+                                        iconName="numbers"
+                                        type="text"
+                                        id="receiptCode"
+                                        value={receiptCode}
+                                        onChange={handleReceiptCodeChange}
+                                    />
+                                    {errors.receiptCode && (
+                                        <p className="text-[#F8B133] text-sm">{errors.receiptCode}</p>
+                                    )}
+                                </div>
                             </>
                         )}
                     </div>
@@ -793,6 +911,15 @@ const Register = () => {
                     </Link>
                 </p>
             </form>
+
+            {/* Modal de informacion */}
+            {showModal && (
+                <ModalWarning
+                    title={modalMessage}
+                    setIsOpen={setShowModal}
+                    isOpen={showModal}
+                />
+            )}
         </>
     );
 };

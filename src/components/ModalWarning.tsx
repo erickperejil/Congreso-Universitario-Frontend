@@ -1,22 +1,13 @@
-import { useState } from 'react';
 import Button from './Button';
 
 export default function ModalWarning({ title, isOpen, setIsOpen }: { title: string; isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
-    
+
 
     return (
         <>
-            <button
-                onClick={() => setIsOpen(true)}
-                className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                type="button"
-            >
-                Toggle modal
-            </button>
-
             {isOpen && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
                     aria-modal="true"
                     role="dialog"
                 >
@@ -68,10 +59,10 @@ export default function ModalWarning({ title, isOpen, setIsOpen }: { title: stri
                                 styleType="fill"
                                 className="w-full"
                             />
-
                         </div>
                     </div>
                 </div>
+
             )}
         </>
     );

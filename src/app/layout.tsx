@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const favicon = "/logos/logo_cit_blanco.png";
+const favicon = "/logos/logo_cit_blanco.ico";
 
 export const metadata: Metadata = {
   title: "CIT",
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
-        <link rel="icon" href={favicon} />
+        <link rel="icon" href="/public/logos/logo_cit_blanco.ico" />
         {/* Link de Google Icons */}
         <link
           rel="stylesheet"
