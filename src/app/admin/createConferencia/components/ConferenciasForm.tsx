@@ -1,7 +1,7 @@
 import React, { useState, useRef,useEffect } from "react";
 import Image from 'next/image';
 import { crearConferencia } from "@/services/conferencias/conferencia";
-import {CreateConferencia } from "@/interfaces/conferencias";
+import {CrearConferencia} from "@/interfaces/conferencias";
 import Modal from "./modal";
 import SubirPdf from "./subirArchivo";
 import UploadModal from "./subirFoto";
@@ -110,7 +110,7 @@ const ConferenciaForm: React.FC = () => {
       const horaFinalConvertida = combinarFechaYHora(fecha_conferencia, hora_final); // DD/MM/YYYY HH:mm
   
       // Creamos el objeto para enviar al backend
-      const newProduct: CreateConferencia = {
+      const newProduct: CrearConferencia = {
         nombre_conferencia,
         nombres_ponente,
         apellidos_ponente,
