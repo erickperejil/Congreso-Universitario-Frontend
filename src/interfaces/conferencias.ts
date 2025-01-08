@@ -1,6 +1,5 @@
 export interface CreateConferencia {
-  id_conferencia: number;
-  nombre: string;
+  nombre_conferencia: string;
   nombres_ponente: string;
   apellidos_ponente: string;
   descripcion_ponente: string;
