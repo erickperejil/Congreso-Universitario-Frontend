@@ -115,7 +115,7 @@ const ConferenciaForm: React.FC = () => {
         nombres_ponente,
         apellidos_ponente,
         descripcion_ponente,
-        img_ponente: mainImage || "",
+        img_perfil_ponente: mainImage || "",
         img_conferecia: galleryImages || "",
         direccion,
         fecha_conferencia: fechaConvertida,
