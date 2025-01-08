@@ -15,8 +15,8 @@ export interface ActualizarUser{
   nombres: string, 
   apellidos: string, 
   correo: string, 
-  dni : number|null,
-  contrasena : number| null,
+  dni? : number|null,
+  contrasena? : number| null,
 }
 
 export interface resetPsw{
@@ -41,4 +41,6 @@ export interface UsuarioRecibo {
   img_recibo?: string;
   codigo_recibo?: string;
   url_qr?: string;
+  telefono?: string;
+  numero_cuenta?: string;
 }

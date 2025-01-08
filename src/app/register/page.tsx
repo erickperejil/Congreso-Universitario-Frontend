@@ -27,19 +27,22 @@ import {
     validateReceiptImage,
     validateGender,
     validateUniversity,
+    validateCareer,
 } from "@/utils/registerFormValidators";
-import { checkEmailExists, getUniversities, handleRegister } from "./actions";
+import { checkEmailExists, getUniversities, getCareers, handleRegister } from "./actions";
 import { genders } from "../constants/genders";
-import { i } from "framer-motion/client";
+import { Career } from "@/interfaces/Career";
+import Image from "next/image";
 
 const Register = () => {
     const router = useRouter();
 
     const [currentStep, setCurrentStep] = useState(1);
     const [universities, setUniversities] = useState<university[]>([]);
+    const [carrers, setCarrers] = useState<Career[]>([{ id: 0, name: "" }, { id: 1, name: "Ingeniería en Sistemas" }, { id: 2, name: "Ingeniería Industrial" }, { id: 3, name: "Ingeniería Civil" }]);
     const [UNAHId, setUNAHId] = useState<number>(-1);
     const [isOrganizer, setIsOrganizer] = useState<boolean>(false);
-    const [sending, setSending] = useState(true);
+    const [sending, setSending] = useState(false);
     const [preview, setPreview] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
@@ -56,6 +59,7 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [studentCode, setStudentCode] = useState("");
+    const [career, setCareer] = useState("");
     const [receiptCode, setReceiptCode] = useState("");
     const [organizerCode, setOrganizerCode] = useState("");
     const [isStudent, setIsStudent] = useState(true);
@@ -74,6 +78,7 @@ const Register = () => {
         password: "",
         confirmPassword: "",
         studentCode: "",
+        career: "",
         receiptCode: "",
         organizerCode: "",
         gender: "",
@@ -82,7 +87,7 @@ const Register = () => {
         receiptImage: "",
     });
 
-    /* Trae todas las universidades para el select */
+    /* Trae todas las universidades y carreras para el select */
     useEffect(() => {
         const getUniversitiesFromAPI = async () => {
             const response = await getUniversities();
@@ -97,8 +102,23 @@ const Register = () => {
             }
         };
 
+/*         const getCareersFromAPI = async () => {
+            const response = await getCareers();
+            if (response.error) {
+                console.error("Error al obtener carreras:", response.error);
+                return;
+            }
+
+            if (response.careers) {
+                setCarrers(response.careers);
+                console.log("Carreras:", response.careers);
+            }
+        } */
+
+
         getUniversitiesFromAPI();
-    }, []);
+/*         getCareersFromAPI();
+ */    }, []);
 
     /* Setea el ID de la UNAH para exigir numero de cuenta si el estudiante selecciona UNAH */
     useEffect(() => {
@@ -206,6 +226,22 @@ const Register = () => {
         setStudentCode(e.target.value);
     }
 
+    function handleChangeCarreer(e: React.ChangeEvent<HTMLInputElement>): void {
+        setCareer(e.target.value);
+        const error = validateCareer(carrers, e.target.value);
+        if (error === "") {
+            setErrors((prev) => ({
+                ...prev,
+                career: "",
+            }));
+        } else {
+            setErrors((prev) => ({
+                ...prev,
+                career: error,
+            }));
+        }    
+    }
+
     function handleReceiptCodeChange(
         e: React.ChangeEvent<HTMLInputElement>
     ): void {
@@ -252,7 +288,7 @@ const Register = () => {
 
     const checkEmailExistsF = async (email: string): Promise<boolean> => {
         try {
-            const response: any = await checkEmailExists(email);
+            const response = await checkEmailExists(email);
 
             if (response?.error) {
                 console.error('Error al verificar correo:', response.error);
@@ -300,6 +336,7 @@ const Register = () => {
                     newErrors.university = validateUniversity(universityID);
                     if (universityID === UNAHId && universityID) {
                         newErrors.studentCode = validateStudentCode(studentCode);
+                        newErrors.career = validateCareer(carrers, career);
                     }
                 }
             },
@@ -349,7 +386,7 @@ const Register = () => {
         const fieldsByStep: { [key: number]: string[] } = {
             1: ['firstName', 'lastName'],
             2: ['birthDate', 'dni', 'phone', 'gender'],
-            3: ['university', 'studentCode'],
+            3: ['university', 'studentCode', 'career'],
             4: ['email', 'password', 'confirmPassword'],
             5: ['organizerCode', 'receiptCode', 'receiptImage'],
         };
@@ -388,6 +425,11 @@ const Register = () => {
             return !isOrganizer ? rec : null;
         };
 
+        const getCareer = (): string | null => {
+            if (isStudent && universityID === UNAHId) return career;
+            return null;
+        };
+
         return {
             nombres: firstName,
             apellidos: lastName,
@@ -397,6 +439,7 @@ const Register = () => {
             genero: gender,
             id_universidad: getUniversityID(),
             identificador_unah: getUNAHIdentifier(),
+            carrera : getCareer(),
             correo: email,
             contrasena: password,
             codigo_recibo: getReceiptCode(),
@@ -513,7 +556,7 @@ const Register = () => {
                 {currentStep === 2 && (
                     <div className="flex flex-col gap-4">
                         <div>
-                            <p>Fecha de nacimiento</p>
+                            <p className="text-[#ab9a9a]">Fecha de nacimiento</p>
                             <InputForm
                                 placeholder="Fecha de Nacimiento"
                                 iconName="date_range"
@@ -573,7 +616,7 @@ const Register = () => {
                 {/* Estado 3 */}
                 {currentStep === 3 && (
                     <div className="flex flex-col gap-4">
-                        <p>Eres estudiante universitario actual?</p>
+                        <p className="text-[#ab9a9a]">¿Actualmente eres un estudiante universitario?</p>
                         <div className="flex gap-4">
                             <label htmlFor="student-yes" className="flex items-center">
                                 <input
@@ -595,7 +638,8 @@ const Register = () => {
                                     onChange={() => {
                                         setIsStudent(false); setErrors((prev) => ({
                                             ...prev, university: "",
-                                            studentCode: ""
+                                            studentCode: "",
+                                            career: ""
                                         }))
                                     }}
                                     checked={!isStudent}
@@ -627,21 +671,43 @@ const Register = () => {
                                     )}
                                 </div>
                                 {universityID === UNAHId && universityID !== -1 && (
-                                    <div>
-                                        <InputForm
-                                            placeholder="Número de cuenta"
-                                            iconName="school"
-                                            type="text"
-                                            id="studentCode"
-                                            value={studentCode}
-                                            onChange={handleStudentCodeChange}
-                                        />
-                                        {errors.studentCode && (
-                                            <p className="text-[#F8B133] text-sm">
-                                                {errors.studentCode}
-                                            </p>
-                                        )}
-                                    </div>
+                                    <>
+                                        <div>
+                                            <InputForm
+                                                placeholder="Número de cuenta"
+                                                iconName="school"
+                                                type="text"
+                                                id="studentCode"
+                                                value={studentCode}
+                                                onChange={handleStudentCodeChange}
+                                            />
+                                            {errors.studentCode && (
+                                                <p className="text-[#F8B133] text-sm">
+                                                    {errors.studentCode}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="bg-transparent border-[1px] border-[#ab9a9a] rounded-md flex items-center gap-2 pl-2 active:outline-none text-white text-base">
+                                                <span className="material-symbols-outlined">school</span>
+                                                <input
+                                                    list="carreers"
+                                                    id="carreers-input"
+                                                    name="carreers"
+                                                    placeholder="Elige tu carrera"
+                                                    className="bg-transparent placeholder:text-gray py-2 w-full focus:outline-none"
+                                                    value={career}
+                                                    onChange={handleChangeCarreer}
+                                                />
+                                                <datalist id="carreers">
+                                                    {carrers.map((carreer) => (
+                                                        <option key={carreer.id} value={carreer.name} />
+                                                    ))}
+                                                </datalist>
+                                            </div>
+                                            {errors.career && (<p className="text-[#F8B133] text-sm">{errors.career}</p>)}
+                                        </div>
+                                    </>
                                 )}
                             </>
                         )}
@@ -704,7 +770,7 @@ const Register = () => {
                 {currentStep === 5 && (
                     <div className="flex flex-col gap-4">
                         <div>
-                            <p>¿Eres parte del equipo organizador de la conferencia?</p>
+                            <p className="text-[#ab9a9a]">¿Eres parte del equipo organizador de la conferencia?</p>
                             <div className="flex gap-4">
                                 <label htmlFor="organizer-yes" className="flex items-center">
                                     <input
@@ -742,10 +808,10 @@ const Register = () => {
                         {isOrganizer ? (
                             <>
                                 <div>
-                                    <p>Ingresa el codigo que te proporcionaron</p>
+                                    <p className="text-[#ab9a9a]">Ingresa el codigo que te proporcionaron</p>
                                     <InputForm
                                         placeholder="Codigo de organizador"
-                                        iconName="code"
+                                        iconName="123"
                                         type="text"
                                         id="organizerCode"
                                         value={organizerCode}
@@ -763,7 +829,7 @@ const Register = () => {
                         ) : (
                             <>
                                 <div>
-                                    <legend>Sube tu recibo de inscripción</legend>
+                                    <legend className="text-[#ab9a9a]">Sube tu recibo de inscripción</legend>
                                     <div className="bg-transparent border-[1px] border-[#ab9a9a] rounded-md flex items-center gap-2 pl-2 active:outline-none text-white text-base">
                                         <label
                                             htmlFor="file-upload"
@@ -782,8 +848,8 @@ const Register = () => {
                                     </div>
                                     {preview && (
                                         <div className="mt-4">
-                                            <p className="text-sm text-white">Vista previa:</p>
-                                            <img
+                                            <p className="text-sm text-[#ab9a9a]">Vista previa:</p>
+                                            <Image
                                                 src={preview}
                                                 alt="Vista previa del recibo"
                                                 className="max-w-full h-auto rounded-lg"

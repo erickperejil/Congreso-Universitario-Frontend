@@ -1,11 +1,10 @@
 'use client'
 
-
 import TableComponent from "./components/participantes";
 
 const HomePage: React.FC = () => {
   return (
-      <main className="container mx-auto px-4 py-10">
+      <main className="container mx-auto">
         <TableComponent/>
       </main>
   );

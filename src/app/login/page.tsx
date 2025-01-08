@@ -10,7 +10,6 @@ import InputForm from "@/components/InputForm";
 
 import { isLoginInputsValids } from "@/utils/loginFormValidators";
 import { login } from "./actions";
-import { Warning } from "postcss";
 import ModalWarning from "@/components/ModalWarning";
 
 function Login() {

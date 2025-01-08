@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import jwt from 'jsonwebtoken';
-
+/* import jwt from 'jsonwebtoken';
+ */
 export function middleware(request: NextRequest) {
      console.log('Middleware:', request.nextUrl.pathname);
-    const token = request.cookies.get('authToken')?.value;
+/*     const token = request.cookies.get('authToken')?.value;
 
     // Define las rutas públicas (que no requieren autenticación)
     const publicRoutes = ['/login', '/register'];
@@ -47,7 +47,7 @@ export function middleware(request: NextRequest) {
         console.error('Invalid token:', error);
         return NextResponse.redirect(new URL('/login', request.url));
     }
-
+ */
     // Si el token es válido y no ha expirado, permite continuar
     return NextResponse.next();
  }

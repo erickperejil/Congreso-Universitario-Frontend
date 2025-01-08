@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Button from './Button';
 
 export default function ModalWarning({ title, isOpen, setIsOpen }: { title: string; isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {

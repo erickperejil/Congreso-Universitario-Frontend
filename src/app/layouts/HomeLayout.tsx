@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { logout } from "@/services/userService";
 import Cookies from 'js-cookie'; // Paquete para manejar cookies en cliente
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
 
 export default function HomeLayout({ navOptions, children }: { navOptions: { name: string; icon: string; link: string; }[]; children: ReactNode }) {
     const router = useRouter();
@@ -38,7 +39,7 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
         return () => {
             document.removeEventListener("click", handleClickOutside);
         };
-    }, [isSidebarOpen]);
+    }, [isSidebarOpen, handleClickOutside]);
 
     async function handleLogout(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>): Promise<void> {
         event.preventDefault();
@@ -106,10 +107,13 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
                         href="/my/"
                         className="w-full mb-5 flex items-start justify-start"
                     >
-                        <img
+                        <Image
                             src="/logos/logo_cit_completo_blanco.webp"
                             className=" w-full"
                             alt="Flowbite Logo"
+                            width={200}
+                            height={50}
+
                         />
                     </Link>
                     <div className="flex flex-col justify-between space-y-4">
@@ -148,7 +152,7 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
             </aside>
 
             {/* Contenido principal */}
-            <div className="px-6 sm:ml-64">
+            <div className="px-10 lg:px-16 py-10 sm:ml-64">
                 <main>
                     {children}
                 </main>

@@ -11,13 +11,14 @@ import Cookies from 'js-cookie';
 import Loader from "./Loading";
 
 
-const UserProfile: React.FC = () => {
+const UserProfile: React.FC = ({id} : {id?: string}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<UsuarioRecibo | null>(null);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({ nombres: "", apellidos: "", correo: "", dni: null, contrasena: null});
 
   useEffect(() => {
+    if(id) return;
     const processToken = () => {
       const token = Cookies.get("authToken");
       if (token) {
