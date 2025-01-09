@@ -79,7 +79,7 @@ export default function ConfirmAccount() {
     try {
       // Envía la petición para verificar el código
       const response = await verifyUser(email, code);
-      if ('error' in response) {
+      if (response.error) {
         console.error('Error al verificar el código:', response.error);
         setError("El código ingresado es incorrecto o ha expirado.");
         return;
@@ -87,6 +87,7 @@ export default function ConfirmAccount() {
 
       // Limpia el almacenamiento local y marca el código como válido
       localStorage.removeItem('registerEmail');
+      localStorage.removeItem('timerEndTime');
       setIsCodeValid(true);
 
     } catch (error) {
@@ -110,7 +111,7 @@ export default function ConfirmAccount() {
         throw error; // Lanza el error para que `catch` lo capture en `handleResendEmailF`
       });
   };
-  
+
 
   return (
     <>
@@ -126,9 +127,9 @@ export default function ConfirmAccount() {
         />
       ) : (
         <SuccessScreen
-          title="¡Cuenta confirmada exitosamente!"
-          comment="Tu cuenta ha sido confirmada. Estamos verificando la validez de tu recibo y te notificaremos en cuanto esté todo listo. Luego, podrás acceder a tu cuenta."
-          buttonTitle="Iniciar sesión"
+          title="¡Cuenta confirmada con éxito!"
+          comment="Tu cuenta ha sido confirmada. Nuestro equipo revisará la validez de tu recibo a la brevedad. Una vez validado, podrás iniciar sesión."
+          buttonTitle="Regresar al inicio"
           redirectionRoute="/login"
           router={router}
         />

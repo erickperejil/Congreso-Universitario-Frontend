@@ -39,7 +39,7 @@ const Register = () => {
 
     const [currentStep, setCurrentStep] = useState(1);
     const [universities, setUniversities] = useState<university[]>([]);
-    const [carrers, setCarrers] = useState<Career[]>([{ id: 0, name: "" }, { id: 1, name: "Ingeniería en Sistemas" }, { id: 2, name: "Ingeniería Industrial" }, { id: 3, name: "Ingeniería Civil" }]);
+    const [carrers, setCarrers] = useState<Career[]>([]);
     const [UNAHId, setUNAHId] = useState<number>(-1);
     const [isOrganizer, setIsOrganizer] = useState<boolean>(false);
     const [sending, setSending] = useState(false);
@@ -60,6 +60,7 @@ const Register = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [studentCode, setStudentCode] = useState("");
     const [career, setCareer] = useState("");
+    const [careerId, setCareerId] = useState<number | null>(null);
     const [receiptCode, setReceiptCode] = useState("");
     const [organizerCode, setOrganizerCode] = useState("");
     const [isStudent, setIsStudent] = useState(true);
@@ -102,23 +103,20 @@ const Register = () => {
             }
         };
 
-/*         const getCareersFromAPI = async () => {
+        const getCareersFromAPI = async () => {
             const response = await getCareers();
             if (response.error) {
                 console.error("Error al obtener carreras:", response.error);
                 return;
             }
 
-            if (response.careers) {
-                setCarrers(response.careers);
-                console.log("Carreras:", response.careers);
-            }
-        } */
-
+            console.log(response.data)
+            setCarrers(response.data);
+        }
 
         getUniversitiesFromAPI();
-/*         getCareersFromAPI();
- */    }, []);
+        getCareersFromAPI();
+    }, []);
 
     /* Setea el ID de la UNAH para exigir numero de cuenta si el estudiante selecciona UNAH */
     useEffect(() => {
@@ -227,19 +225,25 @@ const Register = () => {
     }
 
     function handleChangeCarreer(e: React.ChangeEvent<HTMLInputElement>): void {
-        setCareer(e.target.value);
-        const error = validateCareer(carrers, e.target.value);
+        const selectedCareer = e.target.value;
+        setCareer(selectedCareer);
+
+        const error = validateCareer(carrers, selectedCareer);
+
         if (error === "") {
+            const selectedCareerObj = carrers.find(carreer => carreer.carrera_unah === selectedCareer);
+            setCareerId(selectedCareerObj ? selectedCareerObj.id_carrera_unah : null);
             setErrors((prev) => ({
                 ...prev,
                 career: "",
             }));
         } else {
+            setCareerId(null);
             setErrors((prev) => ({
                 ...prev,
                 career: error,
             }));
-        }    
+        }
     }
 
     function handleReceiptCodeChange(
@@ -425,8 +429,8 @@ const Register = () => {
             return !isOrganizer ? rec : null;
         };
 
-        const getCareer = (): string | null => {
-            if (isStudent && universityID === UNAHId) return career;
+        const getCareer = (): number | null => {
+            if (isStudent && universityID === UNAHId) return careerId;
             return null;
         };
 
@@ -439,7 +443,7 @@ const Register = () => {
             genero: gender,
             id_universidad: getUniversityID(),
             identificador_unah: getUNAHIdentifier(),
-            carrera : getCareer(),
+            id_carrera_unah: getCareer(),
             correo: email,
             contrasena: password,
             codigo_recibo: getReceiptCode(),
@@ -462,7 +466,6 @@ const Register = () => {
                 if (response.error.statusCode === 500) {
                     setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. ¡Gracias por tu paciencia!");
                     setShowModal(true);
-
                 }
                 return;
             }
@@ -481,7 +484,7 @@ const Register = () => {
     if (sending) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <Loader />
+                <Loader isLight={true}/>
             </div>
         );
     }
@@ -701,7 +704,7 @@ const Register = () => {
                                                 />
                                                 <datalist id="carreers">
                                                     {carrers.map((carreer) => (
-                                                        <option key={carreer.id} value={carreer.name} />
+                                                        <option key={carreer.id_carrera_unah} value={carreer.carrera_unah} />
                                                     ))}
                                                 </datalist>
                                             </div>
@@ -852,6 +855,8 @@ const Register = () => {
                                             <Image
                                                 src={preview}
                                                 alt="Vista previa del recibo"
+                                                width={400}
+                                                height={100}
                                                 className="max-w-full h-auto rounded-lg"
                                             />
                                         </div>
@@ -910,16 +915,16 @@ const Register = () => {
                         Iniciar Sesión
                     </Link>
                 </p>
+                {showModal && (
+                    <ModalWarning
+                        title={modalMessage}
+                        setIsOpen={setShowModal}
+                        isOpen={showModal}
+                    />
+                )}
             </form>
 
             {/* Modal de informacion */}
-            {showModal && (
-                <ModalWarning
-                    title={modalMessage}
-                    setIsOpen={setShowModal}
-                    isOpen={showModal}
-                />
-            )}
         </>
     );
 };

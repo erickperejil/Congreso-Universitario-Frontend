@@ -36,6 +36,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
             layout="fill"
             objectFit="contain"
             className="rounded-md border border-gray-300"
+            width={500}
+            height={500}
           />
         </div>
 

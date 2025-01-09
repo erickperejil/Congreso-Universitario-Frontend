@@ -7,6 +7,7 @@ import Button from "@/components/Button";
 import InputForm from "@/components/InputForm";
 import InputFields from "@/components/InputCodeForm";
 import SuccessScreen from "@/components/SuccesScreenForms";
+import ModalWarning from "@/components/ModalWarning";
 
 import { validateConfirmPassword, validateEmailForgotPassword, validatePassword } from "@/utils/registerFormValidators";
 import { sendCodeToResetPasswordF, sendEmailToResetPasswordF, sendNewPasswordF } from "./actions";
@@ -20,6 +21,8 @@ export default function ForgotPassword() {
   const [showInputNewPassword, setShowInputNewPssword] = useState(false);
   const [sending, setSending] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   /* estados de inputs */
   const [email, setEmail] = useState("");
@@ -93,10 +96,8 @@ export default function ForgotPassword() {
       setShowInputEmail(false);
       setShowInputCode(true);
     } catch {
-      setErrors((prev) => ({
-        ...prev,
-        general: "Ocurrió un error al enviar el código. Por favor, intenta de nuevo."
-      }))
+      setModalMessage("Ocurrió un error al enviar el código. Por favor, intenta de nuevo.")
+      setShowModal(true)
       console.error("Ocurrio problema al enviar codigo al correo FP")
     } finally {
       setSending(false);
@@ -151,7 +152,7 @@ export default function ForgotPassword() {
     try {
       // Envía la petición para verificar el código
       const response = await sendCodeToResetPasswordF(email, Number(code));
-      if ('error' in response) {
+      if (response.error) {
         console.error('Error al verificar el código:', response.error);
         setErrors((prev) => ({
           ...prev,
@@ -165,10 +166,8 @@ export default function ForgotPassword() {
 
     } catch (error) {
       console.error('Error inesperado:', error);
-      setErrors((prev) => ({
-        ...prev,
-        code: "Ocurrió un error al verificar el código. Por favor, intenta de nuevo."
-      }));
+      setModalMessage("Ocurrió un error al verificar el código. Por favor, intenta de nuevo.")
+      setShowModal(true)
     } finally {
       setSending(false);
     }
@@ -206,10 +205,8 @@ export default function ForgotPassword() {
       setShowInputNewPssword(false);
       setFinished(true)
     } catch {
-      setErrors((prev) => ({
-        ...prev,
-        general: "Ocurrió un error al enviar la nueva contraseña. Por favor, intenta de nuevo."
-      }))
+      setModalMessage("Ocurrió un error al enviar la nueva contraseña. Por favor, intenta de nuevo.")
+      setShowModal(true)
       console.error("Ocurrio problema al enviar nueva contrasena FP")
     } finally {
       setSending(false);
@@ -333,6 +330,15 @@ export default function ForgotPassword() {
           redirectionRoute="/login"
           router={router}
         />
+      )}
+
+      {showModal && (
+        <ModalWarning
+          title={modalMessage}
+          isOpen={showModal}
+          setIsOpen={setShowModal}  
+        />
+
       )}
     </>
   )

@@ -115,7 +115,7 @@ export function validateCareer(careers: Career[], careerInput: string): string {
     }
 
     // Verifica si alguna carrera coincide con el valor ingresado
-    const isValid = careers.some((career) => career.name === careerInput);
+    const isValid = careers.some((career) => career.carrera_unah === careerInput);
 
     if (isValid) {
         return ""; // Sin errores si la carrera es válida

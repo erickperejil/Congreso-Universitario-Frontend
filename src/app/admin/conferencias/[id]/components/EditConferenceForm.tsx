@@ -395,6 +395,8 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                                             layout="fill"  // Se ajusta automáticamente a la caja del contenedor
                                             objectFit="cover"  // Asegura que la imagen se ajuste a la caja sin distorsionarse
                                             className="w-full h-full object-cover"
+                                            width={500}
+                                            height={500}
                                         />
                                     </div>
                                 ) : (
@@ -417,6 +419,8 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                                             layout="fill"  // Se ajusta automáticamente a la caja del contenedor
                                             objectFit="cover"  // Asegura que la imagen se ajuste a la caja sin distorsionarse
                                             className="w-full h-full object-cover"
+                                            width={500}
+                                            height={500}
                                         />
                                     </div>
                                 ) : (

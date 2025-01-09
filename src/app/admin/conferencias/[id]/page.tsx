@@ -3,12 +3,10 @@
 import ConferenciaForm from "./components/EditConferenceForm";
 import { useSearchParams } from 'next/navigation';
 import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 
 const EditarConferenciaPage: React.FC = () => {
   // Usar useParams para obtener el ID desde la URL
   const { id } = useParams();
-  const router = useRouter();
 
   const searchParams = useSearchParams();
   const visualizar = searchParams.get('visualizar');

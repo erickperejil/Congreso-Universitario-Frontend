@@ -52,7 +52,7 @@ const ConferenciaComponent = ({
 
   return (
     <div
-      className={`w-full border flex flex-col mb-12 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}
+      className={`w-full border flex flex-col mb-6 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}
     >
       <div
         className={`w-full h-14 flex items-center text-2xl p-3 font-bold montserrat-font ${customStyles?.header || ""}`}
@@ -180,7 +180,7 @@ export default function Cronograma({
   }, [diaSeleccionado, fetchPrompt, idUsuario]);
 
   return (
-    <div className="my-16 w-full flex flex-col items-center select-none">
+    <div className="mt-16 w-full flex flex-col items-center select-none">
       <h2 className={`sm:text-6xl text-5xl mb-10 ${titleStyles || ""}`}>
         Conferencias
       </h2>
@@ -213,7 +213,7 @@ export default function Cronograma({
 
       <div id="conferencias" className="md:w-4/6 w-11/12">
         {loading ? (
-          <div className="mt-10 h-full w-full flex justify-center"><Loader/></div>
+          <div className="mt-10 h-full w-full flex justify-center"><Loader isLight={true}/></div>
         ) : (
           conferencias.map((conferencia) => (
             <ConferenciaComponent
