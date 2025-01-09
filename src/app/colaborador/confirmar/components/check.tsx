@@ -1,25 +1,136 @@
-'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const CheckComponent = () => {
-  const [selectedConference, setSelectedConference] = useState<string | null>(null);
+  const [conferences, setConferences] = useState<{ id_conferencia: number; nombre: string }[]>([]);
+  const [selectedConference, setSelectedConference] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  
+  const [showBackButton, setShowBackButton] = useState(false);
+
+  useEffect(() => {
+    const fetchConferences = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const requestData = { fecha: today };
+
+      console.log('Datos enviados al backend:', requestData);
+
+      try {
+        const response = await fetch('https://backend-congreso.vercel.app/conferencias/fecha', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
+        });
+
+        const data = await response.json();
+        console.log('Respuesta del backend:', data);
+        setConferences(data.conferencias || []);
+      } catch (error) {
+        console.error('Error fetching conferences:', error);
+      }
+    };
+
+    fetchConferences();
+  }, []);
 
   const handleConferenceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedConference(event.target.value);
+    setSelectedConference(Number(event.target.value));
   };
 
-  const handleButtonClick = (type: 'entrada' | 'salida') => {
-    const currentTimestamp = new Date().toISOString();
-    setModalMessage(`Hora ${type} guardada exitosamente: ${currentTimestamp}`);
+  const handleButtonClick = async (type: 'entrada' | 'salida') => {
+    if (!selectedConference) {
+      setModalMessage('Por favor selecciona una conferencia antes de continuar.');
+      setIsModalOpen(true);
+      setShowBackButton(false);
+      return;
+    }
+
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    const currentTime = currentDate.toTimeString().split(' ')[0];
+    const timestamp = `${formattedDate} ${currentTime}`;
+
+    const requestData = {
+      idUsuario: '1',
+      idConferencia: selectedConference.toString(),
+      ...(type === 'entrada' ? { horaEntrada: timestamp } : { horaSalida: timestamp }),
+    };
+
+    console.log(`Datos enviados al backend para hora ${type}:`, requestData);
+
+    try {
+      const url =
+        type === 'entrada'
+          ? 'https://backend-congreso.vercel.app/usuario/asistencia/hora/entrada'
+          : 'https://backend-congreso.vercel.app/usuario/asistencia/hora/salida';
+
+      const method = type === 'entrada' ? 'POST' : 'PUT';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const data = await response.json();
+      console.log(`Respuesta del backend para hora ${type}:`, data);
+
+      if (data.result?.codigo === 1) {
+        setModalMessage(
+          type === 'entrada'
+            ? 'Hora de entrada registrada con éxito.'
+            : 'Hora de salida registrada con éxito.'
+        );
+        setShowBackButton(true);
+      } else {
+        let errorMessage = '';
+        switch (data.result?.codigo) {
+          case 2:
+            errorMessage = 'Error: La conferencia no existe.';
+            break;
+          case 3:
+            errorMessage =
+              type === 'entrada'
+                ? 'Error: Usuario no existente.'
+                : 'Error: Usuario no existente o no validado.';
+            break;
+          case 4:
+            errorMessage = 'Error: Usuario no inscrito en la conferencia.';
+            break;
+          case 5:
+            errorMessage =
+              type === 'entrada'
+                ? 'Error: Usuario no inscrito en la conferencia.'
+                : 'Error: El usuario no ha registrado una hora de entrada a esta conferencia.';
+            break;
+          case 6:
+            errorMessage =
+              'Advertencia: Menos de 20 minutos de estadía en la conferencia, no se valida la asistencia.';
+            break;
+          default:
+            errorMessage = 'Error inesperado. Intenta nuevamente.';
+        }
+        setModalMessage(errorMessage);
+        setShowBackButton(false);
+      }
+    } catch (error) {
+      console.error(`Error registrando hora ${type}:`, error);
+      setModalMessage('Error de conexión con el servidor.');
+      setShowBackButton(false);
+    }
+
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    window.location.href ='http://localhost:3000/colaborador/escaner'; // Navegar a la página principal
+  };
+
+  const navigateToMainPage = () => {
+    window.location.href = 'http://localhost:3000/colaborador/escaner';
   };
 
   return (
@@ -38,11 +149,11 @@ const CheckComponent = () => {
           <option value="" disabled>
             Selecciona una conferencia
           </option>
-          <option value="Conferencia 1">Conferencia 1</option>
-          <option value="Conferencia 2">Conferencia 2</option>
-          <option value="Conferencia 3">Conferencia 3</option>
-          <option value="Conferencia 4">Conferencia 4</option>
-          <option value="Conferencia 5">Conferencia 5</option>
+          {conferences.map((conference) => (
+            <option key={conference.id_conferencia} value={conference.id_conferencia}>
+              {conference.nombre}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -55,7 +166,7 @@ const CheckComponent = () => {
       </button>
       <button
         onClick={() => handleButtonClick('salida')}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+        className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
       >
         Hora Salida
       </button>
@@ -67,10 +178,18 @@ const CheckComponent = () => {
             <p className="mb-4">{modalMessage}</p>
             <button
               onClick={closeModal}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md mt-4"
             >
-              Volver a la página principal
+              Cerrar Modal
             </button>
+            {showBackButton && (
+              <button
+                onClick={navigateToMainPage}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md mt-4"
+              >
+                Volver a la página principal
+              </button>
+            )}
           </div>
         </div>
       )}
