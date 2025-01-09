@@ -1,7 +1,7 @@
 import React, { useState, useRef,useEffect } from "react";
 import Image from 'next/image';
 import { crearConferencia } from "@/services/conferencias/conferencia";
-import {CreateConferencia } from "@/interfaces/conferencias";
+import {CrearConferencia} from "@/interfaces/conferencias";
 import Modal from "./modal";
 import SubirPdf from "./subirArchivo";
 import UploadModal from "./subirFoto";
@@ -110,12 +110,12 @@ const ConferenciaForm: React.FC = () => {
       const horaFinalConvertida = combinarFechaYHora(fecha_conferencia, hora_final); // DD/MM/YYYY HH:mm
   
       // Creamos el objeto para enviar al backend
-      const newProduct: CreateConferencia = {
-        nombre: nombre_conferencia,
+      const newProduct: CrearConferencia = {
+        nombre_conferencia,
         nombres_ponente,
         apellidos_ponente,
         descripcion_ponente,
-        img_ponente: mainImage || "",
+        img_perfil_ponente: mainImage || "",
         img_conferecia: galleryImages || "",
         direccion,
         fecha_conferencia: fechaConvertida,
@@ -323,7 +323,7 @@ const ConferenciaForm: React.FC = () => {
               {mainImage ? (
                 <Image src={mainImage} alt="Main Preview" width={250} height={250} className="mx-auto" style={{ width: 'auto', height: 'auto' }}/>
               ) : (
-                <p>Click para cargar la imagen</p>
+                <p>Click para subir una imagen</p>
                 
               )}
             
@@ -357,7 +357,7 @@ const ConferenciaForm: React.FC = () => {
                     </div>
                   </div>
                 ) : (
-                  <p>No images to display</p>
+                  <p>Click para subir una imagen</p>
                 )}
 
             </div>
