@@ -111,11 +111,11 @@ const ConferenciaForm: React.FC = () => {
   
       // Creamos el objeto para enviar al backend
       const newProduct: CreateConferencia = {
-        nombre_conferencia,
+        nombre: nombre_conferencia,
         nombres_ponente,
         apellidos_ponente,
         descripcion_ponente,
-        img_perfil_ponente: mainImage || "",
+        img_ponente: mainImage || "",
         img_conferecia: galleryImages || "",
         direccion,
         fecha_conferencia: fechaConvertida,

@@ -1,8 +1,11 @@
+'use client';
+
 import { useState, useEffect, JSX } from "react";
 import { FaEdit, FaSearch, FaEye, FaPaperPlane } from "react-icons/fa";
 import { obtenerUsuarios } from "@/services/participantes/participantes"; // Importa el servicio
 import { Participantes } from "@/interfaces/participantes";
 import { useRouter } from "next/navigation";
+import Loader from "@/components/Loading";
 
 const TableComponent = () => {
   const [usuarios, setUsuarios] = useState<Participantes[]>([]);
@@ -75,8 +78,12 @@ const TableComponent = () => {
   };
 
   if (loading) {
-    return <p className="text-center">Cargando...</p>;
-  }
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <Loader />
+        </div>
+    );
+}
 
   if (error) {
     return <p className="text-center text-red-500">{error}</p>;

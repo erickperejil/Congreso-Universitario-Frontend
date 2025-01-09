@@ -153,3 +153,16 @@ body {
     transform: translateX(0);
   }
 }
+
+input:-webkit-autofill {
+  background-color: transparent !important; /* Fondo transparente */
+  color: white !important; /* Mantén el color del texto */
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input:-webkit-autofill::first-line {
+  font-size: inherit;
+  font-family: inherit;
+  color: white;
+}
+

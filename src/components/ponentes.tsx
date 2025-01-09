@@ -47,7 +47,7 @@ export default function PonentesComponente() {
         {ponentes.map((ponente, index) => (
           <div
             key={index}
-            className="relative group overflow-hidden rounded-lg shadow-lg"
+            className="relative group overflow-hidden rounded-lg shadow-lg "
           >
             {/* Imagen */}
             <Image

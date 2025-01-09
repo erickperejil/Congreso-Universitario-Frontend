@@ -40,7 +40,7 @@ export default function MyInscriptions() {
   if (isLoading) {
     return (
       <div className="h-screen w-full flex justify-center items-center">
-        <Loader/>
+        <Loader />
       </div>
     );
   }
@@ -56,77 +56,77 @@ export default function MyInscriptions() {
   if (idUsuario === null) {
     return (
       <div className="h-screen w-full flex justify-center items-center">
-        <Loader/>
+        <Loader />
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-full overflow-y-scroll flex flex-col">
-      <h2 className="md:w-4/6 w-11/12 mx-auto text-3xl mt-10">
-        Mis conferencias
-      </h2>
-
-      <div className="md:w-4/6 w-11/12 h-40 mx-auto flex flex-col">
-        <div className="relative mt-10 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
-          <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
-            {asistenciasInfo.cantidad_asistencias}/
-            {asistenciasInfo.cantidad_total_conferencias}
-          </h2>
-          <motion.div
-          className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
-          initial={{ width: "0%" }}
-          animate={{ width: `${
-            asistenciasInfo.cantidad_total_conferencias > 0
-              ? (asistenciasInfo.cantidad_asistencias /
-                  asistenciasInfo.cantidad_total_conferencias) *
-                100
-              : 0
-          }%` }} 
-          transition={{ duration: 2, ease: "easeInOut" }} 
-         ></motion.div>
-          {/* <div
-            className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
-            style={{
-              width: `${
-                asistenciasInfo.cantidad_total_conferencias > 0
-                  ? (asistenciasInfo.cantidad_asistencias /
+    <div>
+      <h2 className="text-3xl text-black border-b-[1px] border-gray-300 pb-1 mb-2">Mis Conferencias</h2>
+      <div className="h-screen w-full overflow-y-scroll flex flex-col">
+        <div className="md:w-4/6 w-11/12 h-40 mx-auto flex flex-col">
+          <div className="relative mt-10 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
+            <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
+              {asistenciasInfo.cantidad_asistencias}/
+              {asistenciasInfo.cantidad_total_conferencias}
+            </h2>
+            <motion.div
+              className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
+              initial={{ width: "0%" }}
+              animate={{
+                width: `${asistenciasInfo.cantidad_total_conferencias > 0
+                    ? (asistenciasInfo.cantidad_asistencias /
                       asistenciasInfo.cantidad_total_conferencias) *
                     100
-                  : 0
-              }%`,
-            }}
-          ></div> */}
+                    : 0
+                  }%`
+              }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+            ></motion.div>
+            {/* <div
+              className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
+              style={{
+                width: `${
+                  asistenciasInfo.cantidad_total_conferencias > 0
+                    ? (asistenciasInfo.cantidad_asistencias /
+                        asistenciasInfo.cantidad_total_conferencias) *
+                      100
+                    : 0
+                }%`,
+              }}
+            ></div> */}
 
-        </div>
+          </div>
 
-        <div>
-          <h2 className="montserrat-font mt-3">
-            Necesitas asistir a {asistenciasInfo.cantidad_total_conferencias}{" "}
-            conferencias para obtener tu certificado
-          </h2>
+          <div>
+            <h2 className="montserrat-font mt-3">
+              Necesitas asistir a {asistenciasInfo.cantidad_total_conferencias}{" "}
+              conferencias para obtener tu certificado
+            </h2>
+          </div>
         </div>
+        <Cronograma
+          fetchPrompt="usuario"
+          idUsuario={idUsuario}
+          customStyles={{
+            container: "border-[#101017] shadow-md shadow-slate-700",
+            header: "bg-[#101017] text-slate-100",
+            button: "border-slate-800 text-slate-800 hidden",
+            imageContainer: "border-blue-400 border-b-transparent",
+            ponente: "border-b-blue-200 border-x-blue-200 border-t-transparent montserrat-font",
+            content: "border-transparent",
+            datosimportantes: "text-slate-900 montserrat-font"
+          }}
+          dayButtonStyles={{
+            default: "text-[#101017] border-[#101017] hidden",
+            selected: "bg-[#101017] text-slate-100 hidden",
+            hover: "hover:text-[#101017] hidden",
+          }}
+          titleStyles="hidden"
+          subtitleStyles="hidden"
+        />
       </div>
-      <Cronograma
-        fetchPrompt="usuario"
-        idUsuario={idUsuario}
-        customStyles={{
-          container: "border-[#101017] shadow-md shadow-slate-700",
-          header: "bg-[#101017] text-slate-100",
-          button: "border-slate-800 text-slate-800 hidden",
-          imageContainer: "border-blue-400 border-b-transparent",
-          ponente: "border-b-blue-200 border-x-blue-200 border-t-transparent montserrat-font",
-          content: "border-transparent",
-          datosimportantes: "text-slate-900 montserrat-font"
-        }}
-        dayButtonStyles={{
-          default: "text-[#101017] border-[#101017] hidden",
-          selected: "bg-[#101017] text-slate-100 hidden",
-          hover: "hover:text-[#101017] hidden",
-        }}
-        titleStyles="hidden"
-        subtitleStyles="hidden"
-      />
     </div>
   );
 }

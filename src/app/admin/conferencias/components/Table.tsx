@@ -5,6 +5,7 @@ import { FaEdit, FaSearch, FaEye, FaFolderMinus } from "react-icons/fa";
 import { eliminarConferencia, obtenerConferencias } from "@/services/conferencias/conferencia";
 import { Conferencia } from "@/interfaces/conferencias";
 import { useRouter } from "next/navigation";
+import Loader from "@/components/Loading";
 
 const TableComponent = () => {
   const router = useRouter();
@@ -25,7 +26,7 @@ const TableComponent = () => {
         setFilteredData(data);
         setActions(data.map(() => "Enviar"));
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         setError("Error al cargar los conferencias.");
       } finally {
@@ -75,8 +76,8 @@ const TableComponent = () => {
       console.error("No se pudo eliminar la conferencia:", error);
     }
   };
-  
-  
+
+
   // const handleActionChange = (index: number) => {
   //   setActions((prev) => {
   //     const updatedActions = [...prev];
@@ -86,7 +87,11 @@ const TableComponent = () => {
   // };
 
   if (loading) {
-    return <p className="text-center">Cargando...</p>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
   }
 
   if (error) {
@@ -94,9 +99,10 @@ const TableComponent = () => {
   }
 
   return (
-    <div className="overflow-x-auto p-4">
+    <div className="overflow-x-auto">
+      <h2 className="text-3xl mb-6 text-black border-b-[1px] border-gray-300 pb-1">Conferencias</h2>
+
       <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
-        <h1 className="text-lg font-bold">Conferencias</h1>
         <div className="flex items-center w-full sm:w-1/3 bg-gray-100 rounded-full px-4 py-1">
           <input
             type="text"

@@ -29,7 +29,7 @@ export default function Nav({ options }: NavProps) {
             as="nav"
             className="h-14 px-4 text-sm fixed top-2 z-10 w-[95%] left-1/2 transform -translate-x-1/2 bg-[#000]/50 backdrop-blur-md text-white rounded-full border border-gray-900 shadow-lg"
         >
-            {({ open, close }) => (
+            {({ close }) => (
                 <>
                     <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
                         <div className="relative flex h-14 items-center justify-between">

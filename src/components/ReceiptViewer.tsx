@@ -44,6 +44,8 @@ const ReciboViewer = ({ recibo }: { recibo: string }) => {
                 alt="UserRecibo Enlarged"
                 layout="fill"
                 objectFit="contain"
+                width={64}
+                height={64}
               />
             </div>
           </div>

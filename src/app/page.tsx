@@ -38,13 +38,9 @@ export default function Home() {
 
   const navbarOptions = [
     { name: "Inicio", icon: "home", link: "#inicio" },
-    { name: "Ponentes", icon: "group", link: "#ponentes" },
     { name: "Conferencias", icon: "import_contacts", link: "#conferencias" },
+    { name: "Ponentes", icon: "group", link: "#ponentes" },
   ];
-
-  const handleDownload = () => {
-    console.log("Cronograma descargado");
-  };
 
   return (
     <div className="flex flex-col justify-center bg-[#101017] text-white font-extralight w-full">
@@ -86,16 +82,16 @@ export default function Home() {
             className="rounded-lg w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
           />
           <div className="flex flex-col gap-8 text-center md:text-left text-3xl md:text-6xl leading-none">
-            <h2>Conoce nuestro cronograma de conferencias</h2>
+            <h2>Sé parte de las conferencias y preparate para el futuro</h2>
             <Button
-              text="Descargar Cronograma"
-              action={handleDownload}
+              text="Registrarme ahora"
+              action={() => router.push("/register")}
               variant="primary"
               styleType="outlined"
               className="w-full md:w-max"
             >
               <span className="material-symbols-outlined">
-                download
+                account_circle
               </span>
             </Button>
           </div>
@@ -104,26 +100,26 @@ export default function Home() {
         <div className="w-full min-h-screen flex flex-col bg-[101017]">
           <div className="bg-[101017] flex-grow w-full mt-10">
             <div className="container flex flex-col gap-10 mx-auto px-4">
-              <section className="mt-12 intersection-animate">
+              <section className="intersection-animate">
                 <div>
                   <Carousel></Carousel>
                 </div>
               </section>
-              <section id="ponentes" className="pt-20 intersection-animate">
+              <section id="conferencias" className="intersection-animate">
+                <Cronograma></Cronograma>
+              </section>
+              <section id="ponentes" className="intersection-animate pt-16">
                 <div className="flex justify-center">
                   <Ponentes></Ponentes>
                 </div>
                 <div></div>
-              </section>
-              <section id="conferencias" className="intersection-animate">
-                <Cronograma></Cronograma>
               </section>
             </div>
           </div>
         </div>
       </main>
 
-      <footer className="text-center py-4">
+      <footer className="text-center py-4 bg-[url(/img/bg/sol.webp)] bg-cover bg-center bg-no-repeat mt-12">
         <p>UNAH 2025</p>
         <ul className="list-none">
           <li>

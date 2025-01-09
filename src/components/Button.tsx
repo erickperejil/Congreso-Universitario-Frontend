@@ -1,8 +1,10 @@
 'use client'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-interface PrimaryButtonProps {
+
+interface PrimaryButtonProps  {
     text: string;
-    action: () => void;
+    action: (e? : any) => void | Promise<void> | any;
     children?: React.ReactNode;
     className?: string;
     variant: "primary" | "secondary" | "danger" | "success" | "warning" | "info" | "light" | "dark";

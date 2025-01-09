@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
-        <link rel="icon" href="/public/logos/logo_cit_blanco.ico" />
+        <link rel="icon" href={favicon} />
         {/* Link de Google Icons */}
         <link
           rel="stylesheet"

@@ -11,9 +11,9 @@ import Image from 'next/image';
 export default function HomeLayout({ navOptions, children }: { navOptions: { name: string; icon: string; link: string; }[]; children: ReactNode }) {
     const router = useRouter();
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const [optionSelected, setOptionSelected] = useState(
-        sessionStorage.getItem("optionSelected") || "Mi Perfil"
+    const [optionSelected, setOptionSelected] = useState<string>(
     );
+    /* sessionStorage.getItem("optionSelected") || "Mi Perfil" */
 
     const handleOptionChange = (newOption:string) => {
         setOptionSelected(newOption);

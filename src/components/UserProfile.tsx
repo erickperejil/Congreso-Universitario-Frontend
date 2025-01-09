@@ -264,6 +264,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                                 alt="UserQR"
                                 layout="fill"
                                 objectFit="cover"
+                                width={64}
+                                height={64}
                             />
                         </div>
                     </div>
