@@ -11,15 +11,21 @@ import Image from 'next/image';
 export default function HomeLayout({ navOptions, children }: { navOptions: { name: string; icon: string; link: string; }[]; children: ReactNode }) {
     const router = useRouter();
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const [optionSelected, setOptionSelected] = useState<string>(
-    );
-    /* sessionStorage.getItem("optionSelected") || "Mi Perfil" */
+    const [optionSelected, setOptionSelected] = useState("Mi Perfil");
 
-    const handleOptionChange = (newOption:string) => {
+    useEffect(() => {
+        // Esto solo se ejecuta en el cliente
+        const storedOption = sessionStorage.getItem("optionSelected");
+        if (storedOption) {
+            setOptionSelected(storedOption);
+        }
+    }, []); // Solo se ejecuta una vez, cuando el componente se monta
+
+    const handleOptionChange = (newOption: string) => {
         setOptionSelected(newOption);
         sessionStorage.setItem("optionSelected", newOption);
         setSidebarOpen(false);
-      };
+    };
 
     // Manejador para cerrar el sidebar al hacer clic fuera
     const handleClickOutside = (event: MouseEvent) => {
