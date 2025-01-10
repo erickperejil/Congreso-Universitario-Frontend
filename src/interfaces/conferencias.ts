@@ -28,6 +28,7 @@ export interface CreateConferencia {
     fecha: string;
     cupos_disponibles: number;
     finalizado: boolean;
+    inscrito: boolean;
   }
 
   export interface ConferenciaCompleta {

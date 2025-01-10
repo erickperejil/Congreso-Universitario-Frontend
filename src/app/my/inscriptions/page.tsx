@@ -5,13 +5,11 @@ import Cookies from "js-cookie";
 import { fetchAsistenciasByUsuarioId } from "@/services/user";
 import { motion } from "framer-motion";
 import Loader from "@/components/Loading";
+import { Asistencias } from "@/interfaces/participantes";
 
 export default function MyInscriptions() {
   const [idUsuario, setIdUsuario] = useState<number | null>(null);
-  const [asistenciasInfo, setAsistenciasInfo] = useState<{
-    cantidad_asistencias: number;
-    cantidad_total_conferencias: number;
-  } | null>(null);
+  const [asistenciasInfo, setAsistenciasInfo] = useState< Asistencias| null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -70,7 +68,7 @@ export default function MyInscriptions() {
       <div className="md:w-4/6 w-11/12 h-40 mx-auto flex flex-col">
         <div className="relative mt-10 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
           <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
-            {asistenciasInfo.cantidad_asistencias}/
+            {asistenciasInfo.cantidad_asistidas}/
             {asistenciasInfo.cantidad_total_conferencias}
           </h2>
           <motion.div
@@ -78,7 +76,7 @@ export default function MyInscriptions() {
           initial={{ width: "0%" }}
           animate={{ width: `${
             asistenciasInfo.cantidad_total_conferencias > 0
-              ? (asistenciasInfo.cantidad_asistencias /
+              ? (asistenciasInfo.cantidad_asistidas /
                   asistenciasInfo.cantidad_total_conferencias) *
                 100
               : 0

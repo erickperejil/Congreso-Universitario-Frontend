@@ -37,4 +37,20 @@ export const fetchConferenciasPorUsuario = async (idUsuario: number, dia: string
   return data.conferencias;
 };
 
+export const fetchConferenciasPorUsuarioGeneral = async (idUsuario: number, fecha: string | null): Promise<Conferencia[]> => {
+  const response = await fetch("https://backend-congreso.vercel.app/conferencias/usuario/general", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ idUsuario, fecha }),
+  });
 
+  if (!response.ok) {
+    throw new Error("Error al obtener las conferencias del usuario");
+  }
+
+  const data = await response.json();
+  console.log("data de usuario general", data);
+  return data.conferencias;
+};
