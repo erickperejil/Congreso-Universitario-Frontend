@@ -6,11 +6,37 @@ import { fetchAsistenciasByUsuarioId } from "@/services/user";
 import { motion } from "framer-motion";
 import Loader from "@/components/Loading";
 import { Asistencias } from "@/interfaces/participantes";
+import { cancelarInscripcionConferencia, inscribirseEnConferencia } from "@/services/conferencias/conferencia";
+import { Conferencia } from "@/interfaces/conferencias";
 
 export default function MyInscriptions() {
-  const [idUsuario, setIdUsuario] = useState<number | null>(null);
+  const [idUsuario, setIdUsuario] = useState<number>(0);
   const [asistenciasInfo, setAsistenciasInfo] = useState< Asistencias| null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const handleInscripcion = async (conferencia: Conferencia) => {
+      try {
+        let response;
+        if (conferencia.inscrito) {
+          console.log(`Cancelando inscripción para la conferencia: ${conferencia.id_conferencia}`);
+          response = await cancelarInscripcionConferencia(idUsuario, conferencia.id_conferencia);
+        } else {
+          console.log(`Inscribiéndose a la conferencia: ${conferencia.id_conferencia}`);
+          response = await inscribirseEnConferencia(idUsuario, conferencia.id_conferencia);
+        }
+    
+        if (response.codigoResultado === -1) {
+          setErrorMessage(response.message || "Ha ocurrido un error.");
+        } else {
+          console.log("Acción exitosa:", response);
+        }
+      } catch (error) {
+        console.error("Error durante la acción (inscribir o cancelar):", error);
+        setErrorMessage("Error inesperado. Por favor intenta nuevamente."); // Mensaje de error genérico
+      }
+    };
+    
 
   useEffect(() => {
     const token = Cookies.get("authToken");
@@ -44,7 +70,7 @@ export default function MyInscriptions() {
     );
   }
 
-  if (idUsuario === null || asistenciasInfo === null) {
+  if (idUsuario === null || asistenciasInfo === null || idUsuario == 0) {
     return (
       <div className="h-screen w-full flex justify-center items-center">
         <p>Error al cargar los datos del usuario o las asistencias.</p>
@@ -52,7 +78,7 @@ export default function MyInscriptions() {
     );
   }
 
-  if (idUsuario === null) {
+  if (idUsuario === null || idUsuario === 0) {
     return (
       <div className="h-screen w-full flex justify-center items-center">
         <Loader/>
@@ -112,7 +138,7 @@ export default function MyInscriptions() {
         customStyles={{
           container: "border-[#101017] shadow-md shadow-slate-700",
           header: "bg-[#101017] text-slate-100",
-          button: "border-slate-800 text-slate-800 hidden",
+          button: "border-slate-800 text-slate-800",
           imageContainer: "border-blue-400 border-b-transparent",
           ponente: "border-b-blue-200 border-x-blue-200 border-t-transparent montserrat-font",
           content: "border-transparent",
@@ -125,6 +151,7 @@ export default function MyInscriptions() {
         }}
         titleStyles="hidden"
         subtitleStyles="hidden"
+        onInscribirse={handleInscripcion}
       />
       <Cronograma
         fetchPrompt="usuario"
