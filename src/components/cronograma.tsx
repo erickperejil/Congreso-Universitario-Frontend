@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Conferencia } from "@/interfaces/conferencias";
 import {
   fetchConferencias,
+  fetchConferenciasInscritasPorUsuario,
   fetchConferenciasPorUsuario,
   fetchConferenciasPorUsuarioGeneral,
 } from "@/services/conferencias";
@@ -170,7 +171,7 @@ const ConferenciaComponent = ({
 };
 
 interface CronogramaProps {
-  fetchPrompt?: "usuario" | "todos" | "general";
+  fetchPrompt?: "usuario" | "todos" | "general" | "inscritas";
   idUsuario?: number;
   customStyles?: ConferenciaComponentProps["customStyles"];
   dayButtonStyles?: {
@@ -215,7 +216,14 @@ export default function Cronograma({
           diaSeleccionado
         );
         setConferencias(respuesta);
-      } else {
+      } else if (fetchPrompt === "inscritas" && idUsuario !== undefined) {
+        const respuesta = await fetchConferenciasInscritasPorUsuario(
+          idUsuario,
+          diaSeleccionado
+        );
+        setConferencias(respuesta);
+      }
+      else {
         const respuesta = await fetchConferencias(diaSeleccionado);
         setConferencias(respuesta);
       }
@@ -230,11 +238,11 @@ export default function Cronograma({
   useEffect(() => {
     async function fetchGets() {
       setLoading(true);
-      console.log("id user:", idUsuario);
+      // console.log("id user:", idUsuario);
       if(idUsuario != 0){
         try {
           if (fetchPrompt === "usuario" && idUsuario !== undefined) {
-            console.log(idUsuario);
+            // console.log(idUsuario);
             const respuesta = await fetchConferenciasPorUsuario(idUsuario, null);
             console.log("conferencias de usuario", respuesta);
             setConferencias(respuesta);
@@ -244,7 +252,16 @@ export default function Cronograma({
               diaSeleccionado
             );
             setConferencias(respuesta);
-          } else {
+            
+          }
+          else if (fetchPrompt === "inscritas" && idUsuario !== undefined) {
+            const respuesta = await fetchConferenciasInscritasPorUsuario(
+              idUsuario,
+              diaSeleccionado
+            );
+            setConferencias(respuesta);
+          }
+          else {
             const respuesta = await fetchConferencias(diaSeleccionado);
             setConferencias(respuesta);
           }

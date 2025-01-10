@@ -23,6 +23,7 @@ export default function MyInscriptions() {
         // Llamar al API después de setear el ID
         (async () => {
           const data = await fetchAsistenciasByUsuarioId(payload.id_usuario);
+          console.log("asistencia", data)
           setAsistenciasInfo(data);
           setIsLoading(false);
         })();
@@ -105,6 +106,26 @@ export default function MyInscriptions() {
           </h2>
         </div>
       </div>
+      <Cronograma
+        fetchPrompt="inscritas"
+        idUsuario={idUsuario}
+        customStyles={{
+          container: "border-[#101017] shadow-md shadow-slate-700",
+          header: "bg-[#101017] text-slate-100",
+          button: "border-slate-800 text-slate-800 hidden",
+          imageContainer: "border-blue-400 border-b-transparent",
+          ponente: "border-b-blue-200 border-x-blue-200 border-t-transparent montserrat-font",
+          content: "border-transparent",
+          datosimportantes: "text-slate-900 montserrat-font"
+        }}
+        dayButtonStyles={{
+          default: "text-[#101017] border-[#101017] hidden",
+          selected: "bg-[#101017] text-slate-100 hidden",
+          hover: "hover:text-[#101017] hidden",
+        }}
+        titleStyles="hidden"
+        subtitleStyles="hidden"
+      />
       <Cronograma
         fetchPrompt="usuario"
         idUsuario={idUsuario}

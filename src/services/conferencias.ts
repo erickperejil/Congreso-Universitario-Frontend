@@ -54,3 +54,27 @@ export const fetchConferenciasPorUsuarioGeneral = async (idUsuario: number, fech
   console.log("data de usuario general", data);
   return data.conferencias;
 };
+
+export const fetchConferenciasInscritasPorUsuario = async (
+  idUsuario: number,
+  fecha: string
+): Promise<Conferencia[]> => {
+  const response = await fetch(
+    "https://backend-congreso.vercel.app/conferencias/usuario/inscritas",
+    {
+      method: "POST", // Método POST como en el ejemplo
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ idUsuario, fecha }), // Cuerpo según lo solicitado
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error al obtener las conferencias inscritas del usuario");
+  }
+
+  const data = await response.json(); // Parsear el JSON retornado
+  console.log("data de conferencias inscritas", data);
+  return data.conferencias;
+};

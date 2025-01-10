@@ -4,9 +4,12 @@ import Cronograma from "@/components/cronograma";
 import { Conferencia } from "@/interfaces/conferencias";
 import { cancelarInscripcionConferencia, inscribirseEnConferencia } from "@/services/conferencias/conferencia";
 import Cookies from "js-cookie";
+import Modal from "@/components/Modal";
 import { useState, useEffect } from "react";
 export default function Conferences() {
   const [idUsuario, setIdUsuario] = useState<number>(0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
 
   useEffect(() => {
     const token = Cookies.get("authToken");
@@ -21,23 +24,40 @@ export default function Conferences() {
     } 
   }, []);
 
-const handleInscripcion = async (conferencia : Conferencia) => {
-  try {
-    if (conferencia.inscrito) {
-      console.log(`Cancelando inscripción para la conferencia: ${conferencia.id_conferencia}`);
-      const response = await cancelarInscripcionConferencia(idUsuario, conferencia.id_conferencia);
-      console.log("Cancelación exitosa:", response);
-    } else {
-      console.log(`Inscribiéndose a la conferencia: ${conferencia.id_conferencia}`);
-      const response = await inscribirseEnConferencia(idUsuario, conferencia.id_conferencia);
-      console.log("Inscripción exitosa:", response);
+  const handleInscripcion = async (conferencia: Conferencia) => {
+    try {
+      let response;
+      if (conferencia.inscrito) {
+        console.log(`Cancelando inscripción para la conferencia: ${conferencia.id_conferencia}`);
+        response = await cancelarInscripcionConferencia(idUsuario, conferencia.id_conferencia);
+      } else {
+        console.log(`Inscribiéndose a la conferencia: ${conferencia.id_conferencia}`);
+        response = await inscribirseEnConferencia(idUsuario, conferencia.id_conferencia);
+      }
+  
+      if (response.codigoResultado === -1) {
+        setErrorMessage(response.message || "Ha ocurrido un error.");
+      } else {
+        console.log("Acción exitosa:", response);
+      }
+    } catch (error) {
+      console.error("Error durante la acción (inscribir o cancelar):", error);
+      setErrorMessage("Error inesperado. Por favor intenta nuevamente."); // Mensaje de error genérico
     }
-  } catch (error) {
-    console.error("Error durante la acción (inscribir o cancelar):", error);
-  }
-};
+  };
+  
     return (
     <div className="h-screen w-full overflow-y-scroll">
+      {errorMessage && (
+      <Modal
+        hideButtons
+        message="Error"
+        subMessage={errorMessage}
+        onClose={() => setErrorMessage(null)} // Cierra la modal al hacer clic en "Cerrar"
+        onSuccess={() => setErrorMessage(null)} // Podrías agregar acciones específicas si se requiere
+      />
+    )}
+
       <h2 className="md:w-4/6 w-11/12 mx-auto text-3xl md:mt-10 mt-14">
         Conferencias
       </h2>

@@ -141,7 +141,7 @@ export const obtenerConferencias = async (dia: string|null): Promise<Conferencia
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        console.error("Error al inscribirse en la conferencia:", error.response?.data || error.message);
+        // console.error("Error al inscribirse en la conferencia:", error.response?.data || error.message);
         throw new Error(error.response?.data?.message || "Error al inscribirse en la conferencia");
       } else {
         console.error("Error inesperado:", error);
