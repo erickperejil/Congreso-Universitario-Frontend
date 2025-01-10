@@ -127,4 +127,57 @@ export const obtenerConferencias = async (dia: string|null): Promise<Conferencia
     }
   };
 
+  export const inscribirseEnConferencia = async (id_usuario: number, id_conferencia: number) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/usuario/inscripcion/conferencia`, {
+        id_usuario,
+        id_conferencia,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      return response.data;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        // console.error("Error al inscribirse en la conferencia:", error.response?.data || error.message);
+        throw new Error(error.response?.data?.message || "Error al inscribirse en la conferencia");
+      } else {
+        console.error("Error inesperado:", error);
+        throw new Error("Error inesperado al inscribirse en la conferencia");
+      }
+    }
+  };
+  
 
+  export const cancelarInscripcionConferencia = async (id_usuario: number, id_conferencia: number) => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/usuario/inscripcion/cancelarConferencia`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          id_usuario,
+          id_conferencia,
+        },
+      });
+  
+      return response.data;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error(
+          "Error al cancelar la inscripción de la conferencia:",
+          error.response?.data || error.message
+        );
+        throw new Error(
+          error.response?.data?.message ||
+            "Error al cancelar la inscripción de la conferencia"
+        );
+      } else {
+        console.error("Error inesperado:", error);
+        throw new Error("Error inesperado al cancelar la inscripción de la conferencia");
+      }
+    }
+  };
+  
