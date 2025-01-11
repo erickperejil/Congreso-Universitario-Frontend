@@ -150,8 +150,8 @@ export default function Home() {
       {/* Contenido principal */}
       <main className="w-4/5 mx-auto">
         {/* seccion de invitacion a descargar cronograma */}
-        <section className="w-full mt-12 xl:mt-0 xl:h-screen flex flex-col md:flex-row items-center justify-center gap-12 px-8 animate-from-right sm:flex-col-reverse">
-          <img
+        <section className="w-full mt-12 xl:mt-0 xl:h-screen flex flex-col md:flex-row items-center justify-center gap-12 px-8 animate-from-right sm:flex-col-reverse opacity-0 translate-x-[80px]">
+        <img
             src="/img/landing/promo.enc"
             alt="Cronograma del evento"
             className="rounded-lg w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
@@ -175,7 +175,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="w-full mt-20 xl:mt-0 xl:h-screen flex flex-col md:flex-row items-center justify-center gap-12 px-8 animate-from-left mb-16 xl:mb-0" id="objetivo">
+        <section className="w-full mt-20 xl:mt-0 xl:h-screen flex flex-col md:flex-row items-center justify-center gap-12 px-8 animate-from-left mb-16 xl:mb-0 opacity-0 translate-x-[-80px]" id="objetivo">
           <div className="flex flex-col gap-8 text-center md:text-left text-3xl md:text-6xl leading-none">
             <h2>
               Nuestro Objetivo

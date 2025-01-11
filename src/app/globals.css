@@ -80,7 +80,6 @@ body {
   animation: floatFromLeft 2s ease-in-out forwards; /* Animación suave y gradual */
 }
 
-
 @keyframes fadeInUp {
   0% {
     opacity: 0;
