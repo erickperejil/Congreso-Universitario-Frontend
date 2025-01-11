@@ -113,7 +113,7 @@ export default function Nav({ options }: NavProps) {
                                     key={item.name}
                                     as="a"
                                     href={item.link}
-                                    onClick={(e) => handleNavClick(e, item.link, close)} // Pasar `close` para cerrar el menú
+                                    onClick={(e) => handleNavClick(e, item.link, close)}
                                     className="text-gray-300 hover:bg-[#30303d] hover:text-[#F8B133] block px-3 py-2 rounded-md text-base font-medium flex items-center gap-1"
                                 >
                                     <span className="material-symbols-outlined">{item.icon}</span>
@@ -125,7 +125,7 @@ export default function Nav({ options }: NavProps) {
                                 variant="primary"
                                 styleType="fill"
                                 action={() => router.push("/login")}
-                                className='mt-12'
+                                className='mt-16 ml-3'
                             />
                         </div>
                     </DisclosurePanel>
