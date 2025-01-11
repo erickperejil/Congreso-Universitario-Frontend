@@ -36,10 +36,10 @@ export default function Home() {
 
   const useIntersectionAnimation = () => {
     useEffect(() => {
-      interface AnimationConfig {
-        selector: string;
-        class: string;
-      }
+      // interface AnimationConfig {
+      //   selector: string;
+      //   class: string;
+      // }
 
       const animateSections = (selector: string, animationClass: string): (() => void) => {
         const sections = document.querySelectorAll<HTMLElement>(selector);

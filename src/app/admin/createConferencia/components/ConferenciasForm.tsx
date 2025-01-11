@@ -392,7 +392,7 @@ const ConferenciaForm: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700">Selecciona un ponente</label>
                 <select name="" id="" className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full" onChange={(e) => setId_ponente(Number(e.target.value))} >
                   <option value="" hidden selected>------</option>
-                  {ponentes.map((ponente, key) => (
+                  {ponentes.map((ponente) => (
                     <option key={ponente.id_ponente} value={ponente.id_ponente}>
                       {ponente.nombres}
                     </option>
