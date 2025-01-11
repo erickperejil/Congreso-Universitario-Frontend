@@ -1,12 +1,12 @@
 'use client';
 import React from 'react';
+import { useParams } from 'next/navigation';
 import Header from '../../components/header';
-import UserInfoCard from './components/info';
+import UserInfoCard from '../components/info';
 
-
-
-const ScanPage: React.FC = () => {
-  
+const HomePage: React.FC = () => {
+  const params = useParams(); // Hook para obtener los parámetros dinámicos de la URL
+  const id = Array.isArray(params?.id) ? params.id[0] : params?.id; // Aseguramos que sea un string
 
   return (
     <div className="flex flex-col min-h-screen bg-[#101017] text-white">
@@ -15,14 +15,14 @@ const ScanPage: React.FC = () => {
 
       {/* Contenido principal */}
       <main className="flex flex-col items-center justify-center flex-grow px-4">
-
         {/* Escáner QR */}
-        <div className="">
-          <UserInfoCard/>
+        <div>
+          {/* Pasamos el id como prop al componente UserInfoCard */}
+          <UserInfoCard id={id} />
         </div>
       </main>
     </div>
   );
 };
 
-export default ScanPage;
+export default HomePage;
