@@ -83,7 +83,7 @@ export default function ForgotPassword() {
     }
 
     try {
-      const response = await sendEmailToResetPasswordF(email)
+      const response = await sendEmailToResetPasswordF(email.toLowerCase());
 
       if (response.error) {
         setErrors((prev) => ({
@@ -254,7 +254,7 @@ export default function ForgotPassword() {
                 <InputFields inputRefs={inputRefs} handleInputChange={handleInputCodeChange} />
 
               </div>
-              {errors.code && <p className="text-[#F8B133] text-sm mt-3" id="error-paragraph">{errors.code}</p>}
+              {errors.code && <p className="text-[#F8B133] text-sm mt-3 text-center" id="error-paragraph">{errors.code}</p>}
             </div>
 
           )}

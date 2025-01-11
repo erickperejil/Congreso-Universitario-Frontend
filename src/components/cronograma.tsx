@@ -5,10 +5,13 @@ import Image from "next/image";
 import { Conferencia } from "@/interfaces/conferencias";
 import {
   fetchConferencias,
+  fetchConferenciasInscritasPorUsuario,
   fetchConferenciasPorUsuario,
+  fetchConferenciasPorUsuarioGeneral,
 } from "@/services/conferencias";
 import Button from "@/components/Button";
 import Loader from "./Loading";
+import Modal from "./Modal";
 
 interface ConferenciaComponentProps {
   conferencia: Conferencia;
@@ -24,13 +27,26 @@ interface ConferenciaComponentProps {
     datosimportantes?: string;
     button?: string;
   };
+  onInscribirse?: (conferencia: Conferencia) => void;
+  actualizarConferencias?: () => void;
 }
 
 const ConferenciaComponent = ({
   conferencia,
   customStyles,
+  onInscribirse,
 }: ConferenciaComponentProps) => {
   const [index, setIndex] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [cancelshowModal, setCancelShowModal] = useState(false);
+
+  const handleInscribirse = () => {
+    setShowModal(true);
+  };
+
+  const handleCancelar = () => {
+    setCancelShowModal(true)
+  };
 
   const datosFiltrados = conferencia.datosimportantes.filter(
     (dato) => dato.trim() !== ""
@@ -45,14 +61,14 @@ const ConferenciaComponent = ({
     }
   }, [datosFiltrados]);
 
-  const handleCupo = () => {
-    // router.push("/login");
-    console.log("Cronograma descargado");
-  };
+  // const handleCupo = () => {
+  //   // router.push("/login");
+  //   console.log("Cronograma descargado");
+  // };
 
   return (
     <div
-      className={`w-full border flex flex-col mb-6 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}
+      className={`w-full overflow-hidden border flex flex-col mb-6 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}
     >
       <div
         className={`w-full h-14 flex items-center text-2xl p-3 font-bold montserrat-font ${customStyles?.header || ""}`}
@@ -88,23 +104,24 @@ const ConferenciaComponent = ({
             {conferencia.titulo}
           </h2>
           <div className={`text-base flex my-3${customStyles?.lugar || ""}`}>
-          <span className="material-symbols-outlined">location_on</span>{conferencia.lugar}
+            <span className="material-symbols-outlined">location_on</span>
+            {conferencia.lugar}
           </div>
           <Button
-            text="Inscribirse"
-            action={handleCupo}
+            text={conferencia.inscrito ? "Cancelar Inscripcion" : "Inscribirse"}
+            action={conferencia.inscrito? handleCancelar :handleInscribirse }
             variant="secondary"
             styleType="outlined"
             className={`w-full md:w-max ${customStyles?.button || ""}`}
           >
-            <span className="material-symbols-outlined">how_to_reg</span>
+            <span className="material-symbols-outlined">
+              {conferencia.inscrito ? "cancel" : "how_to_reg"}
+            </span>
           </Button>
         </div>
         <div
           className={`overflow-hidden lg:w-1/4 relative p-4 pt-0 md:pt-4 cursor-pointer flex items-center`}
-          onClick={() =>
-            setIndex((prev) => (prev + 1) % datosFiltrados.length)
-          }
+          onClick={() => setIndex((prev) => (prev + 1) % datosFiltrados.length)}
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -120,12 +137,41 @@ const ConferenciaComponent = ({
           </AnimatePresence>
         </div>
       </div>
+      {showModal && (
+        <Modal
+          message="¿Deseas inscribirte en esta conferencia?"
+          subMessage={conferencia.titulo}
+          onClose={() => setShowModal(false)}
+          onSuccess={() => {
+            setShowModal(false);
+            if (onInscribirse) {
+              onInscribirse(conferencia);
+            }
+
+          }}
+          
+        />
+      )}
+      {cancelshowModal && (
+        <Modal
+          message="¿Deseas cancelar tu inscripción a esta conferencia?"
+          subMessage={conferencia.titulo}
+          onClose={() => setCancelShowModal(false)}
+          onSuccess={() => {
+            setCancelShowModal(false);
+            if (onInscribirse) {
+              onInscribirse(conferencia);
+            }
+
+          }}
+        />
+      )}
     </div>
   );
 };
 
 interface CronogramaProps {
-  fetchPrompt?: "usuario" | "todos";
+  fetchPrompt?: "usuario" | "todos" | "general" | "inscritas";
   idUsuario?: number;
   customStyles?: ConferenciaComponentProps["customStyles"];
   dayButtonStyles?: {
@@ -135,6 +181,7 @@ interface CronogramaProps {
   };
   titleStyles?: string;
   subtitleStyles?: string;
+  onInscribirse?: (conferencia: Conferencia) => void;
 }
 
 export default function Cronograma({
@@ -144,35 +191,84 @@ export default function Cronograma({
   dayButtonStyles,
   titleStyles,
   subtitleStyles,
+  onInscribirse,
 }: CronogramaProps) {
   const [diaSeleccionado, setDiaSeleccionado] = useState("24/01/2025");
   const [conferencias, setConferencias] = useState<Conferencia[]>([]);
   const [loading, setLoading] = useState(true);
 
   const dias = [
-    { fecha: "24/01/2025", label: "Lunes 27" },
-    { fecha: "25/01/2025", label: "Martes 28" },
-    { fecha: "26/01/2025", label: "Miércoles 29" },
-    { fecha: "27/01/2025", label: "Jueves 30" },
+    { fecha: "23/01/2025", label: "Jueves 23" },
+    { fecha: "24/01/2025", label: "Viernes 24" },
+    { fecha: "25/01/2025", label: "Sábado 25" },
   ];
+
+  const actualizarConferencias = async () => {
+    setLoading(true);
+    try {
+      if (fetchPrompt === "usuario" && idUsuario !== undefined) {
+        const respuesta = await fetchConferenciasPorUsuario(idUsuario, null);
+        setConferencias(respuesta);
+      } else if (fetchPrompt === "general" && idUsuario !== undefined) {
+        const respuesta = await fetchConferenciasPorUsuarioGeneral(
+          idUsuario,
+          diaSeleccionado
+        );
+        setConferencias(respuesta);
+      } else if (fetchPrompt === "inscritas" && idUsuario !== undefined) {
+        const respuesta = await fetchConferenciasInscritasPorUsuario(
+          idUsuario,
+          diaSeleccionado
+        );
+        setConferencias(respuesta);
+      }
+      else {
+        const respuesta = await fetchConferencias(diaSeleccionado);
+        setConferencias(respuesta);
+      }
+    } catch (error) {
+      console.error("Error al traer conferencias:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   useEffect(() => {
     async function fetchGets() {
       setLoading(true);
-      try {
-        if (fetchPrompt === "usuario" && idUsuario !== undefined) {
-          console.log(idUsuario);
-          const respuesta = await fetchConferenciasPorUsuario(idUsuario, null);
-          console.log("conferencias de usuario", respuesta);
-          setConferencias(respuesta);
-        } else {
-          const respuesta = await fetchConferencias(diaSeleccionado);
-          setConferencias(respuesta);
+      // console.log("id user:", idUsuario);
+      if(idUsuario != 0){
+        try {
+          if (fetchPrompt === "usuario" && idUsuario !== undefined) {
+            // console.log(idUsuario);
+            const respuesta = await fetchConferenciasPorUsuario(idUsuario, null);
+            console.log("conferencias de usuario", respuesta);
+            setConferencias(respuesta);
+          } else if (fetchPrompt === "general" && idUsuario !== undefined) {
+            const respuesta = await fetchConferenciasPorUsuarioGeneral(
+              idUsuario,
+              diaSeleccionado
+            );
+            setConferencias(respuesta);
+            
+          }
+          else if (fetchPrompt === "inscritas" && idUsuario !== undefined) {
+            const respuesta = await fetchConferenciasInscritasPorUsuario(
+              idUsuario,
+              null
+            );
+            setConferencias(respuesta);
+          }
+          else {
+            const respuesta = await fetchConferencias(diaSeleccionado);
+            setConferencias(respuesta);
+          }
+        } catch (error) {
+          console.error("Error al traer conferencias:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error al traer conferencias:", error);
-      } finally {
-        setLoading(false);
       }
     }
 
@@ -184,7 +280,7 @@ export default function Cronograma({
       <h2 className={`sm:text-6xl text-5xl mb-10 ${titleStyles || ""}`}>
         Conferencias
       </h2>
-      <div className="flex lg:w-3/5 w-full flex-nowrap justify-between overflow-x-auto">
+      <div className="flex lg:w-3/5 w-full flex-nowrap justify-between gap-1 overflow-x-auto">
         {dias.map((dia) => (
           <div
             key={dia.fecha}
@@ -213,13 +309,22 @@ export default function Cronograma({
 
       <div id="conferencias" className="md:w-4/6 w-11/12">
         {loading ? (
-          <div className="mt-10 h-full w-full flex justify-center"><Loader isLight={true}/></div>
+          <div className="mt-10 h-full w-full flex justify-center">
+            <Loader />
+          </div>
         ) : (
           conferencias.map((conferencia) => (
             <ConferenciaComponent
               key={conferencia.horario}
               conferencia={conferencia}
               customStyles={customStyles}
+              onInscribirse={async (conferencia) => {
+                if (onInscribirse) {
+                  await onInscribirse(conferencia);
+                  actualizarConferencias(); 
+                }
+              }}
+              actualizarConferencias={actualizarConferencias}
             />
           ))
         )}

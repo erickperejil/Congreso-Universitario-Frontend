@@ -11,25 +11,43 @@ import SuccessScreen from "@/components/SuccesScreenForms";
 import { verifyUser, resendVerificationEmail } from "./actionts";
 
 export default function ConfirmAccount() {
+/*   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const newParam = searchParams.get('new');
+  const isNew = newParam === 'true'; */
+
   const [email, setEmail] = useState('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [isCodeValid, setIsCodeValid] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
+  const [, setEmailLoaded] = useState(false);
 
   // Recuperar el correo almacenado en localStorage
+  /* Reenvia el correo por ejemplo cuando el usuario viene desde el login */
   useEffect(() => {
+    const storedEmail = localStorage.getItem('registerEmail');
 
-    const email = localStorage.getItem('registerEmail');
-
-    if (email) {
-      setEmail(email);
+    if (storedEmail) {
+      setEmail(storedEmail);
+      setEmailLoaded(true); // Marcar como cargado.
     } else {
       console.error('Correo no encontrado. Redirigiendo...');
       router.push('/register');
     }
-  }, []);
+  
+  }, [router]);
+
+/*   useEffect(() => {
+    // Solo ejecutar si el correo ya está cargado y el parámetro es válido
+    if (emailLoaded && !isNew && newParam !== null) {
+      console.log('Reenviando correo...');
+      handleResendEmail();
+    }
+
+    setLoading(false);
+  }, [emailLoaded, isNew, newParam]); */
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
@@ -99,11 +117,13 @@ export default function ConfirmAccount() {
   };
 
   const handleResendEmail = (): Promise<void> => {
+    console.log("correo", email);
     return resendVerificationEmail(email)
       .then((response) => {
         if ('error' in response) {
           throw new Error("Error al reenviar el correo");
         }
+        localStorage.setItem('timerEndTime', (new Date().getTime() + 10 * 60 * 1000).toString());
         setError("El correo ha sido reenviado exitosamente.");
       })
       .catch((error) => {
@@ -111,7 +131,6 @@ export default function ConfirmAccount() {
         throw error; // Lanza el error para que `catch` lo capture en `handleResendEmailF`
       });
   };
-
 
   return (
     <>
@@ -258,4 +277,3 @@ function ConfirmationScreen({
     </>
   );
 }
-

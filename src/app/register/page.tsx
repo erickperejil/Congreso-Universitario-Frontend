@@ -46,6 +46,8 @@ const Register = () => {
     const [preview, setPreview] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
+    const [loadingUnivMsg, setLoadingUnivMsg] = useState("Cargando universidades...");
+    const [loadingCareersMsg, setLoadingCareersMsg] = useState("Cargando carreras...");
 
     /* estados de inputs */
     const [firstName, setFirstName] = useState("");
@@ -59,8 +61,7 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [studentCode, setStudentCode] = useState("");
-    const [career, setCareer] = useState("");
-    const [careerId, setCareerId] = useState<number | null>(null);
+    const [careerId, setCareerId] = useState<number>(-1);
     const [receiptCode, setReceiptCode] = useState("");
     const [organizerCode, setOrganizerCode] = useState("");
     const [isStudent, setIsStudent] = useState(true);
@@ -93,7 +94,7 @@ const Register = () => {
         const getUniversitiesFromAPI = async () => {
             const response = await getUniversities();
             if (response.error) {
-                console.error("Error al obtener universidades:", response.error);
+                setLoadingUnivMsg("Error al obtener universidades, contacte al administrador");
                 return;
             }
 
@@ -106,7 +107,7 @@ const Register = () => {
         const getCareersFromAPI = async () => {
             const response = await getCareers();
             if (response.error) {
-                console.error("Error al obtener carreras:", response.error);
+                setLoadingCareersMsg("Error al obtener carreras, contacte al administrador");
                 return;
             }
 
@@ -225,20 +226,18 @@ const Register = () => {
     }
 
     function handleChangeCarreer(e: React.ChangeEvent<HTMLInputElement>): void {
-        const selectedCareer = e.target.value;
-        setCareer(selectedCareer);
+        const selectedCareer = Number(e.target.value);
 
         const error = validateCareer(carrers, selectedCareer);
 
         if (error === "") {
-            const selectedCareerObj = carrers.find(carreer => carreer.carrera_unah === selectedCareer);
-            setCareerId(selectedCareerObj ? selectedCareerObj.id_carrera_unah : null);
+            const selectedCareerObj = carrers.find(carreer => carreer.id_carrera_unah === selectedCareer);
+            setCareerId(selectedCareerObj ? selectedCareerObj.id_carrera_unah : -1);
             setErrors((prev) => ({
                 ...prev,
                 career: "",
             }));
         } else {
-            setCareerId(null);
             setErrors((prev) => ({
                 ...prev,
                 career: error,
@@ -340,7 +339,7 @@ const Register = () => {
                     newErrors.university = validateUniversity(universityID);
                     if (universityID === UNAHId && universityID) {
                         newErrors.studentCode = validateStudentCode(studentCode);
-                        newErrors.career = validateCareer(carrers, career);
+                        newErrors.career = validateCareer(carrers, careerId);
                     }
                 }
             },
@@ -444,7 +443,7 @@ const Register = () => {
             id_universidad: getUniversityID(),
             identificador_unah: getUNAHIdentifier(),
             id_carrera_unah: getCareer(),
-            correo: email,
+            correo: email.toLowerCase(),
             contrasena: password,
             codigo_recibo: getReceiptCode(),
             codigo_organizador: getOrganizerCode(),
@@ -471,7 +470,7 @@ const Register = () => {
             }
 
             localStorage.setItem('registerEmail', email);
-            router.push(`/register/confirm-account`);
+            router.push(`/register/confirm-account?new=true`);
         } catch (error) {
             setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. ¡Gracias por tu paciencia!");
             setShowModal(true); // Mostrar el modal
@@ -483,8 +482,8 @@ const Register = () => {
 
     if (sending) {
         return (
-            <div className="flex justify-center items-center h-screen">
-                <Loader isLight={true}/>
+            <div className="flex justify-center items-center h-40">
+                <Loader isLight={true} />
             </div>
         );
     }
@@ -575,7 +574,7 @@ const Register = () => {
                         </div>
                         <div>
                             <InputForm
-                                placeholder="DNI o (pasaporte para extranjeros)"
+                                placeholder="DNI o Pasaporte (extranjeros)"
                                 iconName="id_card"
                                 type="number"
                                 id="dni"
@@ -588,7 +587,7 @@ const Register = () => {
                         </div>
                         <div>
                             <InputForm
-                                placeholder="Número celular (sin separaciones)"
+                                placeholder="Celular (sin espacios ni guiones)"
                                 iconName="phone"
                                 type="number"
                                 id="phone"
@@ -605,7 +604,7 @@ const Register = () => {
                                 id="gender"
                                 options={genders}
                                 iconName="wc"
-                                legend="Selecciona tu genero"
+                                legend="Selecciona tu género"
                                 onChange={handleGenderChange}
                                 optionSelected={gender}
                             />
@@ -655,7 +654,7 @@ const Register = () => {
                             <>
                                 <div>
                                     {universities.length === 0 ? (
-                                        <p className="text-white">Cargando universidades...</p>
+                                        <p className="text-white">{loadingUnivMsg}</p>
                                     ) : (
                                         <SelectForm
                                             id="university"
@@ -690,26 +689,21 @@ const Register = () => {
                                                 </p>
                                             )}
                                         </div>
-                                        <div>
-                                            <div className="bg-transparent border-[1px] border-[#ab9a9a] rounded-md flex items-center gap-2 pl-2 active:outline-none text-white text-base">
-                                                <span className="material-symbols-outlined">school</span>
-                                                <input
-                                                    list="carreers"
-                                                    id="carreers-input"
-                                                    name="carreers"
-                                                    placeholder="Elige tu carrera"
-                                                    className="bg-transparent placeholder:text-gray py-2 w-full focus:outline-none"
-                                                    value={career}
+                                        {carrers.length === 0 ? (
+                                            <p className="text-white">{loadingCareersMsg}</p>
+                                        ) :
+                                            <div>
+                                                <SelectForm
+                                                    id="career"
+                                                    options={carrers.map((carreer) => ({ name: carreer.carrera_unah, id: carreer.id_carrera_unah }))} // TODO: Cambiar a carreras de la universidad seleccionada
+                                                    iconName="school"
+                                                    legend="Selecciona tu carrera"
                                                     onChange={handleChangeCarreer}
+                                                    optionSelected={careerId}
                                                 />
-                                                <datalist id="carreers">
-                                                    {carrers.map((carreer) => (
-                                                        <option key={carreer.id_carrera_unah} value={carreer.carrera_unah} />
-                                                    ))}
-                                                </datalist>
+                                                {errors.career && (<p className="text-[#F8B133] text-sm">{errors.career}</p>)}
                                             </div>
-                                            {errors.career && (<p className="text-[#F8B133] text-sm">{errors.career}</p>)}
-                                        </div>
+                                        }
                                     </>
                                 )}
                             </>
@@ -811,9 +805,9 @@ const Register = () => {
                         {isOrganizer ? (
                             <>
                                 <div>
-                                    <p className="text-[#ab9a9a]">Ingresa el codigo que te proporcionaron</p>
+                                    <p className="text-[#ab9a9a]">Ingresa el código proporcionado</p>
                                     <InputForm
-                                        placeholder="Codigo de organizador"
+                                        placeholder="Código de organizador"
                                         iconName="123"
                                         type="text"
                                         id="organizerCode"
@@ -836,10 +830,10 @@ const Register = () => {
                                     <div className="bg-transparent border-[1px] border-[#ab9a9a] rounded-md flex items-center gap-2 pl-2 active:outline-none text-white text-base">
                                         <label
                                             htmlFor="file-upload"
-                                            className="bg-transparent active:border-none placeholder:text-gray py-2 w-full focus:outline-none flex items-center gap-2 cursor-pointer w-full"
+                                            className="bg-transparent active:border-none placeholder:text-gray py-2 w-full focus:outline-none flex items-center gap-2 cursor-pointer"
                                         >
                                             <span className="material-symbols-outlined">upload</span>
-                                            <span>Subir recibo</span>
+                                            <span className="text-[#ab9a9a] cursor-pointer hover:underline">Haz clic aquí para subir tu recibo</span>
                                         </label>
                                         <input
                                             id="file-upload"
@@ -923,8 +917,6 @@ const Register = () => {
                     />
                 )}
             </form>
-
-            {/* Modal de informacion */}
         </>
     );
 };

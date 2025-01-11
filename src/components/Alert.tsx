@@ -2,7 +2,13 @@ import React, { useEffect } from "react";
 
 type NotificationType = "success" | "info" | "warning";
 
-const NotificationCard = ({ type = "success", msg }: { type?: NotificationType; msg: string }) => {
+const NotificationCard = ({ 
+  type = "success", 
+  msg 
+}: { 
+  type?: NotificationType; 
+  msg: string; 
+}) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       const notificationElement = document.querySelector(".animate-slideIn");
@@ -14,10 +20,9 @@ const NotificationCard = ({ type = "success", msg }: { type?: NotificationType; 
       }
     }, 4000);
 
-    return () => clearTimeout(timeout); // Limpia el temporizador al desmontar el componente
+    return () => clearTimeout(timeout);
   }, []);
 
-  // Estilos según el tipo de notificación
   const typeStyles = {
     success: {
       bgColor: "bg-green-500",
@@ -60,11 +65,22 @@ const NotificationCard = ({ type = "success", msg }: { type?: NotificationType; 
     },
   };
 
+  const getTypeInSpanish = (type: NotificationType) => {
+    switch (type) {
+      case "success":
+        return "Éxito";
+      case "info":
+        return "Información";
+      case "warning":
+        return "Advertencia";
+    }
+  }
+
   const { bgColor, textColor, icon } = typeStyles[type];
 
   return (
     <div
-      className={`fixed top-5 right-5 w-full max-w-sm bg-white rounded-lg shadow-md dark:bg-gray-800 transition-all transform animate-slideIn z-50 flex overflow-hidden`}
+      className={`fixed top-5 md:top-8 right-5 md:right-8 w-[90%] max-w-sm bg-white rounded-lg shadow-lg dark:bg-gray-800 transition-all transform animate-slideIn z-50 flex overflow-hidden`}
     >
       <div className={`flex items-center justify-center w-12 ${bgColor}`}>
         {icon}
@@ -72,7 +88,7 @@ const NotificationCard = ({ type = "success", msg }: { type?: NotificationType; 
 
       <div className="px-4 py-2 -mx-3 flex-1">
         <div className="mx-3">
-          <span className={`font-semibold ${textColor} dark:${textColor}`}>{type.toUpperCase()}</span>
+          <span className={`font-semibold ${textColor} dark:${textColor}`}>{getTypeInSpanish(type)}</span>
           <p className="text-sm text-gray-600 dark:text-gray-200">{msg}</p>
         </div>
       </div>

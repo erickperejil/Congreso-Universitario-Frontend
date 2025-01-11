@@ -1,3 +1,4 @@
+import { Asistencias } from "@/interfaces/participantes";
 import { ActualizarUser, UsuarioRecibo } from "@/interfaces/user";
 
 
@@ -62,7 +63,8 @@ export const fetchUsuarioById = async (id: number): Promise<UsuarioRecibo | null
     const data = await response.json();
 
     if (data?.resultado) {
-      console.log(data.resultado)
+      console.log(data)
+      console.log("service login",data.resultado)
       return data.resultado[0] as UsuarioRecibo;
     } else {
       console.error("No se encontró información del usuario en la respuesta.");
@@ -106,7 +108,7 @@ export const updateUsuarioById = async (id_usuario: number, formData: Actualizar
   }
 };
 
-export const fetchAsistenciasByUsuarioId = async (id_usuario: number): Promise<{ cantidad_asistencias: number; cantidad_total_conferencias: number } | null> => {
+export const fetchAsistenciasByUsuarioId = async (id_usuario: number): Promise<Asistencias | null> => {
   try {
     const response = await fetch(`https://backend-congreso.vercel.app/conferencias/usuario/${id_usuario}/asistencias`);
 
@@ -120,10 +122,7 @@ export const fetchAsistenciasByUsuarioId = async (id_usuario: number): Promise<{
     const data = await response.json();
 
     if (data?.conferencias) {
-      return {
-        cantidad_asistencias: data.conferencias.cantidad_asistencias,
-        cantidad_total_conferencias: data.conferencias.cantidad_total_conferencias,
-      };
+      return data.conferencias;
     } else {
       console.error("No se encontró información de las asistencias en la respuesta.");
       return null;

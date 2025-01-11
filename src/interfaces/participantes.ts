@@ -6,3 +6,13 @@ export interface Participantes {
     img_recibo:string;
     codigo_recibo:string;
   }
+
+  export interface Asistencias {
+      nombre_usuario: string;
+      cantidad_asistidas: number;
+      cantidad_total_conferencias: number;
+      cantidad_minima_conferencias: number;
+      cantidad_inscritas_actualmente: number;
+      cantidad_faltante_a_inscribir: number;
+  }
+  
