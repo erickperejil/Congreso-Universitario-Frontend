@@ -198,9 +198,9 @@ export default function Cronograma({
   const [loading, setLoading] = useState(true);
 
   const dias = [
-    { fecha: "23/01/2025", label: "Jueves 23" },
-    { fecha: "24/01/2025", label: "Viernes 24" },
-    { fecha: "25/01/2025", label: "Sábado 25" },
+    { fecha: "11/01/2025", label: "Sabado 11" },
+    { fecha: "12/01/2025", label: "Domingo 24" },
+    { fecha: "13/01/2025", label: "Lunes 25" },
   ];
 
   const actualizarConferencias = async () => {
