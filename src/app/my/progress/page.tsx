@@ -6,62 +6,32 @@ import { fetchAsistenciasByUsuarioId } from "@/services/user";
 import { motion } from "framer-motion";
 import Loader from "@/components/Loading";
 import { Asistencias } from "@/interfaces/participantes";
-import { cancelarInscripcionConferencia, inscribirseEnConferencia } from "@/services/conferencias/conferencia";
-import { Conferencia } from "@/interfaces/conferencias";
 
 export default function MyInscriptions() {
   const [idUsuario, setIdUsuario] = useState<number>(0);
-  const [asistenciasInfo, setAsistenciasInfo] = useState< Asistencias| null>(null);
+  const [asistenciasInfo, setAsistenciasInfo] = useState<Asistencias | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [, setErrorMessage] = useState<string | null>(null);
 
-    const handleInscripcion = async (conferencia: Conferencia) => {
-      try {
-        let response;
-        if (conferencia.inscrito) {
-          console.log(`Cancelando inscripción para la conferencia: ${conferencia.id_conferencia}`);
-          response = await cancelarInscripcionConferencia(idUsuario, conferencia.id_conferencia);
-        } else {
-          console.log(`Inscribiéndose a la conferencia: ${conferencia.id_conferencia}`);
-          response = await inscribirseEnConferencia(idUsuario, conferencia.id_conferencia);
-        }
-    
-        if (response.codigoResultado === -1) {
-          setErrorMessage(response.message || "Ha ocurrido un error.");
-        } else {
-          console.log("Acción exitosa:", response);
-        }
-      } catch (error) {
-        console.error("Error durante la acción (inscribir o cancelar):", error);
-        setErrorMessage("Error inesperado. Por favor intenta nuevamente."); // Mensaje de error genérico
-      }
-    };
+  const obtenerMensajeMotivacional = (
+    faltantes: number,
+    minimo: number
+  ): string => {
+    if (faltantes === 0) {
+      return "Asiste a todas las conferencias para obtener tu certificado";
+    }
 
+    if (faltantes <= minimo / 2) {
+      return "¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así";
+    }
 
-    const obtenerMensajeMotivacional = (
-      faltantes: number,
-      minimo: number
-    ): string => {
-      if (faltantes === 0) {
-        return "¡Felicidades! Has inscrito todas las conferencias necesarias, asiste a todas ellas para obtener tu certificado";
-      }
-    
-      if (faltantes === minimo) {
-        return "Estás comenzando, ¡inscríbete en tus primeras conferencias para lograrlo!";
-      }
-    
-      if (faltantes <= minimo / 2) {
-        return "¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así";
-      }
-    
-      if (faltantes > minimo / 2 && faltantes <= (minimo * 3) / 4) {
-        return "Estás progresando, pero aún necesitas inscribirte a algunas conferencias más.";
-      }
-    
-      return "No te desanimes, inscríbete en más conferencias y avanza hacia tu meta.";
-    };
-    
-    
+    if (faltantes > minimo / 2 && faltantes <= (minimo * 3) / 4) {
+      return "Estás progresando, pero aún necesitas asistir a algunas conferencias más.";
+    }
+
+    return "sigue aprendiendo y creciendo en cada conferencia y avanza hacia tu meta.";
+  };
 
   useEffect(() => {
     const token = Cookies.get("authToken");
@@ -74,7 +44,7 @@ export default function MyInscriptions() {
         // Llamar al API después de setear el ID
         (async () => {
           const data = await fetchAsistenciasByUsuarioId(payload.id_usuario);
-          console.log("asistencia", data)
+          console.log("asistencia", data);
           setAsistenciasInfo(data);
           setIsLoading(false);
         })();
@@ -120,23 +90,26 @@ export default function MyInscriptions() {
       <div className="md:w-4/6 w-11/12 h-40 mx-auto flex flex-col">
         <div className="relative mt-10 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
           <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
-            {asistenciasInfo.cantidad_inscritas_actualmente}/
+            {asistenciasInfo.cantidad_asistidas}/
             {asistenciasInfo.cantidad_minima_conferencias}
           </h2>
           {asistenciasInfo.cantidad_asistidas > 0 && (
-          <motion.div
-          className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
-          initial={{ width: "0%" }}
-          animate={{ width: `${
-            asistenciasInfo.cantidad_total_conferencias > 0
-              ? (asistenciasInfo.cantidad_inscritas_actualmente /
-                  asistenciasInfo.cantidad_minima_conferencias) *
-                100
-              : 0
-          }%` }} 
-          transition={{ duration: 2, ease: "easeInOut" }} 
-         ></motion.div>
-        )}
+            <motion.div
+              className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
+              initial={{ width: "0%" }}
+              animate={{
+                width: `${
+                  asistenciasInfo.cantidad_total_conferencias > 0
+                    ? (asistenciasInfo.cantidad_asistidas /
+                        asistenciasInfo.cantidad_minima_conferencias) *
+                      100
+                    : 0
+                }%`,
+              }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+            ></motion.div>
+          )}
+
           {/* <div
             className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
             style={{
@@ -162,29 +135,29 @@ export default function MyInscriptions() {
                 }%`,
               }}
             ></div> */}
+        </div>
 
-          </div>
-
-          <div>
+        <div>
           <h2 className="montserrat-font mt-3 text-lg">
             {obtenerMensajeMotivacional(
-              asistenciasInfo.cantidad_faltante_a_inscribir,
+              asistenciasInfo.cantidad_asistidas,
               asistenciasInfo.cantidad_minima_conferencias
             )}
           </h2>
-          </div>
         </div>
-        <Cronograma
-        fetchPrompt="inscritas"
+      </div>
+      <Cronograma
+        fetchPrompt="usuario"
         idUsuario={idUsuario}
         customStyles={{
           container: "border-[#101017] shadow-md shadow-slate-700",
           header: "bg-[#101017] text-slate-100",
-          button: "border-slate-800 text-slate-800",
+          button: "border-slate-800 text-slate-800 hidden",
           imageContainer: "border-blue-400 border-b-transparent",
-          ponente: "border-b-blue-200 border-x-blue-200 border-t-transparent montserrat-font",
+          ponente:
+            "border-b-blue-200 border-x-blue-200 border-t-transparent montserrat-font",
           content: "border-transparent",
-          datosimportantes: "text-slate-900 montserrat-font"
+          datosimportantes: "text-slate-900 montserrat-font",
         }}
         dayButtonStyles={{
           default: "text-[#101017] border-[#101017] hidden",
@@ -193,8 +166,7 @@ export default function MyInscriptions() {
         }}
         titleStyles="hidden"
         subtitleStyles="hidden"
-        onInscribirse={handleInscripcion}
       />
-      </div>
+    </div>
   );
 }

@@ -132,7 +132,7 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
   }
 
   return (
-    <div className="w-full flex lg:flex-row flex-col">
+    <div className="w-full flex lg:flex-row flex-col ">
       <div className="lg:w-1/4 w-full md:mt-16 mt-10 p-4 flex items-start justify-center">
         <div className="bg-orange-500 h-64 w-64 mt-2 relative">
           <Image
