@@ -169,7 +169,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                         <div className=" w-full h-3/4 flex flex-col gap-4 justify-center">
                             {/* nombre */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Nombres</label>
+                                <label className="block text-sm md:text-xs font-medium text-gray-700">Nombres</label>
                                 <input
                                     type="text"
                                     name="nombres"

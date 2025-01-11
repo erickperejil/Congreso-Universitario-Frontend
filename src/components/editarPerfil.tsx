@@ -147,8 +147,8 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
         {/* datos */}
         <div className=" w-full h-3/4 flex flex-col p-4 justify-center">
           {/* nombre */}
-          <div className=" w-full h-12 mt-4 flex flex-row">
-            <label className="w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">
+          <div className=" w-full h-12 mt-4 flex sm:flex-row flex-col mb-6 sm:mb-0">
+            <label className="w-28 flex sm:justify-center items-center font-medium sm:text-xl text-lg text-gray-700  font-koulen ">
               NOMBRES
             </label>
             <input
@@ -157,12 +157,12 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
               value={editing ? formData.nombres : user?.nombres || ""}
               onChange={handleInputChange}
               disabled={!editing}
-              className="flex-1 text-xl px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
+              className="flex-1 sm:text-xl text-lg px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
             />
           </div>
 
-          <div className=" w-full h-12 mt-4 flex flex-row">
-            <label className="w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">
+          <div className=" w-full h-12 mt-4 flex sm:flex-row flex-col mb-6 sm:mb-0">
+            <label className="w-28 flex sm:justify-center items-center font-medium sm:text-xl text-lg text-gray-700  font-koulen ">
               APELLIDOS
             </label>
             <input
@@ -171,7 +171,7 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
               value={editing ? formData.apellidos : user?.apellidos || ""}
               onChange={handleInputChange}
               disabled={!editing}
-              className="flex-1 text-xl px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
+              className="flex-1 sm:text-xl text-lg px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
             />
           </div>
 
@@ -189,8 +189,8 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
             />
           </div> */}
 
-          <div className=" w-full h-12 mt-4 flex flex-row">
-            <label className="w-28 flex justify-center items-center font-medium text-xl text-gray-700  font-koulen ">
+          <div className=" w-full h-12 mt-4 flex sm:flex-row flex-col mb-6 sm:mb-0">
+            <label className="w-28 flex sm:justify-center items-center font-medium sm:text-xl text-lg text-gray-700  font-koulen ">
               CORREO
             </label>
             <input
@@ -198,7 +198,7 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
               name="correo"
               value={user?.correo || ""}
               disabled
-              className="flex-1 text-xl px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
+              className="flex-1 sm:text-xl text-lg px-4 py-2 rounded bg-gray-200 text-gray-600 font-lekton border-none w-full"
             />
           </div>
 
