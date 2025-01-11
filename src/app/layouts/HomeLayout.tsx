@@ -159,7 +159,7 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
 
             {/* Contenido principal */}
             <div className="px-10 lg:px-16 sm:ml-64">
-                <main>
+                <main className="p-4 py-6">
                     {children}
                 </main>
             </div>

@@ -165,6 +165,7 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                 cupos: conferencia.cupos,
                 descripcion_conferencia: conferencia.descripcion_conferencia,
                 url_carpeta_zip: url_carpeta_zip || "",
+                id_ponente: conferencia.id_ponente || 0,
             };
 
             console.log("Creando Conferencia", newConference);
@@ -253,34 +254,37 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
     }
 
     const handlePonenteChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedPonenteId = event.target.value;
+        const selectedPonenteId = Number(event.target.value);
         const selectedPonente = ponentes.find(
-          (ponente) => ponente.id_ponente === Number(selectedPonenteId)
+          (ponente) => ponente.id_ponente === selectedPonenteId
         );
       
         if (selectedPonente) {
-          // Divide los nombres en un arreglo para manipularlos fácilmente
           const nombresArray = selectedPonente.nombres.split(' ');
-      
-          // Extrae los valores según los índices disponibles
           const primerNombre = nombresArray[0] || '';
           const segundoNombre = nombresArray[1] || '';
           const primerApellido = nombresArray[2] || '';
           const segundoApellido = nombresArray[3] || '';
       
-          // Actualiza el estado con la información procesada
+          // Actualizar conferencia
           setConferencia({
             ...conferencia,
-            nombres: `${primerNombre} ${segundoNombre}`.trim(), // Combina nombres disponibles
-            apellidos: `${primerApellido} ${segundoApellido}`.trim(), // Combina apellidos disponibles
+            id_ponente: selectedPonenteId, // Asegura que el select esté sincronizado
+            nombres: `${primerNombre} ${segundoNombre}`.trim(),
+            apellidos: `${primerApellido} ${segundoApellido}`.trim(),
             descripcion_ponente: selectedPonente.descripcion,
             img_ponente: selectedPonente.img_perfil,
           });
       
+          // Actualizar la imagen del ponente
           setPonenteImg(selectedPonente.img_perfil);
+        } else {
+          // Manejar casos donde no se seleccione un ponente válido
+          setConferencia({ ...conferencia, id_ponente: selectedPonenteId });
         }
       };
       
+
 
     return (
         <div className="rounded-lg max-w-5xl mx-auto">
@@ -396,14 +400,21 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Selecciona un ponente</label>
-                            <select name="" id="" className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full" onChange={handlePonenteChange} value={conferencia.id_ponente}>
-                                <option value="" hidden selected>------</option>
-                                {ponentes.map((ponente, key) => (
+                            <select
+                                name="ponente"
+                                id="ponente"
+                                className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full"
+                                onChange={handlePonenteChange}
+                                value={conferencia.id_ponente || ""} // Asegura que no sea undefined
+                            >
+                                <option value="" hidden>------</option>
+                                {ponentes.map((ponente) => (
                                     <option key={ponente.id_ponente} value={ponente.id_ponente}>
                                         {ponente.nombres}
                                     </option>
                                 ))}
                             </select>
+
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">

@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSearchParams } from 'next/navigation';
 import Link from "next/link";
 
 import Button from "@/components/Button";
@@ -10,7 +9,6 @@ import InputFields from "@/components/InputCodeForm";
 import SuccessScreen from "@/components/SuccesScreenForms";
 
 import { verifyUser, resendVerificationEmail } from "./actionts";
-import Loader from "@/components/Loading";
 
 export default function ConfirmAccount() {
 /*   const [loading, setLoading] = useState(true);

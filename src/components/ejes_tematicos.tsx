@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { desc } from "framer-motion/client";
 
 const carouselItems = [
   {

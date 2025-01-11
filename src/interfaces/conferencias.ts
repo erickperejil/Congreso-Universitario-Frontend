@@ -15,6 +15,7 @@ export interface CreateConferencia {
   url_carpeta_zip: string;
   finalizado?: boolean;
   inactivo?: boolean;
+  id_ponente?: number;
 }
 
   export interface Conferencia {
