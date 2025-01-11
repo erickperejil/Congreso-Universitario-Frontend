@@ -106,7 +106,13 @@ export default function Home() {
                 </div>
               </section>
               <section id="conferencias" className="intersection-animate">
-                <Cronograma></Cronograma>
+                <Cronograma
+                  customStyles={{
+                    button: "hidden",
+                  }}
+                >
+
+                </Cronograma>
               </section>
               <section id="ponentes" className="intersection-animate pt-16">
                 <div className="flex justify-center">
