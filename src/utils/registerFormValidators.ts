@@ -105,8 +105,8 @@ export function validateStudentCode(studentCode: string): string {
 }
 
 
-export function validateCareer(careers: Career[], careerInput: string): string {
-    if (careerInput === "") {
+export function validateCareer(careers: Career[], idCareer: number): string {
+    if (!idCareer || idCareer === -1) {
         return "Seleccione una carrera";
     }
 
@@ -115,7 +115,7 @@ export function validateCareer(careers: Career[], careerInput: string): string {
     }
 
     // Verifica si alguna carrera coincide con el valor ingresado
-    const isValid = careers.some((career) => career.carrera_unah === careerInput);
+    const isValid = careers.some((career) => career.id_carrera_unah === idCareer);
 
     if (isValid) {
         return ""; // Sin errores si la carrera es válida
@@ -128,10 +128,6 @@ export function validateCareer(careers: Career[], careerInput: string): string {
 export function validateReceiptCode(receiptCode: string): string {
     if (receiptCode === "") {
         return "El campo  es requerido";
-    }
-
-    if (receiptCode.length !== 2) {
-        return "Numero de recibo invalido";
     }
 
     return "";

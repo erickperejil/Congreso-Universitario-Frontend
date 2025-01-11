@@ -2,26 +2,33 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { desc } from "framer-motion/client";
 
 const carouselItems = [
   {
     id: 1,
-    title: "INTELIGENCIA ARTIFICIAL",
-    description: "Analiza aplicaciones, retos y oportunidades de la IA en múltiples campos.",
-    image: "/img/imagen.svg",
+    title: "SOCIEDAD DEL FUTURO",
+    description: "Examina la evolución de las estructuras económicas, tecnológicas y sociales",
+    image: "/img/landing/sociedad-del-futuro.webp",
   },
   {
     id: 2,
-    title: "TECNOLOGÍA AVANZADA",
-    description: "Explora avances tecnológicos y su impacto en el futuro.",
-    image: "/img/imagen.svg",
+    title: "INTELIGENCIA ARTIFICIAL",
+    description: "Analiza aplicaciones, retos y oportunidades de la IA en múltiples campos",
+    image: "/img/landing/IA.webp",
   },
   {
     id: 3,
-    title: "INNOVACIÓN TECNOLÓGICA",
-    description: "Descubre cómo la innovación impulsa cambios en la sociedad.",
-    image: "/img/imagen.svg",
+    title: "SOSTENIBILIDAD",
+    description: "Promueve prácticas sostenibles en medioambiente, economía y sociedad.",
+    image: "/img/landing/sostenibilidad.webp",
   },
+  {
+    id: 4,
+    title: "INNOVACIÓN",
+    description: "Explora avances disruptivos y su impacto en la educación y la industria.",
+    image: "/img/landing/innovacion.webp",
+  }
 ];
 
 export default function Carousel() {
@@ -46,11 +53,13 @@ export default function Carousel() {
 
   return (
     
-    <div className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden rounded-lg">
+    <div className="relative w-full h-[50vh] md:h-[80vh] overflow-hidden rounded-lg">
       {/* Contenedor del carrusel */}
       <h1 className="text-[#E7E8F2] text-3xl md:text-5xl text-3xl font-bold text-center mb-6">
-        Ejes Tematicos
+        Ejes Temáticos
       </h1>
+
+      {/* centrar botones en lo lato de esten div de abajo */}
       <div
         className="flex transition-transform duration-700 ease-in-out h-full rounded-sm"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -58,7 +67,7 @@ export default function Carousel() {
         {carouselItems.map((item) => (
           <div
             key={item.id}
-            className="min-w-full flex-shrink-0 flex items-center justify-center relative h-full"
+            className="min-w-full flex-shrink-0 flex items-center justify-center relative h-full rounded-sm"
           >
             {/* Imagen */}
             <div className="relative w-full h-full rounded-sm">
@@ -72,7 +81,7 @@ export default function Carousel() {
             {/* Información superpuesta */}
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-6 bg-black bg-opacity-50">
               <h2 className="text-2xl md:text-4xl font-bold">{item.title}</h2>
-              <p className="mt-4 text-sm md:text-lg">{item.description}</p>
+              <p className="mt-4 text-sm md:text-lg montserrat-font">{item.description}</p>
             </div>
           </div>
         ))}

@@ -28,6 +28,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
     const [formData, setFormData] = useState({ nombres: "", apellidos: "", correo: "" });
     const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
     const [showNotification, setShowNotification] = useState(false);
+    const [notificationType, setNotificationType] = useState<"success" | "info" | "warning">("success");
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -54,6 +55,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                 }
             } catch (error) {
                 setNotificationMsg("Error al cargar el usuario.");
+                setNotificationType("warning");
                 setShowNotification(true);
                 console.error("Error al cargar el usuario:", error);
             } finally {
@@ -92,13 +94,16 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                 );
                 setEditing(false);
                 setNotificationMsg("Usuario actualizado correctamente.");
+                setNotificationType("success");
                 setShowNotification(true);
             } else {
                 setNotificationMsg("No se pudo actualizar la información del usuario.");
+                setNotificationType("warning");
                 setShowNotification(true);
             }
         } catch (error) {
             setNotificationMsg("Error al intentar actualizar el usuario.");
+            setNotificationType("warning");
             setShowNotification(true);
             console.error("Error al intentar actualizar el usuario:", error);
         } finally {
@@ -147,7 +152,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
     return (
         <>
             {showNotification && (
-                <NotificationCard msg={notificationMsg || ""} />
+                <NotificationCard msg={notificationMsg || ""} type={notificationType} />
             )}
             <div className="rounded-lg max-w-5xl mx-auto">
                 <div className="flex items-center gap-2 mb-6 text-3xl text-black border-b-[1px] border-gray-300 pb-1">
@@ -201,7 +206,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                                 </div>
                             )}
 
-
                             {/* SOLO LO MOSTRAMOS SI ES PARA VISUALIZACION */}
                             {visualize && (
                                 <div>
@@ -216,7 +220,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                                     />
                                 </div>
                             )}
-
 
                             {/* SOLO LOS MOSTRAMOS SI ES PARA VISUALIZACION */}
                             {visualize && (<>
@@ -264,8 +267,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                                 alt="UserQR"
                                 layout="fill"
                                 objectFit="cover"
-                                width={64}
-                                height={64}
                             />
                         </div>
                     </div>

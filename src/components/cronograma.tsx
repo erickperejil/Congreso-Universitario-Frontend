@@ -52,7 +52,7 @@ const ConferenciaComponent = ({
 
   return (
     <div
-      className={`w-full border flex flex-col mb-6 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}
+      className={`w-full overflow-hidden border flex flex-col mb-6 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}
     >
       <div
         className={`w-full h-14 flex items-center text-2xl p-3 font-bold montserrat-font ${customStyles?.header || ""}`}
@@ -184,7 +184,7 @@ export default function Cronograma({
       <h2 className={`sm:text-6xl text-5xl mb-10 ${titleStyles || ""}`}>
         Conferencias
       </h2>
-      <div className="flex lg:w-3/5 w-full flex-nowrap justify-between overflow-x-auto">
+      <div className="flex lg:w-3/5 w-full flex-nowrap justify-between gap-1 overflow-x-auto">
         {dias.map((dia) => (
           <div
             key={dia.fecha}
