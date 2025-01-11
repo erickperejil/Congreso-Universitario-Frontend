@@ -22,7 +22,7 @@ export default function MyInscriptions() {
       return "Asiste a todas las conferencias para obtener tu certificado";
     }
 
-    if (faltantes <= minimo / 2) {
+    if (faltantes == (minimo / 2) + 1) {
       return "¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así";
     }
 

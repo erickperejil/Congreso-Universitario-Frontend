@@ -32,7 +32,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        console.log("entrando en ue")
         if (!id) return;
+        console.log("entrando en ue2")
 
         const loadUser = async (idUsuario: number) => {
             try {
