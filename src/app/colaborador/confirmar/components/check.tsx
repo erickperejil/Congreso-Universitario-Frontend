@@ -46,28 +46,28 @@ const CheckComponent = () => {
       setShowBackButton(false);
       return;
     }
-
+  
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split('T')[0];
     const currentTime = currentDate.toTimeString().split(' ')[0];
     const timestamp = `${formattedDate} ${currentTime}`;
-
+  
     const requestData = {
       idUsuario: '1',
       idConferencia: selectedConference.toString(),
       ...(type === 'entrada' ? { horaEntrada: timestamp } : { horaSalida: timestamp }),
     };
-
+  
     console.log(`Datos enviados al backend para hora ${type}:`, requestData);
-
+  
     try {
       const url =
         type === 'entrada'
           ? 'https://backend-congreso.vercel.app/usuario/asistencia/hora/entrada'
           : 'https://backend-congreso.vercel.app/usuario/asistencia/hora/salida';
-
+  
       const method = type === 'entrada' ? 'POST' : 'PUT';
-
+  
       const response = await fetch(url, {
         method,
         headers: {
@@ -75,45 +75,25 @@ const CheckComponent = () => {
         },
         body: JSON.stringify(requestData),
       });
-
+  
       const data = await response.json();
       console.log(`Respuesta del backend para hora ${type}:`, data);
-
+  
       if (data.result?.codigo === 1) {
-        setModalMessage(
-          type === 'entrada'
-            ? 'Hora de entrada registrada con éxito.'
-            : 'Hora de salida registrada con éxito.'
-        );
+        setModalMessage(data.result.mensaje);
         setShowBackButton(true);
       } else {
-        let errorMessage = '';
-        switch (data.result?.codigo) {
-          case 2:
-            errorMessage = 'Error: La conferencia no existe.';
-            break;
-          case 3:
-            errorMessage =
-              type === 'entrada'
-                ? 'Error: Usuario no existente.'
-                : 'Error: Usuario no existente o no validado.';
-            break;
-          case 4:
-            errorMessage = 'Error: Usuario no inscrito en la conferencia.';
-            break;
-          case 5:
-            errorMessage =
-              type === 'entrada'
-                ? 'Error: Usuario no inscrito en la conferencia.'
-                : 'Error: El usuario no ha registrado una hora de entrada a esta conferencia.';
-            break;
-          case 6:
-            errorMessage =
-              'Advertencia: Menos de 20 minutos de estadía en la conferencia, no se valida la asistencia.';
-            break;
-          default:
-            errorMessage = 'Error inesperado. Intenta nuevamente.';
-        }
+        const errorMessages: Record<number, string> = {
+          2: 'Error: La conferencia no existe.',
+          3: 'Error: Usuario no existente o no validado.',
+          4: 'Error: Usuario no inscrito en la conferencia.',
+          5: 'Error: El usuario no ha registrado una hora de entrada a esta conferencia.',
+          6: 'Advertencia: Menos de 20 minutos de estadía en la conferencia, no se valida la asistencia.',
+        };
+  
+        const errorMessage =
+          errorMessages[data.result?.codigo as number] || 'Error inesperado. Intenta nuevamente.';
+  
         setModalMessage(errorMessage);
         setShowBackButton(false);
       }
@@ -122,9 +102,10 @@ const CheckComponent = () => {
       setModalMessage('Error de conexión con el servidor.');
       setShowBackButton(false);
     }
-
+  
     setIsModalOpen(true);
   };
+  
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -171,7 +152,7 @@ const CheckComponent = () => {
       >
         Hora Salida
       </button>
-
+      
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4">

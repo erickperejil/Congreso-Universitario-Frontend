@@ -1,8 +1,9 @@
 'use client';
 import React from 'react';
 
-import CheckComponent from './components/check';
+
 import Header from '../../components/header';
+import CheckComponent from '../components/check';
 
 const ScanPage: React.FC = () => {
   
