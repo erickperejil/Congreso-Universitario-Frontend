@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 export function middleware(request: NextRequest) {
      console.log('Middleware:', request.nextUrl.pathname);
-     const token = request.cookies.get('authToken')?.value;
+/*     const token = request.cookies.get('authToken')?.value;
 
      // Define las rutas públicas (que no requieren autenticación)
      const publicRoutes = ['/login', '/register'];
