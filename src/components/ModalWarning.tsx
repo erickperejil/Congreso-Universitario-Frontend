@@ -1,6 +1,9 @@
 import Button from './Button';
+import { useRouter } from 'next/navigation';
 
-export default function ModalWarning({ title, isOpen, setIsOpen }: { title: string; isOpen: boolean; setIsOpen: (isOpen: boolean) => void }) {
+export default function ModalWarning({ title, isOpen, setIsOpen, secondAction = null }: { title: string; isOpen: boolean; setIsOpen: (isOpen: boolean) => void; secondAction? : {title: string; action: () => void} | null }) {
+
+    const router = useRouter();
 
 
     return (
@@ -11,7 +14,7 @@ export default function ModalWarning({ title, isOpen, setIsOpen }: { title: stri
                     aria-modal="true"
                     role="dialog"
                 >
-                    <div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow dark:bg-gray-700">
+                    <div className="fixed p-4 w-full max-w-md bg-white rounded-lg shadow dark:bg-gray-700">
                         <button
                             onClick={() => setIsOpen(false)}
                             className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -52,13 +55,24 @@ export default function ModalWarning({ title, isOpen, setIsOpen }: { title: stri
                             <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
                                 {title}
                             </h3>
-                            <Button
-                                text="Cerrar"
-                                action={() => setIsOpen(false)}
-                                variant="primary"
-                                styleType="fill"
-                                className="w-full"
-                            />
+                            <div className='flex flex-col gap-2'>
+                                {secondAction && (
+                                    <Button 
+                                        text={secondAction.title}
+                                        action={secondAction.action}
+                                        variant="secondary"
+                                        styleType="fill"
+                                        className="w-full"
+                                    />
+                                )}
+                                <Button
+                                    text="Cerrar"
+                                    action={() => {localStorage.removeItem('registerEmail') ;setIsOpen(false)}}
+                                    variant="primary"
+                                    styleType="fill"
+                                    className="w-full"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

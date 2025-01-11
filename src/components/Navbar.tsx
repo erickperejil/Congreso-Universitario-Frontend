@@ -1,10 +1,15 @@
+"use client"
+
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Link from 'next/link';
 import Button from "./Button";
+import Image from 'next/image';
 
 export default function Nav({ options }: NavProps) {
     const router = useRouter();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleNavClick = (
         event: React.MouseEvent<HTMLAnchorElement>,
@@ -36,27 +41,37 @@ export default function Nav({ options }: NavProps) {
                             {/* Menú móvil */}
                             <div className="inset-y-0 left-0 flex items-center sm:hidden">
                                 <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-[#30303d] hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#F8B133]">
-                                    <span
-                                        aria-hidden="true"
-                                        className="block material-symbols-outlined text-xl group-data-[open]:hidden"
-                                    >
-                                        menu
-                                    </span>
-                                    <span
-                                        aria-hidden="true"
-                                        className="hidden material-symbols-outlined cursor-pointer text-xl group-data-[open]:block"
-                                    >
-                                        close
-                                    </span>
+                                    {isMenuOpen ? (
+                                        <span
+                                            aria-hidden="true"
+                                            className="hidden material-symbols-outlined cursor-pointer text-xl group-data-[open]:block"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            close
+                                        </span>
+
+                                    ) : (
+                                        <span
+                                            aria-hidden="true"
+                                            className="block material-symbols-outlined text-xl group-data-[open]:hidden"
+                                            onClick={() => setIsMenuOpen(true)}
+                                        >
+                                            menu
+                                        </span>
+                                    )}
+
+
                                 </DisclosureButton>
                             </div>
 
                             {/* Logo */}
                             <div className="flex shrink-0 items-center">
-                                <Link href="#">
-                                    <img
+                                <Link href="#inicio">
+                                    <Image
                                         src="/logos/logo_cit_blanco.webp"
                                         alt="Logo del congreso"
+                                        width={100}
+                                        height={100}
                                         className="w-14"
                                     />
                                 </Link>
@@ -105,6 +120,13 @@ export default function Nav({ options }: NavProps) {
                                     {item.name}
                                 </DisclosureButton>
                             ))}
+                            <Button
+                                text="Iniciar sesión"
+                                variant="primary"
+                                styleType="fill"
+                                action={() => router.push("/login")}
+                                className='mt-12'
+                            />
                         </div>
                     </DisclosurePanel>
                 </>

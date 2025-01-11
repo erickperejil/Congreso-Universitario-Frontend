@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React from "react";
 
 interface SelectFormProps {
@@ -6,7 +8,7 @@ interface SelectFormProps {
     iconName: string;
     legend: string;
     optionSelected?: number;
-    onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+    onChange: (e? : any) => void | Promise<void> | any;
 }
 
 const SelectForm = ({ options, id, iconName, legend, optionSelected, onChange }: SelectFormProps) => {

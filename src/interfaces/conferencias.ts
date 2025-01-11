@@ -46,6 +46,7 @@ export interface CreateConferencia {
     cupos: string;
     finalizado: boolean;
     url_carpeta_zip: string;
+    id_ponente?: number;
   }
 
 
@@ -74,10 +75,10 @@ export interface CreateConferencia {
   } */
       export interface CrearConferencia {
         nombre_conferencia:string;
-        nombres_ponente: string;
-        apellidos_ponente: string;
-        descripcion_ponente: string;
-        img_perfil_ponente: string;
+        nombres_ponente?: string | null;
+        apellidos_ponente?: string | null;
+        descripcion_ponente?: string | null;
+        img_perfil_ponente?: string | null;
         descripcion_conferencia: string;
         direccion: string;
         fecha_conferencia: string; // Formato de fecha: "YYYY-MM-DD"
@@ -86,5 +87,6 @@ export interface CreateConferencia {
         cupos: string; // Cambiado a número
         img_conferecia: string; // Cambiado a string para coincidir con el JSON
         url_carpeta_zip: string;
+        id_ponente?: number | null;
       }
       

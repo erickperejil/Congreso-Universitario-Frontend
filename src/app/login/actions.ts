@@ -25,3 +25,33 @@ export const login = async (email: string, password: string): Promise<{ error?: 
         return { error: 'Network error or server unavailable' };
     }
 };
+
+/* Verifica si hay menos de 500 usuarios inscritos verificados para ver si ocultamos o no el boton de registro */
+export const showRegister = async () => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+    if (!API_URL) {
+        throw new Error('API_URL is not defined');
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/usuario/pre-registro`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            return { error: errorData.message || `Error ${response.status}: ${response.statusText}` };
+        }
+
+        const responseData = await response.json();
+        return { responseData };
+    } catch (error) {
+        if (error instanceof Error) {
+            return { error: error.message };
+        }
+        return { error: 'Network error or server unavailable' };
+    }
+}

@@ -9,19 +9,18 @@ export default function FloatingNotification() {
         <AnimatePresence>
             {isNotificationVisible && (
                 <motion.div
-                    className="fixed top-4 right-4 montserrat-font text-white p-1 rounded-lg shadow-2xl w-96 z-50"
+                    className="fixed top-4 right-4 montserrat-font text-white p-2 rounded-lg shadow-2xl w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:w-96 z-50"
                     style={{ backgroundImage: 'url(/img/bg/sol.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}
                     initial={{ opacity: 0, y: -20, scale: 0.9 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -20, scale: 0.9 }}
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                    <div className='flex items-center justify-between items-start w-full rounded-lg p-4'>
+                    <div className="flex items-center justify-between w-full p-4 rounded-lg">
                         <div className="flex items-center gap-3">
                             <span className="text-sm font-medium">
-                                Verifica cuidadosamente la exactitud de tu información, ya que será utilizada en la generación de los certificados oficiales.
+                                Verifica cuidadosamente la exactitud de tus datos personales, ya que será utilizada en la generación de los certificados oficiales.
                             </span>
-
                         </div>
                         <button
                             onClick={hideNotification}
@@ -29,7 +28,6 @@ export default function FloatingNotification() {
                         >
                             &times; {/* La "X" de cerrar */}
                         </button>
-
                     </div>
                 </motion.div>
             )}

@@ -7,9 +7,10 @@ type SubirPdfProps = {
   initialUploadedFileUrl?: string | null;
   setNombre_prod: React.Dispatch<React.SetStateAction<string>>;
   nombre_prod: string;// URL inicial del archivo cargado
+  soloVisualizar?: boolean;
 };
 
-export default function SubirPdf({ onSubmit, initialUploadedFileUrl, nombre_prod }: SubirPdfProps) {
+export default function SubirPdf({ onSubmit, initialUploadedFileUrl, nombre_prod, soloVisualizar = false }: SubirPdfProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(initialUploadedFileUrl || null); // Estado inicial
   const [isLoading, setIsLoading] = useState(false);
@@ -66,31 +67,35 @@ export default function SubirPdf({ onSubmit, initialUploadedFileUrl, nombre_prod
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mx-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Selecciona un archivo Zip</label>
-        <input
-          type="file"
-          accept=".pdf"
-          onChange={handleFileChange}
-          disabled={!!uploadedFileUrl} // Deshabilitar si ya hay un archivo cargado
-          className={`mt-2 block w-full text-sm border text-black border-gray-300 rounded-lg p-2 ${uploadedFileUrl ? 'bg-gray-100 cursor-not-allowed' : ''
-            }`}
-        />
+        {!soloVisualizar && (<>
+          <label className="block text-sm font-medium text-gray-700">Selecciona un archivo Zip</label>
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={handleFileChange}
+            disabled={!!uploadedFileUrl} // Deshabilitar si ya hay un archivo cargado
+            className={`mt-2 block w-full text-sm border text-black border-gray-300 rounded-lg p-2 ${uploadedFileUrl ? 'bg-gray-100 cursor-not-allowed' : ''
+              }`}
+          />
+        </>)}
         {uploadedFileUrl && (
           <div className="text-sm text-green-600 mt-2">
             <p>Archivo ya cargado: <a href={uploadedFileUrl} target="_blank" rel="noopener noreferrer" className="underline">Ver Archivo</a></p>
-            <Button
-              action={handleResetFile}
-              text="Cambiar archivo"
-              className="w-full mt-4"
-              type='button'
-              variant='primary'
-              styleType='fill'
-            />
+            {!soloVisualizar && (
+              <Button
+                action={handleResetFile}
+                text="Cambiar archivo"
+                className="w-full mt-4"
+                type='button'
+                variant='primary'
+                styleType='fill'
+              />
+            )}
           </div>
         )}
       </div>
 
-      {!uploadedFileUrl && (
+      {!uploadedFileUrl && !soloVisualizar && (
         <Button
           text={isLoading ? 'Subiendo...' : 'Subir archivo'}
           type="submit"
@@ -100,13 +105,13 @@ export default function SubirPdf({ onSubmit, initialUploadedFileUrl, nombre_prod
           variant='primary'
           action={() => { }}
         />
-/*         <button
-          type="submit"
-          className={`w-full py-2 text-black rounded-lg ${isLoading || uploadedFileUrl ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
-          disabled={isLoading} // Deshabilitar si ya hay un archivo cargado
-        >
-          {isLoading ? 'Subiendo...' : 'Subir archivo'}
-        </button> */
+        /*         <button
+                  type="submit"
+                  className={`w-full py-2 text-black rounded-lg ${isLoading || uploadedFileUrl ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+                  disabled={isLoading} // Deshabilitar si ya hay un archivo cargado
+                >
+                  {isLoading ? 'Subiendo...' : 'Subir archivo'}
+                </button> */
       )}
 
     </form>

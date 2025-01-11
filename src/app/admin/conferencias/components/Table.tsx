@@ -152,7 +152,7 @@ const TableComponent = () => {
                 <td className="px-4 py-2 border-b">{conferencia.fecha}</td>
                 <td className="px-4 py-2 border-b">{conferencia.cupos_disponibles}</td>
                 <td className="px-4 py-2 border-b text-center">
-                  <div className="flex items-center justify-center space-x-4">
+                  <div className="flex flex-col lg:flex-row items-center justify-center gap-1">
                     {/* <button
                       className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
                       onClick={() => {}}

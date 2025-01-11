@@ -1,15 +1,17 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
+import Head from 'next/head'
 import Cookies from 'js-cookie';
 
 import Button from "@/components/Button";
 import InputForm from "@/components/InputForm";
 
 import { isLoginInputsValids } from "@/utils/loginFormValidators";
-import { login } from "./actions";
+import { login, showRegister } from "./actions";
+import { resendVerificationEmail } from "@/app/register/confirm-account/actionts";
 import ModalWarning from "@/components/ModalWarning";
 
 function Login() {
@@ -17,47 +19,82 @@ function Login() {
     const [sendingLogin, setSendingLogin] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
+    const [seconActionModal, setSecondActionModal] = useState<{ title: string, action: () => void } | null>(null);
 
     /* estados de inputs */
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [areInputsValids, setAreInputsValids] = useState(false);
     const [loginError, setLoginError] = useState("");
-    
+    const [showRegisterButton, setShowRegisterButton] = useState(true);
+
+    useEffect(() => {
+        const checkRegister = async () => {
+            try {
+                const response = await showRegister();
+                if (response.error) {
+                    console.error('Error:', response.error);
+                    return;
+                }
+
+                setShowRegisterButton(response.responseData.resultado);
+
+                console.log('Response:', response.responseData.resultado);
+            } catch (err) {
+                console.error('Unexpected error:', err);
+            }
+        };
+
+        checkRegister();
+    });
+
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setSendingLogin(true);
 
         try {
             // Llamada al servicio de login
-            const response = await login(email, password);
+            const response = await login(email.toLowerCase(), password);
 
             if (response.error) {
                 if (response.statusCode === 403) {
                     switch (response.codigoResultado) {
                         case -1:
+                            setSecondActionModal(null);
                             setModalMessage(
-                                'Tu recibo de pago ha sido rechazado. Si crees que fue un error, por favor contáctanos en congresofacultadingenieriaunah@gmail.com.'
+                                'Lamentamos informarte que tu recibo de pago ha sido rechazado. Si consideras que esto es un error, por favor contáctanos a congresofacultadingenieriaunah@gmail.com.'
                             );
                             break;
                         case -2:
+                            setSecondActionModal(null);
                             setModalMessage(
-                                'Ocurrió un error inesperado. Por favor, inténtalo más tarde o contáctanos en congresofacultadingenieriaunah@gmail.com.'
+                                'Ha ocurrido un error inesperado. Te invitamos a intentar más tarde o, si lo prefieres, contacta con nosotros a congresofacultadingenieriaunah@gmail.com.'
+                            );
+                            break;
+                        case -3:
+                            localStorage.setItem('registerEmail', email);
+                            setSecondActionModal({ title: 'Validar cuenta', action: () => {handleResendEmail()} });
+                            setModalMessage(
+                                'Parece que tu cuenta no ha sido validada aún. Si deseas hacerlo, haz clic en el botón a continuación.'
                             );
                             break;
                         case 2:
+                            setSecondActionModal(null);
                             setModalMessage(
-                                'Estamos procesando la validación de tu recibo de pago. Te notificaremos tan pronto como esté listo. Gracias por tu paciencia.'
+                                'Estamos validando tu recibo de pago. Por favor, espera unos minutos y vuelve a intentarlo.'
                             );
                             break;
                         default:
+                            setSecondActionModal(null);
                             setModalMessage(
-                                'Se produjo un error desconocido. Por favor, contacta al soporte.'
+                                'Se ha producido un error desconocido. Si necesitas asistencia, no dudes en contactarnos.'
                             );
                             break;
                     }
 
                     setShowModal(true);
+                    setLoginError('');
+                    
                 } else {
                     setLoginError(response.error);
                 }
@@ -87,8 +124,6 @@ function Login() {
         }
     };
 
-
-
     function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>): void {
         setAreInputsValids(isLoginInputsValids(e.target.value, password));
         setEmail(e.target.value);
@@ -99,8 +134,29 @@ function Login() {
         setPassword(e.target.value);
     }
 
+      const handleResendEmail = async () => {
+        console.log("correo", email);
+
+        try {
+            const response = await resendVerificationEmail(email);
+            if (response.error) {
+              throw new Error(response.error);
+            }
+
+            localStorage.setItem('timerEndTime', (new Date().getTime() + 10 * 60 * 1000).toString());
+            router.push('/register/confirm-account');
+            } catch (error) {
+            console.error('Error al reenviar el correo:', error);
+            setModalMessage("Ocurrió un error al reenviar el correo. Por favor, intenta de nuevo.");
+            setShowModal(true);
+        }
+      };
+
     return (
         <>
+            <Head>
+                <title>Iniciar Sesión | Congreso Facultad de Ingeniería</title>
+            </Head>
             {/* formulario de login */}
             <h1 className="text-4xl">¡Bienvenido!</h1>
 
@@ -125,7 +181,9 @@ function Login() {
                     <Button text="Iniciar Sesión" action={handleLogin} variant='primary' styleType="fill" className="w-[100%] mb-2" disabled={!areInputsValids || sendingLogin} />
                 </div>
 
-                <p className="text-sm text-white text-center">No tengo cuenta, <Link href="/register" className="text-[#f8b133] underline decoration-solid">Registrarme</Link></p>
+                {showRegisterButton && (
+                    <p className="text-sm text-white text-center">No tengo cuenta, <Link href="/register" className="text-[#f8b133] underline decoration-solid">Registrarme</Link></p>
+                )}
             </form>
 
             {/* Modal de advertencia */}
@@ -134,6 +192,7 @@ function Login() {
                     title={modalMessage}
                     setIsOpen={setShowModal}
                     isOpen={showModal}
+                    secondAction={seconActionModal}
                 />
             )}
 
