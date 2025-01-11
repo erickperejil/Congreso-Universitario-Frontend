@@ -138,7 +138,7 @@ export default function MyInscriptions() {
         </div>
 
         <div>
-          <h2 className="montserrat-font mt-3 text-lg">
+          <h2 className="montserrat-font mt-6 text-lg">
             {obtenerMensajeMotivacional(
               asistenciasInfo.cantidad_asistidas,
               asistenciasInfo.cantidad_minima_conferencias
@@ -146,6 +146,7 @@ export default function MyInscriptions() {
           </h2>
         </div>
       </div>
+      <div className="lg:-mt-12">
       <Cronograma
         fetchPrompt="usuario"
         idUsuario={idUsuario}
@@ -167,6 +168,7 @@ export default function MyInscriptions() {
         titleStyles="hidden"
         subtitleStyles="hidden"
       />
+      </div>
     </div>
   );
 }

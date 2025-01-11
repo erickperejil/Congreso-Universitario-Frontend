@@ -166,7 +166,7 @@ export default function MyInscriptions() {
           </div>
 
           <div>
-          <h2 className="montserrat-font mt-3 text-lg">
+          <h2 className="montserrat-font mt-6 text-lg">
             {obtenerMensajeMotivacional(
               asistenciasInfo.cantidad_faltante_a_inscribir,
               asistenciasInfo.cantidad_minima_conferencias
@@ -178,7 +178,7 @@ export default function MyInscriptions() {
         fetchPrompt="inscritas"
         idUsuario={idUsuario}
         customStyles={{
-          container: "border-[#101017] shadow-md shadow-slate-700",
+          container: "border-[#101017] shadow-md shadow-slate-700 ",
           header: "bg-[#101017] text-slate-100",
           button: "border-slate-800 text-slate-800",
           imageContainer: "border-blue-400 border-b-transparent",
