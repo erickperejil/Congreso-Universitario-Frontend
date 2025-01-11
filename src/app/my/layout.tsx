@@ -14,6 +14,7 @@ export default function Home({ children }: HomeProps) {
         { name: "Mi Perfil", icon: "person", link: "/my/profile" },
         { name: "Conferencias", icon: "library_books", link: "/my/conferences" },
         { name: "Mis Inscripciones", icon: "school", link: "/my/inscriptions" },
+        { name: "Mi Progreso", icon: "school", link: "/my/progress" },
     ];
 
     return (

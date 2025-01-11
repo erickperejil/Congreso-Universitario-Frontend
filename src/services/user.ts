@@ -121,7 +121,7 @@ export const fetchAsistenciasByUsuarioId = async (id_usuario: number): Promise<A
     const data = await response.json();
 
     if (data?.conferencias) {
-      return data;
+      return data.conferencias;
     } else {
       console.error("No se encontró información de las asistencias en la respuesta.");
       return null;

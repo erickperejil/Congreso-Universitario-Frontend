@@ -57,7 +57,7 @@ export const fetchConferenciasPorUsuarioGeneral = async (idUsuario: number, fech
 
 export const fetchConferenciasInscritasPorUsuario = async (
   idUsuario: number,
-  fecha: string
+  fecha: string | null
 ): Promise<Conferencia[]> => {
   const response = await fetch(
     "https://backend-congreso.vercel.app/conferencias/usuario/inscritas",

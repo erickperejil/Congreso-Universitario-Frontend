@@ -257,7 +257,7 @@ export default function Cronograma({
           else if (fetchPrompt === "inscritas" && idUsuario !== undefined) {
             const respuesta = await fetchConferenciasInscritasPorUsuario(
               idUsuario,
-              diaSeleccionado
+              null
             );
             setConferencias(respuesta);
           }
