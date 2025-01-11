@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 /***/ 
-export function middleware(request: NextRequest) {/**
+export function middleware(request: NextRequest) {
      console.log('Middleware:', request.nextUrl.pathname);
      const token = request.cookies.get('authToken')?.value;
 
@@ -49,7 +49,7 @@ export function middleware(request: NextRequest) {/**
      }
 //  
 //     // Si el token es válido y no ha expirado, permite continuar
-    return NextResponse.next();*/ 
+    return NextResponse.next(); 
  }
 
 // Configura el middleware para aplicarlo a todas las rutas
