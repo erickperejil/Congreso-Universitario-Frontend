@@ -143,7 +143,7 @@ const TablaParticipantes = () => {
               <th className="px-4 py-2 text-left border-b">DNI</th>
               <th className="px-4 py-2 text-left border-b">Nombre</th>
               <th className="px-4 py-2 text-left border-b">Correo</th>
-              <th className="px-4 py-2 text-center border-b">ReciboFactura</th>
+              <th className="px-4 py-2 text-center border-b">Recibo</th>
             </tr>
           </thead>
           <tbody>
