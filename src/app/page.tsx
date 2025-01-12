@@ -111,7 +111,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col justify-center bg-[#101017] text-white font-extralight w-full" suppressHydrationWarning >
+    <div className="flex flex-col justify-center bg-[#101017] text-white font-extralight w-full overflow-hidden" suppressHydrationWarning >
       <Navbar options={navbarOptions}  />
 
       {/* imagen promocional de inicio */}

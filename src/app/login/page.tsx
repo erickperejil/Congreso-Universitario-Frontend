@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
-import Head from 'next/head'
 import Cookies from 'js-cookie';
 
 import Button from "@/components/Button";
@@ -111,11 +110,17 @@ function Login() {
 
             // Guardar el token
             if (response.token) {
-                Cookies.set('authToken', response.token, { expires: 1, secure: process.env.NODE_ENV === 'production' });
+                Cookies.set('authToken', response.token, { 
+                    expires: 1, 
+                    secure: process.env.NODE_ENV === 'production', 
+                    sameSite: 'strict', 
+                    path: '/', 
+                });
             }
+            
 
             // Redirigir a la página principal
-            router.push('/my');
+            router.push('/my/profile');
         } catch (err) {
             console.error('Unexpected error during login:', err);
             setLoginError('Ocurrió un error inesperado. Intenta nuevamente.');
@@ -154,9 +159,6 @@ function Login() {
 
     return (
         <>
-            <Head>
-                <title>Iniciar Sesión | Congreso Facultad de Ingeniería</title>
-            </Head>
             {/* formulario de login */}
             <h1 className="text-4xl">¡Bienvenido!</h1>
 

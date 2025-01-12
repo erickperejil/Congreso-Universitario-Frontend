@@ -3,15 +3,15 @@ export default function PreHomeLayout({ children }: { children: React.ReactNode 
         <div className="flex min-h-screen">
             {/* banner izquierdo */}
             <div className="w-full md:w-2/5 xl:w-3/5 hidden md:grid md:bg-[url('/img/landing/promo.enc')] md:bg-repeat md:bg-center md:bg-black md:brightness-90 xl:bg-[#080816] xl:bg-none z-10 relative">
-            <div className="hiddden md:absolute inset-0 bg-black bg-opacity-40 z-10 xl:hidden"></div>
+                <div className="hiddden md:absolute inset-0 bg-black bg-opacity-40 z-10 xl:hidden"></div>
 
-    {/* La imagen solo se mostrará en pantallas grandes, oculta en dispositivos pequeños */}
-    <img
-        src="/img/landing/promo.enc"
-        alt="login ilustracion"
-        className="w-[60%] rounded-lg shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)] fade-in-up place-self-center hidden xl:block"
-    />
-</div>
+                {/* La imagen solo se mostrará en pantallas grandes, oculta en dispositivos pequeños */}
+                <img
+                    src="/img/landing/promo.enc"
+                    alt="login ilustracion"
+                    className="w-[60%] rounded-lg shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)] fade-in-up place-self-center hidden xl:block"
+                />
+            </div>
 
 
 

@@ -74,10 +74,10 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onImageUploa
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-md max-w-lg w-full">
         <h2 className="text-xl font-semibold mb-4">{isGallery ? "Subir Foto de la Conferencia" : "Subir Foto del Ponente"}</h2>
-        
+
         {/* Mostrar error si existe */}
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        
+
         {/* Preview of Selected Images */}
         <div className="grid grid-cols-3 gap-2 mb-4">
           {tempImages.map((url, index) => (
@@ -108,13 +108,14 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onImageUploa
           className="mb-4"
           disabled={uploading}
         />
-        {uploading && <p className="text-blue-500">Uploading...</p>}
+        {uploading && <p className="text-blue-500">Subiendo...</p>}
 
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 text-gray-700 rounded">Cancel</button>
-          <button onClick={handleConfirm} className="px-4 py-2 bg-blue-600 text-white rounded">OK</button>
+          <button onClick={onClose} className="px-4 py-2 bg-gray-300 text-gray-700 rounded">Cerrar</button>
+          <button onClick={handleConfirm} className="px-4 py-2 bg-blue-600 text-white rounded">Listo</button>
         </div>
+
       </div>
     </div>
   );

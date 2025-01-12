@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Cookies from 'js-cookie';
 import Loader from "./Loading";
+import { toast } from "react-toastify";
 
 
 const UserProfile: React.FC = ({id} : {id?: string}) => {
@@ -97,19 +98,19 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
               }
             : null
         );
+        toast.success("Información actualizada exitosamente");
         setEditing(false);
       } else {
-        console.error("No se pudo actualizar la información del usuario.");
+        toast.error("No se pudo actualizar la información del usuario.");
       }
     } catch (error) {
       console.error("Error al intentar actualizar el usuario:", error);
+      toast.error("Error al intentar actualizar el usuario.");
     } finally {
       setIsLoading(false); // Finaliza el estado de carga
     }
   };
   
-  
-
   const handleCancel = () => {
     setEditing(false);
     if (user) {

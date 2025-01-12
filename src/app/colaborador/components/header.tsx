@@ -8,7 +8,7 @@ const Header: React.FC = () => {
             alt="Congreso de Innovación y Tecnología UNAH 2025"
             width={160}
             height={160}
-            className="mr-3"
+            className="mr-3 xl:hidden"
           />
     </header>
   );
