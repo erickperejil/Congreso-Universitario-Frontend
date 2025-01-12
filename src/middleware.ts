@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
     console.log('Token:', token);
 
      // Define las rutas públicas (que no requieren autenticación)
-     const publicRoutes = ['/login', '/register'];
+     const publicRoutes = ['/login', '/register', '/colaborador/informacion'];
 
 //     // Si la ruta es pública, permite el acceso
     if (publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
@@ -51,7 +51,7 @@ export function middleware(request: NextRequest) {
                 break;
             case 'colaborador':
                 if (!request.nextUrl.pathname.startsWith('/colaborador')) {
-                    return NextResponse.redirect(new URL('/colaborador', request.url));
+                    return NextResponse.redirect(new URL('/colaborador/escaner', request.url));
                 }
                 break;
             default:
@@ -66,27 +66,6 @@ export function middleware(request: NextRequest) {
     // Si el token es válido y no ha expirado, permite continuar
     return NextResponse.next(); // Llamar como función
 }
-//         // Redirigir según el rol
-         if (decoded.tipo_usuario === 'administrador' || decoded.tipo_usuario === 'organizador') {
-//             // Administradores y organizadores solo pueden acceder a /admin
-             if (!request.nextUrl.pathname.startsWith('/admin')) {
-                 return NextResponse.redirect(new URL('/admin/home', request.url));
-             }
-         } else if (decoded.tipo_usuario === 'comun') {
-//             // Los usuarios solo pueden acceder a /my
-             if (!request.nextUrl.pathname.startsWith('/my')) {
-                 return NextResponse.redirect(new URL('/my', request.url));
-             }
-         }
-     } catch (error) {
-         // Si la decodificación falla, redirige al login
-         console.error('Invalid token:', error);
-         return NextResponse.redirect(new URL('/login', request.url));
-     }
-//  
-//     // Si el token es válido y no ha expirado, permite continuar
-    return NextResponse.next(); 
- }
 
 // Configura el middleware para aplicarlo a todas las rutas
 export const config = {
