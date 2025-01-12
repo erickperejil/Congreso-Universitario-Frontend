@@ -9,7 +9,7 @@ const HomePage: React.FC = () => {
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id; // Aseguramos que sea un string
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#101017] text-white">
+    <div className="flex flex-col min-h-screen bg-[#fff] text-white w-full">
       {/* Header siempre en la parte superior */}
       <Header />
 

@@ -63,7 +63,7 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanSuccess, onScanError }) => 
   }, [cameraPermissionGranted, onScanSuccess, onScanError]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#101017] px-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#fff] px-4">
       {loading ? (
         <p className="text-lg font-medium text-white">Cargando...</p>
       ) : errorMessage ? (

@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
     console.log('Token:', token);
 
      // Define las rutas públicas (que no requieren autenticación)
-     const publicRoutes = ['/login', '/register'];
+     const publicRoutes = ['/login', '/register', '/colaborador/informacion'];
 
 //     // Si la ruta es pública, permite el acceso
     if (publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
@@ -51,7 +51,7 @@ export function middleware(request: NextRequest) {
                 break;
             case 'colaborador':
                 if (!request.nextUrl.pathname.startsWith('/colaborador')) {
-                    return NextResponse.redirect(new URL('/colaborador', request.url));
+                    return NextResponse.redirect(new URL('/colaborador/escaner', request.url));
                 }
                 break;
             default:

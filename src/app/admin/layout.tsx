@@ -1,6 +1,7 @@
 'use client';
 
 import HomeLayout from '../layouts/HomeLayout';
+import { NavbarProvider } from '../contexts/NavbarContext';
 
 import { ReactNode } from 'react';
 
@@ -19,9 +20,11 @@ export default function Home({ children }: HomeProps) {
     ];
 
     return (
-        <HomeLayout navOptions={navOptions} >
-            { children }
-        </HomeLayout >
+        <NavbarProvider>
+            <HomeLayout navOptions={navOptions}> 
+                { children }
+            </HomeLayout >
+        </NavbarProvider>
 
     );
 }

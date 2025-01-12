@@ -4,6 +4,7 @@ import { NotificationProvider } from '@/app/contexts/NotificationContext';
 import FloatingNotification from '@/components/FloatingNotification';
 import HomeLayout from '../layouts/HomeLayout';
 import { ReactNode } from 'react';
+import { NavbarProvider } from '../contexts/NavbarContext';
 
 interface HomeProps {
     children: ReactNode;
@@ -18,6 +19,7 @@ export default function Home({ children }: HomeProps) {
     ];
 
     return (
+        <NavbarProvider>
         <NotificationProvider>
             <HomeLayout navOptions={navOptions}>
                 {/* Mostrar la notificación flotante */}
@@ -25,5 +27,6 @@ export default function Home({ children }: HomeProps) {
                 {children}
             </HomeLayout>
         </NotificationProvider>
+        </NavbarProvider>
     );
 }

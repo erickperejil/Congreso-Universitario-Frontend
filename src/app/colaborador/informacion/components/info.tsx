@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
+import { isTokenValid } from '../[id]/actions';
+import { useNavbar } from '../../../contexts/NavbarContext';
 
 interface ConferenciasData {
   nombre_usuario: string;
@@ -20,9 +23,11 @@ interface UserInfoCardProps {
 }
 
 const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
+  const { setNavbarVisible } = useNavbar();  
   const [data, setData] = useState<ConferenciasData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [tokenValido, setTokenValido] = useState<boolean>(false);
 
   useEffect(() => {
     if (!id) return; // Si no hay ID, no hacemos el fetch.
@@ -53,6 +58,35 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+      const processToken = () => {
+      const token = Cookies.get("authToken");
+      console.log(token);
+  
+      if (token) {
+        console.log("Token encontrado");
+        setTokenValido(isTokenValid(token));
+        console.log("Token válido?", isTokenValid(token));
+      } else {
+        setTokenValido(false);
+      }
+
+
+      console.log(tokenValido);
+    };
+  
+    processToken();
+  }, []);
+
+  useEffect(() => {
+    if(!tokenValido) {
+      console.log("Token inválido");
+       setNavbarVisible(false);
+     } else {
+        setNavbarVisible(true);
+    }
+  }, [tokenValido]);
+  
   const renderMessage = () => {
     if (!data) return null;
 
@@ -166,16 +200,18 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
 
       {/* Botón de redirección */}
       <div className="mt-6 text-center">
-        <button
-          onClick={() => {
-            if (id) {
-              window.location.href = `http://localhost:3000/colaborador/confirmar/${id}`;
-            }
-          }}
-          className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded"
-        >
-          Organizador
-        </button>
+        {tokenValido && (
+          <button
+            onClick={() => {
+              if (id) {
+                window.location.href = `http://localhost:3000/colaborador/confirmar/${id}`;
+              }
+            }}
+            className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Organizador
+          </button>
+        )}
       </div>
     </div>
   );

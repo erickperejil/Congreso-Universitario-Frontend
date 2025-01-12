@@ -14,7 +14,7 @@ const ScanPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#101017] text-white">
+    <div className="flex flex-col min-h-screen bg-[#fff] text-white">
       {/* Header siempre en la parte superior */}
       <Header />
 
