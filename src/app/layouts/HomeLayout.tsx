@@ -7,19 +7,34 @@ import { logout } from "@/services/userService";
 import Cookies from 'js-cookie'; // Paquete para manejar cookies en cliente
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Estilos predeterminados
 
-export default function HomeLayout({ navOptions, children }: { navOptions: { name: string; icon: string; link: string; }[]; children: ReactNode }) {
+export default function HomeLayout({ navOptions, children, className }: { navOptions: { name: string; icon: string; link: string; default : boolean }[]; children: ReactNode, className?: string }) {
     const router = useRouter();
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [optionSelected, setOptionSelected] = useState("Mi Perfil");
-
+    
     useEffect(() => {
-        // Esto solo se ejecuta en el cliente
+        // Buscar la opción por defecto en navOptions
+        const defaultOption = navOptions.find(option => option.default);
+    
+        // Verificar si hay una opción almacenada en sessionStorage
         const storedOption = sessionStorage.getItem("optionSelected");
-        if (storedOption) {
+    
+        if (storedOption && navOptions.some(option => option.name === storedOption)) {
+            // Si hay una opción almacenada válida, seleccionarla
             setOptionSelected(storedOption);
+        } else if (defaultOption) {
+            // Si no hay opción almacenada, usar la opción por defecto
+            setOptionSelected(defaultOption.name);
+        } else if (navOptions.length > 0) {
+            // Fallback: seleccionar la primera opción si no hay `default`
+            setOptionSelected(navOptions[0].name);
         }
-    }, []); // Solo se ejecuta una vez, cuando el componente se monta
+    }, [navOptions]);
+    
+    
 
     const handleOptionChange = (newOption: string) => {
         setOptionSelected(newOption);
@@ -105,10 +120,10 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
             <aside
                 id="logo-sidebar"
                 className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full bg-[#101017] px-4"
-                    } sm:translate-x-0`}
+                    } sm:translate-x-0 border-r border-gray-800 dark:border-gray-700`}
                 aria-label="Sidebar"
             >
-                <div className="h-full px-3 py-4 overflow-y-auto bg-[#101017]">
+                <div className={`h-full px-3 py-4 overflow-y-auto bg-[#101017]`}>
                     <Link
                         href="/my/"
                         className="w-full mb-5 flex items-start justify-start"
@@ -158,8 +173,9 @@ export default function HomeLayout({ navOptions, children }: { navOptions: { nam
             </aside>
 
             {/* Contenido principal */}
-            <div className="px-10 lg:px-16 sm:ml-64">
-                <main className="p-4 py-6">
+            <div className={`${className} px-10 lg:px-16 sm:ml-64`}>
+                <main className={`p-4 py-6 ${className ? 'p-0 py-0' : ""}`}>
+                    <ToastContainer />
                     {children}
                 </main>
             </div>

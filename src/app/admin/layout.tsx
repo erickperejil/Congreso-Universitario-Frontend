@@ -12,9 +12,9 @@ interface HomeProps {
 export default function Home({ children }: HomeProps) {
 
     const navOptions = [
-        { name: "Conferencias", icon: "person", link: "/admin/conferencias" },
-        { name: "Crear Conferencia", icon: "library_books", link: "/admin/createConferencia" },
-        { name: "Participantes", icon: "library_books", link: "/admin/home" },
+        { name: "Conferencias", icon: "person", link: "/admin/conferencias", default: false },
+        { name: "Crear Conferencia", icon: "library_books", link: "/admin/createConferencia", default: false },
+        { name: "Participantes", icon: "library_books", link: "/admin/home", default: true },
         
     ];
 

@@ -4,29 +4,31 @@ import jwt from 'jsonwebtoken';
 
 export function middleware(request: NextRequest) {
     console.log('Middleware:', request.nextUrl.pathname);
+
     const token = request.cookies.get('authToken')?.value;
+    console.log('Token:', token);
 
-    // Define las rutas públicas (que no requieren autenticación)
-    const publicRoutes = ['/login', '/register'];
+     // Define las rutas públicas (que no requieren autenticación)
+     const publicRoutes = ['/login', '/register'];
 
-    // Si la ruta es pública, permite el acceso
+//     // Si la ruta es pública, permite el acceso
     if (publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
         return NextResponse.next(); // Llamar como función
     }
 
-    // Si no hay token, redirige al login
-    if (!token) {
-        return NextResponse.redirect(new URL('/login', request.url));
-    }
+//     // Si no hay token, redirige al login
+     if (!token) {
+         return NextResponse.redirect(new URL('/login', request.url));
+     }
 
     try {
         // Decodificar el token sin verificar la firma
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const decoded: any = jwt.decode(token);
-
-        // Verificar expiración del token
-        if (decoded?.exp && decoded.exp < Date.now() / 1000) {
-            // Si el token ha expirado, redirige al login
-            return NextResponse.redirect(new URL('/login', request.url));
+//         // Verificar expiración del token
+         if (decoded?.exp && decoded.exp < Date.now() / 1000) {
+//             // Si el token ha expirado, redirige al login
+             return NextResponse.redirect(new URL('/login', request.url));
         }
 
         // Redirigir según el rol
@@ -43,7 +45,7 @@ export function middleware(request: NextRequest) {
                 break;
             case 'comun':
                 if (!request.nextUrl.pathname.startsWith('/my')) {
-                    return NextResponse.redirect(new URL('/my', request.url));
+                    return NextResponse.redirect(new URL('/my/profile', request.url));
                 }
                 break;
             case 'colaborador':

@@ -13,7 +13,7 @@ import { Ponentes } from "@/interfaces/ponentes";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/Loading";
 import Button from "@/components/Button";
-import NotificationCard from "@/components/Alert";
+import { toast } from "react-toastify";
 
 interface ConferenciaFormProps {
     id: string;
@@ -33,14 +33,13 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
     const [, setnombre_conferencia] = useState("");
     const [conferencia, setConferencia] = useState<ConferenciaCompleta | null>(null);
     const [loading, setLoading] = useState(true);
-    const [showNotification, setShowNotification] = useState(false);
-    const [notificationMsg, setNotificationMsg] = useState("");
-    const [notificationType, setNotificationType] = useState<"success" | "info" | "warning">("success");
     const [ponentes, setPonentes] = useState<Ponentes[]>([]);
 
     // Estados para manejar las categorías y el menú
     const [, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const fechasCongreso = [{ value: "23/01/2025", label: "23 de enero de 2025" }, { value: "24/01/2025", label: "24 de enero de 2025" }, { value: "25/01/2025", label: "25 de enero de 2025" }];
 
     useEffect(() => {
         const loadPonentes = async () => {
@@ -60,7 +59,6 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
 
         loadPonentes();
     }, []);
-
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -94,12 +92,6 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
 
         fetchConferencia();
     }, [id]);
-
-    const verifyNoEmptyFields = () => {
-        if (!conferencia) return false;
-        return Object.values(conferencia).every((value) => value !== "");
-    }
-
 
     // Agregar o quitar categorías seleccionadas
     // Función para abrir el modal del PDF
@@ -175,17 +167,13 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
             console.log("Respuesta del servidor", response);
 
             if (response) {
-                setNotificationMsg("Conferencia editada con éxito");
-                setNotificationType("success");
-                setShowNotification(true);
+                toast.success("Conferencia editada exitosamente");
             }
 
             // Reseteamos el estado y formulario
             setEditingConference(false);
         } catch (error) {
-            setNotificationMsg("Lo sentimos, ocurrió un error al editar la conferencia, revisa bien los campos.");
-            setNotificationType("warning");
-            setShowNotification(true);
+            toast.error("Error al editar la conferencia");
             console.error("Error al crear conferencia", error);
         } finally {
             setLoading(false);
@@ -205,27 +193,21 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
 
 
     const handleEditConference = () => {
-        const isValid = verifyNoEmptyFields();
-        if (!isValid) {
-            setNotificationMsg("Por favor, completa todos los campos antes de continuar.");
-            setNotificationType("warning");
-            setShowNotification(true); // Muestra la notificación si hay campos vacíos
-            return;
+        if (!conferenceImg) {
+            toast.warning("Por favor, carga la imagen de la conferencia antes de continuar.");          
+            return; // Detén la ejecución si no hay imagen
         }
 
         if (!ponenteImg) {
-            setNotificationMsg("Por favor, carga la imagen del ponente antes de continuar.");
-            setNotificationType("warning");
-            setShowNotification(true);
+            toast.warning("Por favor, carga la imagen del ponente antes de continuar.");
             return; // Detén la ejecución si no hay imagen
         }
 
-        if (!url_carpeta_zip) {
-            setNotificationMsg("Por favor, carga el archivo de la conferencia antes de continuar.");
-            setNotificationType("warning");
-            setShowNotification(true);
-            return; // Detén la ejecución si no hay imagen
-        }
+        /*         if (!url_carpeta_zip) {
+                    toast.warning("Por favor, carga el archivo de la conferencia antes de continuar.");
+
+                    return; // Detén la ejecución si no hay imagen
+                } */
 
         console.log("Create button clicked, setting isEditingConference to true");
         setEditingConference(true);
@@ -235,7 +217,11 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
 
     if (loading) {
         return <>
-            <h2 className="text-3xl mb-6 text-black">Editando Conferencia</h2>
+            <div className="flex items-center gap-2 mb-6 text-3xl text-black border-b-[1px] border-gray-300 pb-1">
+                <span className="material-symbols-outlined cursor-pointer hover:scale-125" onClick={() => router.push("/admin/conferencias")}>arrow_back_ios</span>
+                <h2 className="text-3xl text-black">{isVisualizing ? "Visualizando Conferencia" : "Editando Conferencia"}</h2>
+
+            </div>
             <div className="flex justify-center items-center h-96">
                 <Loader />
             </div>
@@ -245,7 +231,11 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
 
     if (!conferencia) {
         return <>
-            <h2 className="text-3xl mb-6 text-black">Editando Conferencia</h2>
+            <div className="flex items-center gap-2 mb-6 text-3xl text-black border-b-[1px] border-gray-300 pb-1">
+                <span className="material-symbols-outlined cursor-pointer hover:scale-125" onClick={() => router.push("/admin/conferencias")}>arrow_back_ios</span>
+                <h2 className="text-3xl text-black">{isVisualizing ? "Visualizando Conferencia" : "Editando Conferencia"}</h2>
+
+            </div>
             <div className="flex justify-center items-center h-96">
                 No se encontró la conferencia
             </div>
@@ -256,34 +246,34 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
     const handlePonenteChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedPonenteId = Number(event.target.value);
         const selectedPonente = ponentes.find(
-          (ponente) => ponente.id_ponente === selectedPonenteId
+            (ponente) => ponente.id_ponente === selectedPonenteId
         );
-      
+
         if (selectedPonente) {
-          const nombresArray = selectedPonente.nombres.split(' ');
-          const primerNombre = nombresArray[0] || '';
-          const segundoNombre = nombresArray[1] || '';
-          const primerApellido = nombresArray[2] || '';
-          const segundoApellido = nombresArray[3] || '';
-      
-          // Actualizar conferencia
-          setConferencia({
-            ...conferencia,
-            id_ponente: selectedPonenteId, // Asegura que el select esté sincronizado
-            nombres: `${primerNombre} ${segundoNombre}`.trim(),
-            apellidos: `${primerApellido} ${segundoApellido}`.trim(),
-            descripcion_ponente: selectedPonente.descripcion,
-            img_ponente: selectedPonente.img_perfil,
-          });
-      
-          // Actualizar la imagen del ponente
-          setPonenteImg(selectedPonente.img_perfil);
+            const nombresArray = selectedPonente.nombres.split(' ');
+            const primerNombre = nombresArray[0] || '';
+            const segundoNombre = nombresArray[1] || '';
+            const primerApellido = nombresArray[2] || '';
+            const segundoApellido = nombresArray[3] || '';
+
+            // Actualizar conferencia
+            setConferencia({
+                ...conferencia,
+                id_ponente: selectedPonenteId, // Asegura que el select esté sincronizado
+                nombres: `${primerNombre} ${segundoNombre}`.trim(),
+                apellidos: `${primerApellido} ${segundoApellido}`.trim(),
+                descripcion_ponente: selectedPonente.descripcion,
+                img_ponente: selectedPonente.img_perfil,
+            });
+
+            // Actualizar la imagen del ponente
+            setPonenteImg(selectedPonente.img_perfil);
         } else {
-          // Manejar casos donde no se seleccione un ponente válido
-          setConferencia({ ...conferencia, id_ponente: selectedPonenteId });
+            // Manejar casos donde no se seleccione un ponente válido
+            setConferencia({ ...conferencia, id_ponente: selectedPonenteId });
         }
-      };
-      
+    };
+
 
 
     return (
@@ -293,9 +283,12 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                 <h2 className="text-3xl text-black">{isVisualizing ? "Visualizando Conferencia" : "Editando Conferencia"}</h2>
 
             </div>
-            {showNotification && (
-                <NotificationCard msg={notificationMsg} type={notificationType} />
-            )}
+{/*                 <NotificationCard
+                    key={notificationMsg + Date.now()}  // Garantiza que el key cambie
+                    msg={notificationMsg}
+                    type={notificationType}
+                /> */}
+
 
             <form ref={formRef} onSubmit={handleFormSubmit}>
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -358,7 +351,7 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
 
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Fecha</label>
+                            {/*                             <label className="block text-sm font-medium text-gray-700">Fecha</label>
                             <input
                                 readOnly={isVisualizing}
                                 type="date"
@@ -366,13 +359,26 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                                 onChange={(e) => setConferencia({ ...conferencia, fecha: formatToDDMMYYYY(e.target.value) })}
                                 required
                                 className="mt-2 p-2 border border-gray-300 rounded-lg w-full text-black"
-                            />
+                            /> */}
+                            <label className="block text-sm font-medium text-gray-700">Fecha</label>
+                            <select
+                                className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full"
+                                value={conferencia.fecha}
+                                onChange={(e) => setConferencia({ ...conferencia, fecha: e.target.value })}
+                            >
+                                <option value="" hidden className="text-gray-400">Selecciona una fecha</option>
+                                {fechasCongreso.map((congreso, key) => (
+                                    <option key={key} value={congreso.value}>
+                                        {congreso.label}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Cupos</label>
                             <input
                                 readOnly={isVisualizing}
-                                type="text"
+                                type="number"
                                 value={conferencia.cupos}
                                 onChange={(e) => setConferencia({ ...conferencia, cupos: e.target.value })}
                                 required
@@ -483,7 +489,9 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                                         />
                                     </div>
                                 ) : (
-                                    <p className="text-gray-500">Sin imagenes por mostrar</p>
+                                    <p className="text-gray-500">
+                                        {isVisualizing ? "No hay archivos por mostrar" : "Click para cargar la imagen"}
+                                    </p>
                                 )}
                             </div>
 
@@ -517,20 +525,28 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                                 <label className="block text-sm font-medium text-gray-700">Archivos de la Conferencia</label>
                                 <div
                                     className="mt-2 border-dashed border-2 border-gray-300 p-4 text-center cursor-pointer"
-                                    onClick={handleOpenPdfModal} // Función para abrir el modal del PDF
+                                    onClick={() => {
+                                        if (isVisualizing) {
+                                            if (url_carpeta_zip) {
+                                                handleOpenPdfModal(); // Ejecuta la función si url_carpeta_zip no está vacío
+                                            }
+                                        } else {
+                                            handleOpenPdfModal();
+                                        }
+                                    }}
                                 >
                                     {url_carpeta_zip ? (
                                         <p className="text-sm text-gray-600">Ya tienes un archivo subido, da click aqui para visualizarlo</p>
 
                                     ) : (
-                                        <p>Click para cargar los archivos</p>
+                                        <p className="text-gray-500">{isVisualizing ? "No hay archivos por mostrar" : "Click para cargar el archivo"}</p>
                                     )}
                                 </div>
                             </div>
                             {/* Modal exclusivo para cargar el PDF */}
                             <Modal isVisible={isPdfModalOpen} onClose={handleClosePdfModal}>
                                 <SubirPdf onSubmit={handlePdfUpload} nombre_prod={conferencia.titulo} setNombre_prod={setnombre_conferencia}
-                                    initialUploadedFileUrl={url_carpeta_zip} soloVisualizar={true} />
+                                    initialUploadedFileUrl={url_carpeta_zip} soloVisualizar={isVisualizing} />
                             </Modal>
                         </div>
                     </div>
@@ -540,15 +556,15 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                 {!isVisualizing && (
                     <div className="col-span-2 flex justify-end space-x-3 mt-4">
                         <Button
-                            text="Cancelar"
+                            text="Volver"
                             action={() => { }}
                             variant="secondary"
-                            styleType="outlined"
+                            styleType="fill"
+                            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-600"
                             type="button"
                         />
                         <Button
                             text="Guardar Cambios"
-                            disabled={!ponenteImg}
                             action={handleEditConference}
                             variant="primary"
                             styleType="fill"

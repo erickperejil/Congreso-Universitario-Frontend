@@ -830,7 +830,7 @@ const Register = () => {
                                     <div className="bg-transparent border-[1px] border-[#ab9a9a] rounded-md flex items-center gap-2 pl-2 active:outline-none text-white text-base">
                                         <label
                                             htmlFor="file-upload"
-                                            className="bg-transparent active:border-none placeholder:text-gray py-2 w-full focus:outline-none flex items-center gap-2 cursor-pointer w-full"
+                                            className="bg-transparent active:border-none placeholder:text-gray py-2 w-full focus:outline-none flex items-center gap-2 cursor-pointer"
                                         >
                                             <span className="material-symbols-outlined">upload</span>
                                             <span className="text-[#ab9a9a] cursor-pointer hover:underline">Haz clic aquí para subir tu recibo</span>

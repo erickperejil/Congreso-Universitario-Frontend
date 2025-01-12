@@ -9,24 +9,41 @@ export default function FloatingNotification() {
         <AnimatePresence>
             {isNotificationVisible && (
                 <motion.div
-                    className="fixed top-4 right-4 montserrat-font text-white p-2 rounded-lg shadow-2xl w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:w-96 z-50"
-                    style={{ backgroundImage: 'url(/img/bg/sol.webp)', backgroundSize: 'cover', backgroundPosition: 'center' }}
-                    initial={{ opacity: 0, y: -20, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                >
+    className="fixed top-4 right-4 montserrat-font text-white p-4 rounded-lg shadow-2xl w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:w-96 z-50"
+    style={{
+        backgroundImage: 'url(/img/bg/sol.webp)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+    }}
+    initial={{ y: -20, scale: 0.9 }}
+    animate={{
+        y: 0,
+        scale: 1,
+        x: [0, -2, 2, -2, 2, 0], // Movimiento suave horizontal
+    }}
+    exit={{ y: -20, scale: 0.9 }}
+    transition={{
+        x: {
+            duration: 1.5, // Más calmado
+            repeat: Infinity,
+            repeatType: 'loop',
+            delay: 4, // Sacudida cada 4 segundos
+            ease: 'easeInOut', // Movimiento fluido
+        },
+    }}
+>
                     <div className="flex items-center justify-between w-full p-4 rounded-lg">
                         <div className="flex items-center gap-3">
                             <span className="text-sm font-medium">
-                                Verifica cuidadosamente la exactitud de tus datos personales, ya que será utilizada en la generación de los certificados oficiales.
+                            Verifica cuidadosamente la exactitud de <span className='font-bold'>todos tus datos personales</span>. Estos se usarán para generar certificados oficiales. 
                             </span>
                         </div>
                         <button
                             onClick={hideNotification}
                             className="text-2xl font-semibold hover:text-gray-200 transition-colors duration-300 hover:scale-110"
+                            aria-label="Cerrar notificación"
                         >
-                            &times; {/* La "X" de cerrar */}
+                            &times;
                         </button>
                     </div>
                 </motion.div>

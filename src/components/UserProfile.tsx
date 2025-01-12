@@ -8,9 +8,9 @@ import { fetchUsuarioById, updateUser } from "@/services/user";
 import Loader from "@/components/Loading";
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import NotificationCard from "@/components/Alert";
 import Button from "@/components/Button";
 import ReciboViewer from "@/components/ReceiptViewer";
+import { toast } from "react-toastify";
 
 
 interface UserProfileProps {
@@ -26,13 +26,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
     const [visualize, ] = useState(isVisualizing);
     const [editing, setEditing] = useState(false);
     const [formData, setFormData] = useState({ nombres: "", apellidos: "", correo: "" });
-    const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
-    const [showNotification, setShowNotification] = useState(false);
-    const [notificationType, setNotificationType] = useState<"success" | "info" | "warning">("success");
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        console.log("entrando en ue")
         if (!id) return;
+        console.log("entrando en ue2")
 
         const loadUser = async (idUsuario: number) => {
             try {
@@ -54,9 +53,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                     console.warn("No se encontró un ID de usuario válido.");
                 }
             } catch (error) {
-                setNotificationMsg("Error al cargar el usuario.");
-                setNotificationType("warning");
-                setShowNotification(true);
+                toast.error("Error al cargar el usuario.");
                 console.error("Error al cargar el usuario:", error);
             } finally {
                 setIsLoading(false); // Finaliza el estado de carga
@@ -81,6 +78,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
 
         try {
             setIsLoading(true);
+            /* verificamos no vacios */
+            if (!formData.nombres || !formData.apellidos || !formData.correo) {
+                toast.warning("Por favor, Rellena todos los campos.");
+                return;
+            }
+
             const updatedUser = await updateUser(user.id_usuario, formData);
 
             if (updatedUser) {
@@ -93,18 +96,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                         : null
                 );
                 setEditing(false);
-                setNotificationMsg("Usuario actualizado correctamente.");
-                setNotificationType("success");
-                setShowNotification(true);
+                toast.success("Usuario actualizado correctamente.");
             } else {
-                setNotificationMsg("No se pudo actualizar la información del usuario.");
-                setNotificationType("warning");
-                setShowNotification(true);
+                toast.error("No se pudo actualizar la información del usuario.");
             }
         } catch (error) {
-            setNotificationMsg("Error al intentar actualizar el usuario.");
-            setNotificationType("warning");
-            setShowNotification(true);
+            toast.error("Error al intentar actualizar el usuario.");
             console.error("Error al intentar actualizar el usuario:", error);
         } finally {
             setIsLoading(false); // Finaliza el estado de carga
@@ -151,9 +148,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
 
     return (
         <>
-            {showNotification && (
-                <NotificationCard msg={notificationMsg || ""} type={notificationType} />
-            )}
             <div className="rounded-lg max-w-5xl mx-auto">
                 <div className="flex items-center gap-2 mb-6 text-3xl text-black border-b-[1px] border-gray-300 pb-1">
                 <span className="material-symbols-outlined cursor-pointer hover:scale-125" onClick={() => router.push("/admin/home")}>arrow_back_ios</span>
@@ -167,7 +161,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                         <div className=" w-full h-3/4 flex flex-col gap-4 justify-center">
                             {/* nombre */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Nombres</label>
+                                <label className="block text-sm md:text-xs font-medium text-gray-700">Nombres</label>
                                 <input
                                     type="text"
                                     name="nombres"

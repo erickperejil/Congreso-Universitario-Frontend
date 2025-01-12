@@ -90,7 +90,8 @@ export default function SubirPdf({ onSubmit, initialUploadedFileUrl, nombre_prod
       </div>
       
       <button
-        type="submit"
+        type="button"
+        onClick={handleSubmit}
         className={`w-full py-2 text-black rounded-lg ${isLoading || uploadedFileUrl ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
         disabled={isLoading || !!uploadedFileUrl} // Deshabilitar si ya hay un archivo cargado
       >

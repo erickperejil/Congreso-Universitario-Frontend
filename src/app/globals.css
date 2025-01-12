@@ -244,3 +244,11 @@ input[type=number]::-webkit-outer-spin-button {
     appearance: none;
     margin: 0; 
 }
+
+.Toastify__progress-bar--success {
+  background: blue;
+}
+
+.Toastify__progress-bar--error {
+  background: blue;
+}
