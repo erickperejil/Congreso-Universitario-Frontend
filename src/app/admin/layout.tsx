@@ -19,7 +19,7 @@ export default function Home({ children }: HomeProps) {
     ];
 
     return (
-        <HomeLayout navOptions={navOptions}>
+        <HomeLayout navOptions={navOptions} >
             { children }
         </HomeLayout >
 

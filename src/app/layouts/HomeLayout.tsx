@@ -85,7 +85,7 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
 
             Cookies.remove('authToken');
             router.push('/login');
-        } catch (error) {
+         } catch (error) {
             console.error('Unexpected error during logout:', error);
         }
     }
@@ -173,7 +173,7 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
             </aside>
 
             {/* Contenido principal */}
-            <div className={`${className} px-10 lg:px-16 sm:ml-64`}>
+            <div className={`${className} px-0 py-6 lg:p-0 lg:px-16 sm:ml-64`}>
                 <main className={`p-4 py-6 ${className ? 'p-0 py-0' : ""}`}>
                     <ToastContainer />
                     {children}

@@ -32,6 +32,7 @@ export function middleware(request: NextRequest) {
         }
 
         // Redirigir según el rol
+        console.log('Tipo de usuario:', decoded.tipo_usuario);
         switch (decoded.tipo_usuario) {
             case 'administrador':
                 if (!request.nextUrl.pathname.startsWith('/admin')) {

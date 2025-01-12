@@ -110,8 +110,14 @@ function Login() {
 
             // Guardar el token
             if (response.token) {
-                Cookies.set('authToken', response.token, { expires: 1, secure: process.env.NODE_ENV === 'production' });
+                Cookies.set('authToken', response.token, { 
+                    expires: 1, 
+                    secure: process.env.NODE_ENV === 'production', 
+                    sameSite: 'strict', 
+                    path: '/', 
+                });
             }
+            
 
             // Redirigir a la página principal
             router.push('/my/profile');
