@@ -94,7 +94,12 @@ export const sendCodeToVerifyUser = async (email: string, code: number) => {
         }
 
         const responseData = await response.json();
-        return { responseData };
+        console.log('responseData:', responseData);
+        if(responseData.codigo_resultado == 1){
+            return { responseData };
+        }
+
+        return { error: responseData.message || `Error ${response.status}: ${response.statusText}` };
     } catch (error) {
         if (error instanceof Error) {
             return { error: error.message };

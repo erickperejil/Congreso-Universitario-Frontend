@@ -100,7 +100,7 @@ export default function Nav({ options }: NavProps) {
                                 variant="primary"
                                 styleType="fill"
                                 action={() => router.push("/login")}
-                                className="hidden sm:block"
+                                className="hidden xl:block"
                             />
                         </div>
                     </div>

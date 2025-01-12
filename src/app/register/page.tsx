@@ -192,7 +192,7 @@ const Register = () => {
     function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>): void {
         setErrors((prev) => ({
             ...prev,
-            email: validateEmail(e.target.value),
+            email: validateEmail(e.target.value, isStudent && universityID === UNAHId ),
         }));
         setEmail(e.target.value);
     }
@@ -307,7 +307,7 @@ const Register = () => {
 
     const handleEmailBlur = async () => {
 
-        errors.email = validateEmail(email);
+        errors.email = validateEmail(email, isStudent && universityID === UNAHId);
         if (errors.email) {
             return;
         }
@@ -344,7 +344,7 @@ const Register = () => {
                 }
             },
             4: async () => {
-                newErrors.email = validateEmail(email);
+                newErrors.email = validateEmail(email, isStudent && universityID === UNAHId);
                 if (newErrors.email) return;
                 const exists = await checkEmailExistsF(email);
                 if (exists) {
@@ -463,7 +463,7 @@ const Register = () => {
                 console.error('Error al registrar usuario:', response.error);
 
                 if (response.error.statusCode === 500) {
-                    setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. ¡Gracias por tu paciencia!");
+                    setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. Si el problema persiste, contacta al soporte. ¡Gracias por tu paciencia!");
                     setShowModal(true);
                 }
                 return;
@@ -471,8 +471,9 @@ const Register = () => {
 
             localStorage.setItem('registerEmail', email);
             router.push(`/register/confirm-account?new=true`);
+            setSending(false);
         } catch (error) {
-            setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. ¡Gracias por tu paciencia!");
+            setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. Si el problema persiste, contacta al soporte. ¡Gracias por tu paciencia!");
             setShowModal(true); // Mostrar el modal
             console.error('Error inesperado:', error);
         } finally {
@@ -641,7 +642,8 @@ const Register = () => {
                                         setIsStudent(false); setErrors((prev) => ({
                                             ...prev, university: "",
                                             studentCode: "",
-                                            career: ""
+                                            career: "",
+                                            email: ""
                                         }))
                                     }}
                                     checked={!isStudent}
@@ -715,6 +717,9 @@ const Register = () => {
                 {currentStep === 4 && (
                     <div className="flex flex-col gap-4">
                         <div>
+                            {universityID === UNAHId && universityID !== -1 && isStudent && <p className="">Por favor, utiliza tu correo institucional (UNAH)</p>
+
+                            }
                             <InputForm
                                 placeholder="Correo Electrónico"
                                 iconName="email"

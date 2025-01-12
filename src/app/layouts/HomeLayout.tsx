@@ -12,19 +12,19 @@ import 'react-toastify/dist/ReactToastify.css'; // Estilos predeterminados
 import { useNavbar } from "../contexts/NavbarContext";
 
 
-export default function HomeLayout({ navOptions, children, className }: { navOptions: { name: string; icon: string; link: string; default : boolean }[]; children: ReactNode, className?: string }) {
+export default function HomeLayout({ navOptions, children, className }: { navOptions: { name: string; icon: string; link: string; default: boolean }[]; children: ReactNode, className?: string }) {
     const router = useRouter();
     const { isNavbarVisible } = useNavbar();
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [optionSelected, setOptionSelected] = useState("Mi Perfil");
-    
+
     useEffect(() => {
         // Buscar la opción por defecto en navOptions
         const defaultOption = navOptions.find(option => option.default);
-    
+
         // Verificar si hay una opción almacenada en sessionStorage
         const storedOption = sessionStorage.getItem("optionSelected");
-    
+
         if (storedOption && navOptions.some(option => option.name === storedOption)) {
             // Si hay una opción almacenada válida, seleccionarla
             setOptionSelected(storedOption);
@@ -36,8 +36,8 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
             setOptionSelected(navOptions[0].name);
         }
     }, [navOptions]);
-    
-    
+
+
 
     const handleOptionChange = (newOption: string) => {
         setOptionSelected(newOption);
@@ -86,9 +86,12 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
                 return;
             }
 
-            Cookies.remove('authToken');
+            /*             Cookies.remove('authToken');
+                        router.push('/login');
+             */
+            Cookies.remove('authToken', { path: '/' }); // Eliminar token
             router.push('/login');
-         } catch (error) {
+        } catch (error) {
             console.error('Unexpected error during logout:', error);
         }
     }
@@ -175,7 +178,7 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
                         </div>
                     </div>
                 </aside>
-            
+
             </>)}
 
             {/* Contenido principal */}

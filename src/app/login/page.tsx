@@ -18,7 +18,8 @@ function Login() {
     const [sendingLogin, setSendingLogin] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-    const [seconActionModal, setSecondActionModal] = useState<{ title: string, action: () => void } | null>(null);
+    const [seconActionModal, setSecondActionModal] = useState<{ title: string, action: () => void; buttonDisabled: boolean } | null>(null);
+    const [buttonDisabled, setButtonDisabled] = useState(false);
 
     /* estados de inputs */
     const [email, setEmail] = useState("");
@@ -72,9 +73,9 @@ function Login() {
                             break;
                         case -3:
                             localStorage.setItem('registerEmail', email);
-                            setSecondActionModal({ title: 'Validar cuenta', action: () => {handleResendEmail()} });
+                            setSecondActionModal({ title: 'Enviar Correo', action: () => { handleResendEmail() }, buttonDisabled: buttonDisabled });
                             setModalMessage(
-                                'Parece que tu cuenta no ha sido validada aún. Si deseas hacerlo, haz clic en el botón a continuación.'
+                                'Parece que tu cuenta no ha sido validada aún. Enviaremos un correo con un código de verificación para que puedas completar tu registro.'
                             );
                             break;
                         case 2:
@@ -93,7 +94,7 @@ function Login() {
 
                     setShowModal(true);
                     setLoginError('');
-                    
+
                 } else {
                     setLoginError(response.error);
                 }
@@ -110,14 +111,14 @@ function Login() {
 
             // Guardar el token
             if (response.token) {
-                Cookies.set('authToken', response.token, { 
-                    expires: 1, 
-                    secure: process.env.NODE_ENV === 'production', 
-                    sameSite: 'strict', 
-                    path: '/', 
+                Cookies.set('authToken', response.token, {
+                    expires: 1,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'strict',
+                    path: '/',
+                    httpOnly: false
                 });
             }
-            
 
             // Redirigir a la página principal
             router.push('/my/profile');
@@ -139,23 +140,27 @@ function Login() {
         setPassword(e.target.value);
     }
 
-      const handleResendEmail = async () => {
+    const handleResendEmail = async () => {
         console.log("correo", email);
+        setButtonDisabled(true);
+
 
         try {
             const response = await resendVerificationEmail(email);
             if (response.error) {
-              throw new Error(response.error);
+                throw new Error(response.error);
             }
 
             localStorage.setItem('timerEndTime', (new Date().getTime() + 10 * 60 * 1000).toString());
             router.push('/register/confirm-account');
-            } catch (error) {
+        } catch (error) {
             console.error('Error al reenviar el correo:', error);
             setModalMessage("Ocurrió un error al reenviar el correo. Por favor, intenta de nuevo.");
             setShowModal(true);
+        } finally {
+            setButtonDisabled(false);
         }
-      };
+    };
 
     return (
         <>
@@ -195,6 +200,7 @@ function Login() {
                     setIsOpen={setShowModal}
                     isOpen={showModal}
                     secondAction={seconActionModal}
+                    buttonDisabled={buttonDisabled}
                 />
             )}
 

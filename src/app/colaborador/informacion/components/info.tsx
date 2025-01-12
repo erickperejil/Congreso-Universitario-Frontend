@@ -1,6 +1,6 @@
 'use client';
 
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { isTokenValid } from '../[id]/actions';
 import { useNavbar } from '../../../contexts/NavbarContext';
