@@ -79,21 +79,33 @@ const CheckComponent = () => {
       const data = await response.json();
       console.log(`Respuesta del backend para hora ${type}:`, data);
   
-      if (data.result?.codigo === 1) {
-        setModalMessage(data.result.mensaje);
-        setShowBackButton(true);
-      } else {
-        const errorMessages: Record<number, string> = {
+      const errorMessages: Record<
+        'entrada' | 'salida',
+        Record<2 | 3 | 4 | 5 | 6, string>
+      > = {
+        entrada: {
+          2: 'Error: La conferencia no existente.',
+          3: 'Error: La conferencia ya finalizó.',
+          4: 'Error: inesperado.',
+          5: 'Error: Usuario no existente.',
+          6: 'Error: Usuario no inscrito en la conferencia.',
+        },
+        salida: {
           2: 'Error: La conferencia no existe.',
           3: 'Error: Usuario no existente o no validado.',
           4: 'Error: Usuario no inscrito en la conferencia.',
           5: 'Error: El usuario no ha registrado una hora de entrada a esta conferencia.',
           6: 'Advertencia: Menos de 20 minutos de estadía en la conferencia, no se valida la asistencia.',
-        };
+        },
+      };
   
+      if (data.result?.codigo === 1) {
+        setModalMessage(data.result.mensaje);
+        setShowBackButton(true);
+      } else {
         const errorMessage =
-          errorMessages[data.result?.codigo as number] || 'Error inesperado. Intenta nuevamente.';
-  
+          errorMessages[type]?.[data.result?.codigo as 2 | 3 | 4 | 5 | 6] ||
+          'Error inesperado. Intenta nuevamente.';
         setModalMessage(errorMessage);
         setShowBackButton(false);
       }
@@ -152,7 +164,7 @@ const CheckComponent = () => {
       >
         Hora Salida
       </button>
-      
+
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4">
@@ -175,7 +187,16 @@ const CheckComponent = () => {
           </div>
         </div>
       )}
+      <div>
+      <button
+                onClick={navigateToMainPage}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md mt-4"
+              >
+                Volver a la página principal
+              </button>
+      </div>
     </div>
+    
   );
 };
 
