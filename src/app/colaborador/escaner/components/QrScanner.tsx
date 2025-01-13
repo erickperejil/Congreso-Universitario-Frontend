@@ -110,15 +110,14 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
           Asegúrate de que el código QR esté completamente dentro del recuadro.
         </p>
       </div>
-      <div></div>
-      <div></div>
-      <div></div>
+      <div className="mt-[3%]">
       <button
           onClick={changeCamera}
           className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
         >
           Cambiar Cámara
         </button>
+      </div>
     </div>
   );
 };
