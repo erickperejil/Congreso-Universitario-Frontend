@@ -9,28 +9,45 @@ interface QrScannerProps {
 const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const isIOS = (): boolean => {
+    const userAgent = navigator.userAgent || "";
+    return /iPad|iPhone|iPod/.test(userAgent);
+  };
+
   useEffect(() => {
     const initializeScanner = async () => {
       const scanner = new Html5Qrcode("qr-reader");
 
       try {
-        // Solicitar acceso a la cámara y obtener la lista de cámaras disponibles
+        // Obtener lista de cámaras disponibles
         const cameras = await Html5Qrcode.getCameras();
 
         if (cameras.length === 0) {
           throw new Error("No se encontraron cámaras disponibles.");
         }
 
-        // Seleccionar la cámara trasera si está disponible
-        const backCamera = cameras.find((camera) =>
-          camera.label.toLowerCase().includes("back")
-        ) || cameras[0]; // Si no hay cámara trasera, usar la primera disponible
+        // Seleccionar la cámara adecuada según el sistema operativo
+        let selectedCamera = cameras[0]; // Por defecto, la primera cámara
 
-        console.log("Usando cámara:", backCamera.label);
+        if (isIOS()) {
+          // En iOS, buscar la cámara trasera
+          selectedCamera =
+            cameras.find((camera) =>
+              camera.label.toLowerCase().includes("back")
+            ) || cameras[0];
+        } else {
+          // En Android, buscar la cámara trasera
+          selectedCamera =
+            cameras.find((camera) =>
+              camera.label.toLowerCase().includes("back")
+            ) || cameras[0];
+        }
+
+        console.log("Usando cámara:", selectedCamera.label);
 
         // Iniciar el escáner con la cámara seleccionada
         await scanner.start(
-          backCamera.id,
+          selectedCamera.id,
           {
             fps: 10,
             qrbox: { width: 250, height: 250 },
