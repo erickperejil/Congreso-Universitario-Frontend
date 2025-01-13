@@ -93,7 +93,7 @@ const CheckComponent = () => {
           5: 'Error: Usuario no existente.',
           6: 'Error: Usuario no inscrito en la conferencia.',
           7: 'Aún no es tiempo de marcar asistencia, solo 1 hora antes del comienzo',
-          8: 'Error: Usuario ya entró en la conferencia',
+          8: 'Error: El tiempo para entrar a la conferencia finalizó',
         },
         salida: {
           2: 'Error: La conferencia no existe.',
@@ -102,7 +102,7 @@ const CheckComponent = () => {
           5: 'Error: El usuario no ha registrado una hora de entrada a esta conferencia.',
           6: 'Advertencia: Menos de 20 minutos de estadía en la conferencia, no se valida la asistencia.',
           7: 'Error: Tiempo de marcar asistencia finalizado, hasta 1 hora después de finalizar',
-          8: 'Error: inesperado',
+          8: 'Error: La conferencia no ha iniciado, no puedes marcar hora de salida',
         },
       };
   
