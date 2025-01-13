@@ -3,12 +3,14 @@ import { Html5Qrcode } from "html5-qrcode";
 
 interface QrScannerProps {
   onScanError?: (errorMessage: string) => void;
+  onScanSuccess: (decodedText: string) => void;
 }
 
 const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     const requestCameraPermission = async () => {
@@ -32,16 +34,28 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
   useEffect(() => {
     if (cameraPermissionGranted) {
       const html5QrCode = new Html5Qrcode("qr-reader");
+
       html5QrCode
         .start(
-          { facingMode: "environment" }, // Cámara trasera
+          { facingMode: "environment" },
           { fps: 10, qrbox: { width: 250, height: 250 } },
           (decodedText) => {
-            console.log("Código QR escaneado:", decodedText);
-            // Redirigir al usuario a la URL escaneada
-            window.location.href = decodedText;
+            if (isRedirecting) return;
+
+            try {
+              const url = new URL(decodedText); // Validar URL
+              console.log("Código QR escaneado:", url.href);
+              setIsRedirecting(true); // Evitar redirecciones múltiples
+              window.location.href = url.href;
+            } catch {
+              console.error("Texto escaneado no es una URL válida:", decodedText);
+              onScanError?.("El código QR no contiene una URL válida.");
+            }
           },
-          onScanError || console.error
+          (errorMessage) => {
+            console.warn("Error al escanear:", errorMessage);
+            onScanError?.(errorMessage);
+          }
         )
         .catch((err) => console.error("Error al iniciar el escáner:", err));
 
@@ -49,7 +63,7 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
         html5QrCode.stop().catch(console.error);
       };
     }
-  }, [cameraPermissionGranted, onScanError]);
+  }, [cameraPermissionGranted, onScanError, isRedirecting]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
