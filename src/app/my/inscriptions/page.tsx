@@ -44,7 +44,7 @@ export default function MyInscriptions() {
     ): string => {
       // Condición: cantidad_asistidas >= minimo - 3
       if (asistidas > 0 && asistidas <= 3) {
-        return "🎉 ¡Estás a un paso de alcanzar el mínimo de conferencias requeridas para obtener tu certificado! Aprovecha esta oportunidad e inscribite a una más. ¡Tú puedes lograrlo! 💪";
+        return "🎉 ¡Estás a un paso de alcanzar el mínimo de conferencias requeridas para obtener tu certificado! Aprovecha esta oportunidad e inscribite a más conferencias. ¡Tú puedes lograrlo! 💪";
       }
     
       // Condición: cantidad_asistidas_a_inscribir > 0
