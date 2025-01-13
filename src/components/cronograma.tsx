@@ -26,6 +26,7 @@ interface ConferenciaComponentProps {
     lugar?: string;
     datosimportantes?: string;
     button?: string;
+    dateStyles?: string;
   };
   onInscribirse?: (conferencia: Conferencia) => void;
   actualizarConferencias?: () => void;
@@ -49,9 +50,9 @@ const ConferenciaComponent = ({
   };
 
   const handleDescargar = (url: string) => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = '';
+    link.download = "";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -80,9 +81,13 @@ const ConferenciaComponent = ({
       className={`w-full overflow-hidden border flex flex-col mb-6 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}
     >
       <div
-        className={`w-full h-14 flex items-center text-2xl p-3 font-bold montserrat-font ${customStyles?.header || ""}`}
+        className={`w-full min-h-14 sm:flex-row flex-col flex items-center text-2xl p-3 font-bold montserrat-font ${customStyles?.header || ""}`}
       >
-        {conferencia.horario}
+        <h3 className={`mr-8 ${customStyles?.dateStyles || "hidden"}`}>
+          {conferencia.fecha}
+        </h3>
+
+        {` ${conferencia.horario} `}
       </div>
       <div
         className={`w-full border lg:h-52 lg:flex rounded-b-md ${customStyles?.content || "border-slate-100 border-t-[#ffffff82]"}`}
@@ -125,9 +130,7 @@ const ConferenciaComponent = ({
                 styleType="outlined"
                 className={`w-full md:w-max ${customStyles?.button || ""}`}
               >
-                <span className="material-symbols-outlined">
-                   download
-                </span>
+                <span className="material-symbols-outlined">download</span>
               </Button>
             )
           ) : (

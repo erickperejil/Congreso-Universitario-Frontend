@@ -186,7 +186,8 @@ export default function MyInscriptions() {
           imageContainer: "border-blue-400 border-b-transparent",
           ponente: "border-b-blue-200 border-x-blue-200 border-t-transparent montserrat-font",
           content: "border-transparent",
-          datosimportantes: "text-slate-900 montserrat-font"
+          datosimportantes: "text-slate-900 montserrat-font",
+          dateStyles: "block"
         }}
         dayButtonStyles={{
           default: "text-[#101017] border-[#101017] hidden",
