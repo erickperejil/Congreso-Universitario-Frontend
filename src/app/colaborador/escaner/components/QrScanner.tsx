@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 
 interface QrScannerProps {
-  onScanSuccess: (decodedText: string) => void;
   onScanError?: (errorMessage: string) => void;
 }
 
-const QrScanner: React.FC<QrScannerProps> = ({ onScanSuccess, onScanError }) => {
+const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -26,10 +25,9 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanSuccess, onScanError }) => 
         setLoading(false);
       }
     };
-  
+
     requestCameraPermission();
   }, []);
-  
 
   useEffect(() => {
     if (cameraPermissionGranted) {
@@ -38,7 +36,11 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanSuccess, onScanError }) => 
         .start(
           { facingMode: "environment" }, // Cámara trasera
           { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText) => onScanSuccess(decodedText),
+          (decodedText) => {
+            console.log("Código QR escaneado:", decodedText);
+            // Redirigir al usuario a la URL escaneada
+            window.location.href = decodedText;
+          },
           onScanError || console.error
         )
         .catch((err) => console.error("Error al iniciar el escáner:", err));
@@ -47,7 +49,7 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanSuccess, onScanError }) => 
         html5QrCode.stop().catch(console.error);
       };
     }
-  }, [cameraPermissionGranted, onScanSuccess, onScanError]);
+  }, [cameraPermissionGranted, onScanError]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
