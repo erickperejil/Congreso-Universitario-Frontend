@@ -71,8 +71,11 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
           throw new Error("No se encontraron cámaras disponibles.");
         }
 
-        // Si hay más de una cámara, seleccionar la segunda disponible
-        const selectedCamera = devices[1] || devices[0]; // Si hay más de una cámara, toma la segunda, si no, la primera
+        // Filtrar la cámara trasera (si está disponible)
+        const rearCamera = devices.find((device) => device.label.toLowerCase().includes("back"));
+        const frontCamera = devices.find((device) => device.label.toLowerCase().includes("front"));
+
+        const selectedCamera = rearCamera || frontCamera || devices[0]; // Prioriza la cámara trasera, luego la delantera, si no se encuentra, usa la primera disponible.
 
         // Mapear dispositivos de tipo CameraDevice a MediaDeviceInfo
         const formattedDevices = devices.map((device) => ({
