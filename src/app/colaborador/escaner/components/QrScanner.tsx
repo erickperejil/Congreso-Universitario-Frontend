@@ -6,7 +6,7 @@ interface QrScannerProps {
   onScanSuccess: (decodedText: string) => void;
 }
 
-const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
+const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => {
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -14,13 +14,21 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
 
   useEffect(() => {
     const requestCameraPermission = async () => {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setErrorMessage(
+          "Tu navegador no soporta acceso a la cámara. Actualízalo o utiliza un navegador como Chrome."
+        );
+        setLoading(false);
+        return;
+      }
+
       try {
         await navigator.mediaDevices.getUserMedia({ video: true });
         setCameraPermissionGranted(true);
       } catch (error) {
         console.error("Error al solicitar acceso a la cámara:", error);
         setErrorMessage(
-          "No se pudo acceder a la cámara. Asegúrate de otorgar permisos."
+          "No se pudo acceder a la cámara. Asegúrate de otorgar permisos en la configuración del navegador."
         );
         setCameraPermissionGranted(false);
       } finally {
@@ -38,7 +46,11 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
       html5QrCode
         .start(
           { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.333, // Configuración estándar para cámaras
+          },
           (decodedText) => {
             if (isRedirecting) return;
 
@@ -46,7 +58,8 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
               const url = new URL(decodedText); // Validar URL
               console.log("Código QR escaneado:", url.href);
               setIsRedirecting(true); // Evitar redirecciones múltiples
-              window.location.href = url.href;
+              onScanSuccess(url.href);
+              window.location.href = url.href; // Redirección
             } catch {
               console.error("Texto escaneado no es una URL válida:", decodedText);
               onScanError?.("El código QR no contiene una URL válida.");
@@ -57,13 +70,16 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
             onScanError?.(errorMessage);
           }
         )
-        .catch((err) => console.error("Error al iniciar el escáner:", err));
+        .catch((err) => {
+          console.error("Error al iniciar el escáner:", err);
+          setErrorMessage("Hubo un problema al iniciar el escáner de QR.");
+        });
 
       return () => {
         html5QrCode.stop().catch(console.error);
       };
     }
-  }, [cameraPermissionGranted, onScanError, isRedirecting]);
+  }, [cameraPermissionGranted, onScanError, onScanSuccess, isRedirecting]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
