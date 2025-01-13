@@ -1,37 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Html5Qrcode, CameraDevice } from "html5-qrcode";
+import { Html5Qrcode } from "html5-qrcode";
 
 interface QrScannerProps {
   onScanError?: (errorMessage: string) => void;
   onScanSuccess: (decodedText: string) => void;
 }
 
-const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => {
+const QrScanner: React.FC<QrScannerProps> = ({ onScanError }) => {
   const [cameraPermissionGranted, setCameraPermissionGranted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isScanning, setIsScanning] = useState(false);
-  const [cameraList, setCameraList] = useState<CameraDevice[]>([]);
-  const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
-  const [html5QrCode, setHtml5QrCode] = useState<Html5Qrcode | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     const requestCameraPermission = async () => {
       try {
         await navigator.mediaDevices.getUserMedia({ video: true });
         setCameraPermissionGranted(true);
-
-        const cameras = await Html5Qrcode.getCameras(); // Retorna CameraDevice[]
-        if (cameras && cameras.length > 0) {
-          setCameraList(cameras); // Guardamos las cámaras directamente
-        } else {
-          setErrorMessage("No se detectaron cámaras disponibles.");
-        }
       } catch (error) {
         console.error("Error al solicitar acceso a la cámara:", error);
         setErrorMessage(
           "No se pudo acceder a la cámara. Asegúrate de otorgar permisos."
         );
+        setCameraPermissionGranted(false);
       } finally {
         setLoading(false);
       }
@@ -40,58 +31,39 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
     requestCameraPermission();
   }, []);
 
-  const startScanning = async () => {
-    if (html5QrCode) {
-      try {
-        await html5QrCode.start(
-          cameraList[currentCameraIndex]?.id, // Usamos el ID de la cámara actual
+  useEffect(() => {
+    if (cameraPermissionGranted) {
+      const html5QrCode = new Html5Qrcode("qr-reader");
+
+      html5QrCode
+        .start(
+          { facingMode: "environment" },
           { fps: 10, qrbox: { width: 250, height: 250 } },
           (decodedText) => {
-            console.log("Código QR escaneado:", decodedText);
-            onScanSuccess(decodedText);
+            if (isRedirecting) return;
+
+            try {
+              const url = new URL(decodedText); // Validar URL
+              console.log("Código QR escaneado:", url.href);
+              setIsRedirecting(true); // Evitar redirecciones múltiples
+              window.location.href = url.href;
+            } catch {
+              console.error("Texto escaneado no es una URL válida:", decodedText);
+              onScanError?.("El código QR no contiene una URL válida.");
+            }
           },
           (errorMessage) => {
             console.warn("Error al escanear:", errorMessage);
             onScanError?.(errorMessage);
           }
-        );
-        setIsScanning(true);
-      } catch (err) {
-        console.error("Error al iniciar el escáner:", err);
-      }
-    }
-  };
-
-  const stopScanning = async () => {
-    if (html5QrCode) {
-      try {
-        await html5QrCode.stop();
-        setIsScanning(false);
-      } catch (err) {
-        console.error("Error al detener el escáner:", err);
-      }
-    }
-  };
-
-  const changeCamera = () => {
-    stopScanning().then(() => {
-      const nextIndex = (currentCameraIndex + 1) % cameraList.length;
-      setCurrentCameraIndex(nextIndex);
-      startScanning();
-    });
-  };
-
-  useEffect(() => {
-    if (cameraPermissionGranted) {
-      const qrCodeScanner = new Html5Qrcode("qr-reader");
-      setHtml5QrCode(qrCodeScanner);
+        )
+        .catch((err) => console.error("Error al iniciar el escáner:", err));
 
       return () => {
-        qrCodeScanner.stop().catch(console.error);
-        qrCodeScanner.clear();
+        html5QrCode.stop().catch(console.error);
       };
     }
-  }, [cameraPermissionGranted]);
+  }, [cameraPermissionGranted, onScanError, isRedirecting]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
@@ -113,31 +85,6 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
             id="qr-reader"
             className="border-2 border-gray-600 rounded-lg w-full max-w-[90vw] h-auto aspect-square"
           ></div>
-          <div className="flex justify-center mt-4 space-x-4">
-            {isScanning ? (
-              <button
-                className="px-4 py-2 bg-red-500 text-white font-medium rounded"
-                onClick={stopScanning}
-              >
-                Detener
-              </button>
-            ) : (
-              <button
-                className="px-4 py-2 bg-green-500 text-white font-medium rounded"
-                onClick={startScanning}
-              >
-                Iniciar
-              </button>
-            )}
-            {cameraList.length > 1 && (
-              <button
-                className="px-4 py-2 bg-blue-500 text-white font-medium rounded"
-                onClick={changeCamera}
-              >
-                Cambiar Cámara
-              </button>
-            )}
-          </div>
         </div>
       )}
       {cameraPermissionGranted && (
