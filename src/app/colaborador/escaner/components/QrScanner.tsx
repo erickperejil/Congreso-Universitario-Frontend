@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Html5Qrcode } from "html5-qrcode";
+import React, { useEffect, useState, useCallback } from "react";
+import { Html5Qrcode, Html5QrcodeCameraScanConfig } from "html5-qrcode";
 
 interface QrScannerProps {
   onScanError?: (errorMessage: string) => void;
@@ -8,50 +8,19 @@ interface QrScannerProps {
 
 const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
+  const [currentCameraIndex, setCurrentCameraIndex] = useState<number>(0);
 
-  const isIOS = (): boolean => {
-    const userAgent = navigator.userAgent || "";
-    return /iPad|iPhone|iPod/.test(userAgent);
-  };
-
-  useEffect(() => {
-    const initializeScanner = async () => {
+  const startScanner = useCallback(
+    async (cameraId: string) => {
       const scanner = new Html5Qrcode("qr-reader");
-
       try {
-        // Obtener lista de cámaras disponibles
-        const cameras = await Html5Qrcode.getCameras();
-
-        if (cameras.length === 0) {
-          throw new Error("No se encontraron cámaras disponibles.");
-        }
-
-        // Seleccionar la cámara adecuada según el sistema operativo
-        let selectedCamera = cameras[0]; // Por defecto, la primera cámara
-
-        if (isIOS()) {
-          // En iOS, buscar la cámara trasera
-          selectedCamera =
-            cameras.find((camera) =>
-              camera.label.toLowerCase().includes("back")
-            ) || cameras[0];
-        } else {
-          // En Android, buscar la cámara trasera
-          selectedCamera =
-            cameras.find((camera) =>
-              camera.label.toLowerCase().includes("back")
-            ) || cameras[0];
-        }
-
-        console.log("Usando cámara:", selectedCamera.label);
-
-        // Iniciar el escáner con la cámara seleccionada
         await scanner.start(
-          selectedCamera.id,
+          cameraId,
           {
             fps: 10,
             qrbox: { width: 250, height: 250 },
-          },
+          } as Html5QrcodeCameraScanConfig,
           (decodedText) => {
             try {
               const url = new URL(decodedText); // Validar si es una URL
@@ -69,21 +38,60 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
           }
         );
       } catch (error) {
-        console.error("Error al inicializar el escáner:", error);
-        setErrorMessage(
-          "No se pudo acceder a la cámara. Asegúrate de otorgar permisos."
-        );
+        console.error("Error al iniciar el escáner:", error);
+        setErrorMessage("No se pudo iniciar el escáner con la cámara seleccionada.");
       }
 
-      // Limpiar el escáner al desmontar
       return () => {
         scanner.stop().catch(console.error);
         scanner.clear();
       };
+    },
+    [onScanError, onScanSuccess]
+  );
+
+  const changeCamera = async () => {
+    if (cameras.length > 0) {
+      const nextIndex = (currentCameraIndex + 1) % cameras.length;
+      setCurrentCameraIndex(nextIndex);
+
+      const cameraId = cameras[nextIndex].deviceId;
+      console.log("Cambiando a cámara:", cameras[nextIndex].label);
+
+      await startScanner(cameraId);
+    }
+  };
+
+  useEffect(() => {
+    const initializeScanner = async () => {
+      try {
+        const devices = await Html5Qrcode.getCameras();
+
+        if (devices.length === 0) {
+          throw new Error("No se encontraron cámaras disponibles.");
+        }
+
+        // Mapear dispositivos de tipo CameraDevice a MediaDeviceInfo
+        const formattedDevices = devices.map((device) => ({
+          deviceId: device.id,
+          label: device.label,
+          kind: "videoinput" as MediaDeviceKind, // Aseguramos que el tipo es correcto
+          groupId: "", // Opcional
+          toJSON: () => JSON.stringify(device), // Implementación mínima de toJSON
+        }));
+
+        setCameras(formattedDevices as MediaDeviceInfo[]);
+
+        const initialCameraId = formattedDevices[0].deviceId;
+        await startScanner(initialCameraId);
+      } catch (error) {
+        console.error("Error al inicializar el escáner:", error);
+        setErrorMessage("No se pudo acceder a la cámara. Asegúrate de otorgar permisos.");
+      }
     };
 
     initializeScanner();
-  }, [onScanError, onScanSuccess]);
+  }, [startScanner]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
@@ -98,6 +106,12 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
           id="qr-reader"
           className="border-2 border-gray-600 rounded-lg w-full max-w-[90vw] h-auto aspect-square"
         ></div>
+        <button
+          onClick={changeCamera}
+          className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+        >
+          Cambiar Cámara
+        </button>
         <p className="mt-4 text-sm text-center text-gray-700">
           Asegúrate de que el código QR esté completamente dentro del recuadro.
         </p>
