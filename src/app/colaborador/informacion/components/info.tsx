@@ -145,7 +145,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
           ></div>
         </div>
         <p className="text-sm text-center mt-2">
-          Llevas {cantidad_asistidas} / {cantidad_minima_conferencias} conferencias asistiendo ({Math.min(progress, 100).toFixed(2)}%) para conseguir tu diploma
+          Llevas {cantidad_asistidas} / {cantidad_minima_conferencias} conferencias de las {cantidad_minima_conferencias} ({Math.min(progress, 100).toFixed(2)}%) para conseguir tu diploma
         </p>
       </div>
     );
