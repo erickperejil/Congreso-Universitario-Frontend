@@ -16,38 +16,38 @@ export default function MyInscriptions() {
 
   const obtenerMensajeMotivacional = (
     minimo: number,
-    faltante: number
+    asistidas: number
   ): string => {
     // Condición: cantidad_asistidas >= minimo - 3
-    if (faltante > 0 && faltante <= 3) {
-      return "🎉 ¡Estás a un paso de alcanzar el mínimo de conferencias requeridas para obtener tu certificado! Aprovecha esta oportunidad y asiste a una más. ¡Tú puedes lograrlo! 💪";
+    if (asistidas > 0 && asistidas <= 3) {
+      return "🎉 ¡Estás a un paso de alcanzar el mínimo de conferencias requeridas para obtener tu certificado! Aprovecha esta oportunidad y asiste a más conferencias. ¡Tú puedes lograrlo! 💪";
     }
   
-    // Condición: cantidad_faltante_a_inscribir > 0
-    if (faltante > 0 && faltante > minimo - 3) {
-      return `📝 ¡Aún puedes inscribirte en más conferencias! Solo te faltan ${faltante} para alcanzar el mínimo necesario. ¡No dejes pasar esta oportunidad y asegura tu lugar! 🚀`;
+    // Condición: cantidad_asistidas_a_inscribir > 0
+    if (asistidas > 0 && asistidas == 3) {
+      return `📝 ¡Aún puedes inscribirte en más conferencias! Solo te faltan ${asistidas} para alcanzar el mínimo necesario. ¡No dejes pasar esta oportunidad y asegura tu lugar! 🚀`;
     }
   
-    // Condición: faltante es igual a minimo (aún no se ha comenzado)
-    if (faltante === minimo) {
+    // Condición: asistidas es igual a minimo (aún no se ha comenzado)
+    if (asistidas == 0) {
       return "💡 ¡No te quedes atrás! Aún no has asistido a ninguna conferencia, pero nunca es tarde para comenzar. Inscríbete y participa para obtener conocimientos valiosos y tu certificado. 🌱";
     }
   
-    // Condición: faltante es 0 (cumplió con el mínimo necesario)
-    if (faltante === 0) {
+    // Condición: asistidas es 0 (cumplió con el mínimo necesario)
+    if (asistidas >= minimo) {
       return "🎉 ¡Felicidades! Has cumplido con todas las conferencias necesarias para obtener tu certificado. ¡Gran trabajo! 🌟";
     }
   
     // Casos genéricos según el progreso
-    if (faltante <= minimo / 2) {
+    if (asistidas <= minimo / 2) {
       return "💪 ¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así.";
     }
   
-    if (faltante > minimo / 2 && faltante <= (minimo * 3) / 4) {
+    if (asistidas > minimo / 2 && asistidas <= (minimo * 3) / 4) {
       return "📈 Estás progresando, pero aún necesitas asistir a algunas conferencias más.";
     }
   
-    // Si faltante es mayor a (minimo * 3) / 4
+    // Si asistidas es mayor a (minimo * 3) / 4
     return "🌟 No te desanimes, ve a más conferencias y avanza hacia tu meta.";
   };
   
@@ -106,8 +106,8 @@ export default function MyInscriptions() {
         Mis conferencias
       </h2>
 
-      <div className="md:w-4/6 w-11/12 h-40 mx-auto flex flex-col">
-        <div className="relative mt-10 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
+      <div className="md:w-4/6 w-11/12 mx-auto flex flex-col space-y-6">
+        <div className="relative mt-10 lg:w-1/2 w-full h-10 rounded-full bg-[#14110b] shadow-lg ">
           <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
             {asistenciasInfo.cantidad_asistidas}/
             {asistenciasInfo.cantidad_minima_conferencias}
@@ -159,8 +159,8 @@ export default function MyInscriptions() {
         <div>
           <h2 className="montserrat-font mt-6 text-lg">
             {obtenerMensajeMotivacional(
-              asistenciasInfo.cantidad_asistidas,
-              asistenciasInfo.cantidad_minima_conferencias
+              asistenciasInfo.cantidad_minima_conferencias,
+              asistenciasInfo.cantidad_asistidas
             )}
           </h2>
         </div>
