@@ -24,7 +24,7 @@ export default function MyInscriptions() {
     }
   
     // Condición: cantidad_faltante_a_inscribir > 0
-    if (faltante > 0 && faltante > minimo - 3) {
+    if (faltante > 0 && faltante == 3) {
       return `📝 ¡Aún puedes inscribirte en más conferencias! Solo te faltan ${faltante} para alcanzar el mínimo necesario. ¡No dejes pasar esta oportunidad y asegura tu lugar! 🚀`;
     }
   
@@ -34,7 +34,7 @@ export default function MyInscriptions() {
     }
   
     // Condición: faltante es 0 (cumplió con el mínimo necesario)
-    if (faltante === 0) {
+    if (faltante <= 0) {
       return "🎉 ¡Felicidades! Has cumplido con todas las conferencias necesarias para obtener tu certificado. ¡Gran trabajo! 🌟";
     }
   
@@ -106,8 +106,8 @@ export default function MyInscriptions() {
         Mis conferencias
       </h2>
 
-      <div className="md:w-4/6 w-11/12 h-40 mx-auto flex flex-col">
-        <div className="relative mt-10 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
+      <div className="md:w-4/6 w-11/12 mx-auto flex flex-col space-y-6">
+        <div className="relative mt-10 lg:w-1/2 w-full h-10 rounded-full bg-[#14110b] shadow-lg ">
           <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
             {asistenciasInfo.cantidad_asistidas}/
             {asistenciasInfo.cantidad_minima_conferencias}
