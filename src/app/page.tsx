@@ -106,12 +106,13 @@ export default function Home() {
   const navbarOptions = [
     { name: "Inicio", icon: "home", link: "#inicio" },
     { name: "Nuestro Objetivo", icon: "bookmark_flag", link: "#objetivo" },
+    { name: "Detalles de Pago", icon: "bookmark_flag", link: "#pago" },
     { name: "Conferencias", icon: "import_contacts", link: "#conferencias" },
     { name: "Ponentes", icon: "group", link: "#ponentes" },
   ];
 
   return (
-    <div className="flex flex-col justify-center bg-[#101017] text-white font-extralight w-full" suppressHydrationWarning >
+    <div className="flex flex-col justify-center bg-[#101017] text-white font-extralight w-full overflow-hidden" suppressHydrationWarning >
       <Navbar options={navbarOptions}  />
 
       {/* imagen promocional de inicio */}
@@ -134,13 +135,19 @@ export default function Home() {
           <span className="text-[#f8b133] text-shadow-none montserrat-font typing-effect">
             UNAH 2025
           </span>
-          <Button
-            text="Iniciar sesión"
-            variant="primary"
-            styleType="fill"
-            action={() => router.push("/login")}
-            className="xl:hidden mt-4"
-          />
+          {showRegisterButton && (
+              <Button
+                text="Registrarme ahora"
+                action={() => router.push("/register")}
+                variant="primary"
+                styleType="outlined"
+                className="mt-4 tracking-wide"
+              >
+                <span className="material-symbols-outlined">
+                  account_circle
+                </span>
+              </Button>
+            )}
         </h1>
 
       </header>
@@ -150,44 +157,46 @@ export default function Home() {
       {/* Contenido principal */}
       <main className="w-4/5 mx-auto">
         {/* seccion de invitacion a descargar cronograma */}
-        <section className="w-full mt-12 xl:mt-0 xl:h-screen flex flex-col md:flex-row items-center justify-center gap-12 px-8 animate-from-right sm:flex-col-reverse opacity-0 translate-x-[80px]">
+        <section className="w-full mt-12 xl:mt-0 xl:h-screen flex flex-col lg:flex-row items-center justify-center gap-12 px-8 animate-from-right sm:flex-col-reverse opacity-0 translate-x-[80px]">
         <img
             src="/img/landing/promo.enc"
             alt="Cronograma del evento"
             className="rounded-lg w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
           />
           <div className="flex flex-col gap-8 text-center md:text-left text-3xl md:text-6xl leading-none">
-            <h2>Inteligencia, Innovación y
+            <h2 className="text-center lg:text-left">Inteligencia, Innovación y
               Sostenibilidad en Acción</h2>
             {showRegisterButton && (
-              <Button
-                text="Registrarme ahora"
-                action={() => router.push("/register")}
-                variant="primary"
-                styleType="outlined"
-                className="w-full md:w-max"
-              >
-                <span className="material-symbols-outlined">
-                  account_circle
-                </span>
-              </Button>
+              <a href="/pdf/cronograma.pdf" download="Cronograma_CIT">
+                <Button
+                  text="Descargar cronograma"
+                  action={() => (console.log("e"))}
+                  variant="primary"
+                  styleType="outlined"
+                  className="w-full md:w-max mx-auto mx-auto lg:mx-0 mt-4 tracking-wide"
+                >
+                  <span className="material-symbols-outlined">
+                    download
+                  </span>
+                </Button>
+              </a>
             )}
           </div>
         </section>
 
-        <section className="w-full mt-20 xl:mt-0 xl:h-screen flex flex-col md:flex-row items-center justify-center gap-12 px-8 animate-from-left mb-16 xl:mb-0 opacity-0 translate-x-[-80px]" id="objetivo">
+        <section className="w-full mt-28 xl:mt-0 xl:h-screen flex flex-col-reverse lg:flex-row items-center justify-center gap-12 px-8 animate-from-left mb-16 xl:mb-0 opacity-0 translate-x-[-80px] md:flex-col" id="objetivo">
           <div className="flex flex-col gap-8 text-center md:text-left text-3xl md:text-6xl leading-none">
-            <h2>
+            <h2 className="text-center lg:text-left">
               Nuestro Objetivo
             </h2>
-            <p className="text-base montserrat-font">
+            <p className="text-base montserrat-font text-center lg:text-left">
               Crear un espacio
               interdisciplinario que fomente el diálogo y el
               intercambio de conocimientos sobre los temas
               cruciales de Sociedad del Futuro, Inteligencia
               Artificial, Sostenibilidad e Innovación.
             </p>
-            <p className="text-base montserrat-font">
+            <p className="text-base montserrat-font text-center lg:text-left">
               Mediante conferencias, paneles y actividades de
               networking, el Congreso busca involucrar a
               estudiantes, académicos y profesionales en
@@ -202,6 +211,18 @@ export default function Home() {
             alt="Cronograma del evento"
             className="rounded-lg w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
           />
+        </section>
+
+        <section className="w-full my-28 xl:my-0 xl:h-screen flex flex-col lg:flex-row items-center justify-center gap-12 px-8 animate-from-right sm:flex-col-reverse opacity-0 translate-x-[80px]" id="pago">
+        <img
+            src="/img/landing/promo.enc"
+            alt="Cronograma del evento"
+            className="rounded-lg w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
+          />
+          <div className="flex flex-col gap-8 text-center md:text-left text-3xl md:text-6xl leading-none">
+            <h2 className="text-center lg:text-left">Detalles de Pago</h2>
+            <p className="text-base montserrat-font text-center lg:text-left">Pgaaa</p>
+          </div>
         </section>
 
         <div className="w-full min-h-screen flex flex-col bg-[101017]">

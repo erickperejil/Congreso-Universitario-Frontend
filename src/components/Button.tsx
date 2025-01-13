@@ -10,7 +10,7 @@ interface PrimaryButtonProps  {
     variant: "primary" | "secondary" | "danger" | "success" | "warning" | "info" | "light" | "dark";
     styleType: "fill" | "outlined";
     disabled?: boolean,
-    type?: "button" | "submit" | "reset";
+    type?: "button" | "submit" | "reset" ;
 }
 
 export default function Button({ text, action, children, className, variant, styleType, disabled = false, type = "submit" }: PrimaryButtonProps){

@@ -307,7 +307,7 @@ export default function Cronograma({
         {dias.find((dia) => dia.fecha === diaSeleccionado)?.label} de Enero
       </h3>
 
-      <div id="conferencias" className="md:w-4/6 w-11/12">
+      <div id="conferencias" className="w-full md:w-6/6 lg:w-4/6">
         {loading ? (
           <div className="mt-10 h-full w-full flex justify-center">
             <Loader />

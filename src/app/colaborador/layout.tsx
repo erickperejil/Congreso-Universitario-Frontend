@@ -13,18 +13,19 @@ interface HomeProps {
 export default function Home({ children }: HomeProps) {
 
     const navOptions = [
-        { name: "Conferencias", icon: "person", link: "/admin/conferencias", default: false },
-        { name: "Crear Conferencia", icon: "library_books", link: "/admin/createConferencia", default: false },
-        { name: "Participantes", icon: "library_books", link: "/admin/home", default: true },
-        
+        { name: "Escanear", icon: "qr_code_scanner", link: "/colaborador/escaner", default: true },
+        { name: "Mi Perfil", icon: "person", link: "/colaborador/perfil", default: false },
     ];
 
     return (
         <NavbarProvider>
-            <HomeLayout navOptions={navOptions}> 
+            <HomeLayout navOptions={navOptions} className="py-0"> 
                 { children }
             </HomeLayout >
         </NavbarProvider>
-
+/*         <HomeLayout navOptions={navOptions} className="px-0 lg:px-0"> 
+            { children }
+        </HomeLayout >
+ */
     );
 }

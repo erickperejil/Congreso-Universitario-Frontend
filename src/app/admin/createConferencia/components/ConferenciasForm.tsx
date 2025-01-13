@@ -8,8 +8,11 @@ import Modal from "./modal";
 import SubirPdf from "./subirArchivo";
 import UploadModal from "./subirFoto";
 import Loader from "@/components/Loading";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const ConferenciaForm: React.FC = () => {
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [isCreatingProduct, setIsCreatingProduct] = useState(true);
   const [mainImage, setMainImage] = useState<string | null>(null);
@@ -37,6 +40,8 @@ const ConferenciaForm: React.FC = () => {
   // Estados para manejar las categorías y el menú
   const [, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const fechasCongreso = [{ value: "23/01/2025", label: "23 de enero de 2025" }, { value: "24/01/2025", label: "24 de enero de 2025" }, { value: "25/01/2025", label: "25 de enero de 2025" }];
 
   useEffect(() => {
     const loadPonentes = async () => {
@@ -81,7 +86,6 @@ const ConferenciaForm: React.FC = () => {
     handleClosePdfModal();
   };
 
-
   const handleRemoveGalleryImage = (url: string) => {
     setGalleryImages((prevImages) => {
       if (typeof prevImages === "string") {
@@ -117,19 +121,19 @@ const ConferenciaForm: React.FC = () => {
     e.preventDefault();
 
     if (!isCreatingProduct) {
-      console.log("isCreatingProduct flag is false, skipping submission");
+      toast.error("Error al crear conferencia");
       return;
     }
 
     try {
       // Validamos que la fecha y las horas no estén vacías
       if (!fecha_conferencia || !hora_inicio || !hora_final) {
-        alert("Por favor, completa todos los campos de fecha y hora.");
+        toast.warning("Por favor, completa todos los campos de fecha y hora.");
         return;
       }
 
       // Convertimos la fecha y combinamos las horas
-      const fechaConvertida = convertirFechaParaServidor(fecha_conferencia); // YYYY-MM-DD -> DD/MM/YYYY
+      /*       const fechaConvertida = convertirFechaParaServidor(fecha_conferencia); // YYYY-MM-DD -> DD/MM/YYYY */
       const horaInicioConvertida = combinarFechaYHora(fecha_conferencia, hora_inicio); // DD/MM/YYYY HH:mm
       const horaFinalConvertida = combinarFechaYHora(fecha_conferencia, hora_final); // DD/MM/YYYY HH:mm
 
@@ -150,11 +154,11 @@ const ConferenciaForm: React.FC = () => {
         id_ponente: infoPonente.id_ponente,
         nombres_ponente: infoPonente.nombres_ponente,
         apellidos_ponente: infoPonente.apellidos_ponente,
-        descripcion_ponente: infoPonente.apellidos_ponente,
+        descripcion_ponente: infoPonente.descripcion_ponente,
         img_perfil_ponente: infoPonente.img_perfil_ponente,
         img_conferecia: galleryImages || "",
         direccion,
-        fecha_conferencia: fechaConvertida,
+        fecha_conferencia: fecha_conferencia,
         hora_inicio: horaInicioConvertida,
         hora_final: horaFinalConvertida,
         cupos,
@@ -166,40 +170,45 @@ const ConferenciaForm: React.FC = () => {
 
       // Llamada al backend
       const response = await crearConferencia(newProduct);
+      toast.success("Conferencia creada exitosamente");
+      resetForm();
+      scrollTo(0, 0);
       console.log("Respuesta del servidor", response);
 
-      // Reseteamos el estado y formulario
-      setIsCreatingProduct(false);
-      resetForm();
     } catch (error) {
+      toast.error("Error al crear conferencia");
       console.error("Error al crear conferencia", error);
     }
   };
 
-  // Función para convertir la fecha de YYYY-MM-DD a DD/MM/YYYY
+/*   // Función para convertir la fecha de YYYY-MM-DD a DD/MM/YYYY
   const convertirFechaParaServidor = (fecha: string) => {
     if (!fecha) return ""; // Retorna vacío si no hay fecha
     const partes = fecha.split('-');
     return `${partes[2]}/${partes[1]}/${partes[0]}`; // Formato DD/MM/YYYY
   };
-
+ */
   // Función para combinar la fecha (DD/MM/YYYY) con la hora (HH:mm)
   const combinarFechaYHora = (fecha: string, hora: string) => {
     if (!fecha || !hora) return ""; // Retorna vacío si falta fecha o hora
-    const partesFecha = fecha.split('-'); // YYYY-MM-DD
-    return `${partesFecha[2]}/${partesFecha[1]}/${partesFecha[0]} ${hora}`; // DD/MM/YYYY HH:mm
+    return `${fecha_conferencia} ${hora}`; // DD/MM/YYYY HH:mm
   };
 
   const handleCreateProduct = () => {
-    if (!mainImage) {
-      alert("Debes cargar una imagen principal antes de continuar.");
+    if(!galleryImages) {
+      toast.warning("Debes cargar una imagen de la conferencia antes de continuar");
+      return; // Detén la ejecución si no hay
+    }
+
+    if (!mainImage && crearPonenteSeleccionado) {
+      toast.warning("Debes cargar una imagen del ponente antes de continuar");
       return; // Detén la ejecución si no hay imagen
     }
 
-    if (!url_carpeta_zip) {
-      alert("Debes cargar un tutorial antes de continuar");
+/*     if (!url_carpeta_zip) {
+      toast.warning("Debes cargar los archivos de la conferencia antes de continuar");
       return; // Detén la ejecución si no hay imagen
-    }
+    } */
 
     console.log("Create button clicked, setting isCreatingProduct to true");
     setIsCreatingProduct(true);
@@ -220,7 +229,7 @@ const ConferenciaForm: React.FC = () => {
     setMainImage(null);
     setGalleryImages(null);
     seturl_carpeta_zip(null);
-
+    setId_ponente(null);
   };
 
   if (loading) {
@@ -230,7 +239,12 @@ const ConferenciaForm: React.FC = () => {
 
   return (
     <div className="rounded-lg max-w-5xl mx-auto">
-      <h2 className="text-3xl text-black border-b-[1px] border-gray-300 pb-1 font-koulen mb-6">Agregar una Nueva Conferencia</h2>
+      <div className="flex items-center gap-2 mb-6 text-3xl text-black border-b-[1px] border-gray-300 pb-1">
+        <span className="material-symbols-outlined cursor-pointer hover:scale-125" onClick={() => router.push("/admin/conferencias")}>arrow_back_ios</span>
+        <h2>Agregar Nueva Conferencia</h2>
+
+      </div>
+
       <form ref={formRef} onSubmit={handleFormSubmit}>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <div className="space-y-6">
@@ -276,18 +290,32 @@ const ConferenciaForm: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Fecha</label>
-              <input
+              <select
+                className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full"
+                value={fecha_conferencia}
+                onChange={(e) => setfecha_conferencia(e.target.value)}
+              >
+                <option value="" hidden className="text-gray-400">Selecciona una fecha</option>
+                {fechasCongreso.map((congreso, key) => (
+                  <option key={key} value={congreso.value}>
+                    {congreso.label}
+                  </option>
+                ))}
+              </select>
+
+
+              {/*               <input
                 type="date"
                 value={fecha_conferencia}
                 onChange={(e) => setfecha_conferencia(e.target.value)}
                 required
                 className="mt-2 p-2 border border-gray-300 rounded-lg w-full text-black"
-              />
+              /> */}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Cupos</label>
               <input
-                type="text"
+                type="number"
                 value={cupos}
                 onChange={(e) => setcupos(e.target.value)}
                 required
@@ -330,7 +358,7 @@ const ConferenciaForm: React.FC = () => {
                     name="ponente"
                     id="crearPonente"
                     checked={crearPonenteSeleccionado}
-                    onClick={() => setCrearPonenteSeleccionado(true)}
+                    onChange={() => setCrearPonenteSeleccionado(true)}
                   />
                   <span>Crear ponente</span>
                 </label>
@@ -339,7 +367,8 @@ const ConferenciaForm: React.FC = () => {
                     type="radio"
                     name="ponente"
                     id="seleccionarPonente"
-                    onClick={() => setCrearPonenteSeleccionado(false)}
+                    checked={!crearPonenteSeleccionado}
+                    onChange={() => setCrearPonenteSeleccionado(false)}
                   />
                   <span>Seleccionar ponente existente</span>
                 </label>
@@ -379,6 +408,7 @@ const ConferenciaForm: React.FC = () => {
                     <textarea
                       value={descripcion_ponente}
                       onChange={(e) => setdescripcion_ponente(e.target.value)}
+                      required
                       className="mt-2 p-2 border text-black border-gray-300 rounded-lg w-full"
                       placeholder="Describe el Ponente"
                     />
@@ -391,7 +421,7 @@ const ConferenciaForm: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Selecciona un ponente</label>
                 <select name="" id="" className="mt-2 p-2 text-black border border-gray-300 rounded-lg w-full" onChange={(e) => setId_ponente(Number(e.target.value))} >
-                  <option value="" hidden selected>------</option>
+                  <option value="" hidden>------</option>
                   {ponentes.map((ponente) => (
                     <option key={ponente.id_ponente} value={ponente.id_ponente}>
                       {ponente.nombres}
@@ -412,21 +442,21 @@ const ConferenciaForm: React.FC = () => {
                 onClick={() => handleOpenModal("gallery")}
               >
                 {galleryImages ? (
-                    <div className="relative inline-block w-full h-64 bg-gray-100 rounded-lg overflow-hidden">
-                      <Image
-                        src={galleryImages}
-                        alt="Gallery Preview"
-                        layout="fill"
-                        objectFit="cover"
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        onClick={() => handleRemoveGalleryImage(galleryImages)}
-                        className="absolute top-0 right-0 bg-red-500 text-white px-1 rounded-full"
-                      >
-                        ✕
-                      </button>
-                    </div>
+                  <div className="relative inline-block w-full h-64 bg-gray-100 rounded-lg overflow-hidden">
+                    <Image
+                      src={galleryImages}
+                      alt="Gallery Preview"
+                      layout="fill"
+                      objectFit="cover"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => handleRemoveGalleryImage(galleryImages)}
+                      className="absolute top-2 right-2 bg-red-500 text-white px-1 rounded-full"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 ) : (
                   <p>Click para subir una imagen</p>
                 )}
@@ -444,7 +474,7 @@ const ConferenciaForm: React.FC = () => {
                 >
                   {mainImage ? (
                     <div className="relative inline-block w-full h-64 bg-gray-100 rounded-lg overflow-hidden">
-                    <Image src={mainImage} alt="Main Preview" layout="fill" objectFit="cover" className="w-full h-full object-cover" />
+                      <Image src={mainImage} alt="Main Preview" layout="fill" objectFit="cover" className="w-full h-full object-cover" />
                     </div>
                   ) : (
                     <p>Click para subir una imagen</p>
@@ -464,7 +494,9 @@ const ConferenciaForm: React.FC = () => {
                   onClick={handleOpenPdfModal} // Función para abrir el modal del PDF
                 >
                   {url_carpeta_zip ? (
-                    <p className="text-sm text-gray-600">Archivo subido</p>
+                    <p className="text-sm text-gray-600 flex items-center justify-center"><span className="material-symbols-outlined">
+                      check
+                    </span> Archivo subido </p>
                   ) : (
                     <p>Click para cargar los archivos</p>
                   )}
@@ -483,26 +515,20 @@ const ConferenciaForm: React.FC = () => {
         <div className="col-span-2 flex justify-end space-x-3 mt-10">
           <button
             type="button"
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-            onClick={() => {
-              window.location.href = "https://diancrochet-administrador.vercel.app/productos";
-            }}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-600"
+            onClick={() => { router.push("/admin/conferencias") }}
           >
             Volver
           </button>
-          <button
-            type="button"
-            disabled={!mainImage}
-            className={`px-4 py-2 rounded-lg ${mainImage
-              ? "bg-black text-white hover:bg-gray-800"
-              : "bg-gray-400 text-gray-700 cursor-not-allowed"
-              }`}
-            onClick={handleCreateProduct}
-          // Deshabilita el botón si no hay imagen
-          >
-            Crear
-          </button>
-
+            <button
+              type="button"
+              disabled={crearPonenteSeleccionado ? !mainImage || !galleryImages /* || !url_carpeta_zip */ ? true : false : !galleryImages && !url_carpeta_zip ? true : false} 
+              className={`px-4 py-2 rounded-lg disabled:cursor-not-allowed bg-black text-white hover:bg-gray-800 disabled:bg-gray-400 disabled:text-gray-700" }`}
+              onClick={handleCreateProduct}
+            // Deshabilita el botón si no hay imagen
+            >
+              Crear Conferencia
+            </button>
         </div>
       </form>
 

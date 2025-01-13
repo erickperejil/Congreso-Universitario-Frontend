@@ -11,11 +11,6 @@ import SuccessScreen from "@/components/SuccesScreenForms";
 import { verifyUser, resendVerificationEmail } from "./actionts";
 
 export default function ConfirmAccount() {
-/*   const [loading, setLoading] = useState(true);
-  const searchParams = useSearchParams();
-  const newParam = searchParams.get('new');
-  const isNew = newParam === 'true'; */
-
   const [email, setEmail] = useState('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
@@ -23,6 +18,8 @@ export default function ConfirmAccount() {
   const [isCodeValid, setIsCodeValid] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
   const [, setEmailLoaded] = useState(false);
+
+  const [isNormalUser, setIsNormalUser] = useState(false);
 
   // Recuperar el correo almacenado en localStorage
   /* Reenvia el correo por ejemplo cuando el usuario viene desde el login */
@@ -34,7 +31,7 @@ export default function ConfirmAccount() {
       setEmailLoaded(true); // Marcar como cargado.
     } else {
       console.error('Correo no encontrado. Redirigiendo...');
-      router.push('/register');
+      router.push('/login');
     }
   
   }, [router]);
@@ -90,22 +87,27 @@ export default function ConfirmAccount() {
 
     // Valida si el correo está presente
     if (!email) {
-      setError("Error al identificar el correo. Por favor, intenta de nuevo");
+      setError("Error al identificar el correo. Por favor vuelve a ingresar, si el problema persiste, contacta a soporte.");
       return; // Detiene la ejecución
     }
 
     try {
       // Envía la petición para verificar el código
+      console.log("codigo enviado", code)
+      console.log("correo enviado", email)
       const response = await verifyUser(email, code);
+      console.log("respuesta", response)
       if (response.error) {
         console.error('Error al verificar el código:', response.error);
-        setError("El código ingresado es incorrecto o ha expirado.");
+        setError("El código ingresado es incorrecto");
         return;
       }
 
       // Limpia el almacenamiento local y marca el código como válido
       localStorage.removeItem('registerEmail');
       localStorage.removeItem('timerEndTime');
+      console.log("valor usuario", response.responseData.valor_usuario)
+      setIsNormalUser(response.responseData.valor_usuario)
       setIsCodeValid(true);
 
     } catch (error) {
@@ -147,7 +149,7 @@ export default function ConfirmAccount() {
       ) : (
         <SuccessScreen
           title="¡Cuenta confirmada con éxito!"
-          comment="Tu cuenta ha sido confirmada. Nuestro equipo revisará la validez de tu recibo a la brevedad. Una vez validado, podrás iniciar sesión."
+          comment={ isNormalUser ? "Tu cuenta ha sido confirmada. Nuestro equipo revisará la validez de tu recibo a la brevedad. Una vez validado, podrás iniciar sesión." : "Tu cuenta ha sido confirmada, ahora puedes iniciar sesión"}
           buttonTitle="Regresar al inicio"
           redirectionRoute="/login"
           router={router}
@@ -277,3 +279,11 @@ function ConfirmationScreen({
     </>
   );
 }
+
+/* {
+  "message": "Código verificado correctamente."
+  "usuario": true o false
+}
+
+true si es usuario comun
+false si es organizador */

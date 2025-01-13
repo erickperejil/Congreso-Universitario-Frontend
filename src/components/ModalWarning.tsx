@@ -1,6 +1,8 @@
+'use client';
+
 import Button from './Button';
 
-export default function ModalWarning({ title, isOpen, setIsOpen, secondAction = null }: { title: string; isOpen: boolean; setIsOpen: (isOpen: boolean) => void; secondAction? : {title: string; action: () => void} | null }) {
+export default function ModalWarning({ title, isOpen, setIsOpen, secondAction = null, buttonDisabled = false}: { title: string; isOpen: boolean; setIsOpen: (isOpen: boolean) => void; secondAction? : {title: string; action: () => void} | null; buttonDisabled?: boolean }) {
 
     return (
         <>
@@ -55,6 +57,7 @@ export default function ModalWarning({ title, isOpen, setIsOpen, secondAction = 
                                 {secondAction && (
                                     <Button 
                                         text={secondAction.title}
+                                        disabled={buttonDisabled}
                                         action={secondAction.action}
                                         variant="secondary"
                                         styleType="fill"

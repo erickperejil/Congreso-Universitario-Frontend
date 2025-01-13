@@ -141,19 +141,29 @@ export function validateOrganizerCode(organizerCode: string): string {
     return "";
 }
 
-export function validateEmail(email: string): string {
+export function validateEmail(email: string, isFromUNAH: boolean): string {
+    // Expresión regular general para correos electrónicos
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Expresión regular específica para correos de la UNAH
+    const reUNAH = /^[^\s@]+@(unah\.hn|unah\.edu\.hn)$/;
 
-    const re = /\S+@\S+\.\S+/;
     if (email === "") {
         return "El campo es requerido";
     }
 
-    if (!re.test(email)) {
-        return "El correo no es válido";
+    if (isFromUNAH) {
+        if (!reUNAH.test(email)) {
+            return "El correo debe ser del dominio UNAH (@unah.hn o @unah.edu.hn)";
+        }
+    } else {
+        if (!re.test(email)) {
+            return "El correo no es válido";
+        }
     }
 
-    return "";
+    return ""; // Retornar vacío si el correo es válido
 }
+
 
 export function validateGender(genderId: number): string {
     if (genderId === -1) {
