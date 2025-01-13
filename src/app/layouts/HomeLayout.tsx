@@ -89,6 +89,7 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
             /*             Cookies.remove('authToken');
                         router.push('/login');
              */
+            sessionStorage.clear(); 
             Cookies.remove('authToken', { path: '/' }); // Eliminar token
             router.push('/login');
         } catch (error) {
