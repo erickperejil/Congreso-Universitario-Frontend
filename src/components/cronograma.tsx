@@ -76,7 +76,7 @@ const ConferenciaComponent = ({
         {conferencia.horario}
       </div>
       <div
-        className={`w-full border lg:h-48 lg:flex rounded-b-md ${customStyles?.content || "border-slate-100 border-t-[#ffffff82]"}`}
+        className={`w-full border lg:h-52 lg:flex rounded-b-md ${customStyles?.content || "border-slate-100 border-t-[#ffffff82]"}`}
       >
         <div
           className={`p-5 lg:w-1/4 flex flex-col items-center justify-center ${customStyles?.imageContainer || ""}`}

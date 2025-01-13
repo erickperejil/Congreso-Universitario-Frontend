@@ -58,7 +58,7 @@ export default function MyInscriptions() {
       }
     
       // Condición: faltante es 0 (cumplió con el mínimo necesario)
-      if (faltante >= 0) {
+      if (faltante <= 0) {
         return "🎉 ¡Felicidades! Te has inscrito en todas las conferencias necesarias, ahora asiste a todas ellas para obtener tu certificado. ¡Gran trabajo! 🌟";
       }
     
@@ -133,7 +133,7 @@ export default function MyInscriptions() {
       </h2>
 
       <div className="md:w-4/6 w-11/12 h-44 mx-auto flex flex-col">
-        <div className="relative mt-10 lg:w-1/2 w-full h-40 rounded-full bg-[#14110b] shadow-lg ">
+        <div className="relative mt-10 lg:w-1/2 w-full h-10 rounded-full bg-[#14110b] shadow-lg ">
           <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
             {asistenciasInfo.cantidad_inscritas_actualmente}/
             {asistenciasInfo.cantidad_minima_conferencias}
