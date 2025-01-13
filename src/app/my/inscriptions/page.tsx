@@ -169,8 +169,8 @@ export default function MyInscriptions() {
   <div>
     <h2 className="montserrat-font text-lg text-center">
       {obtenerMensajeMotivacional(
-        asistenciasInfo.cantidad_inscritas_actualmente,
-        asistenciasInfo.cantidad_minima_conferencias
+        asistenciasInfo.cantidad_minima_conferencias,
+        asistenciasInfo.cantidad_inscritas_actualmente
       )}
     </h2>
   </div>
