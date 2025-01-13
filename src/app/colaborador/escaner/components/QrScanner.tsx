@@ -1,4 +1,3 @@
-// components/QRScanner.tsx
 'use client'
 import React, { useEffect, useState, useRef } from "react";
 import { Html5Qrcode, Html5QrcodeCameraScanConfig } from "html5-qrcode";
@@ -8,7 +7,12 @@ const QRScanner: React.FC = () => {
   const [currentCamera, setCurrentCamera] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
 
-  const config: Html5QrcodeCameraScanConfig = { fps: 10, qrbox: 400 };
+  // Configuración optimizada para teléfonos
+  const config: Html5QrcodeCameraScanConfig = {
+    fps: 10,
+    qrbox: { width: 300, height: 400 }, // Área de escaneo vertical
+    aspectRatio: 0.75, // Relación 3:4 típica de teléfonos
+  };
 
   // Obtener la cámara trasera
   const getBackCamera = async () => {
@@ -23,16 +27,6 @@ const QRScanner: React.FC = () => {
     }
   };
 
-  // Validar si el texto es una URL
-  const isValidUrl = (text: string) => {
-    try {
-      new URL(text);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   // Iniciar escaneo
   const startScanning = () => {
     if (!currentCamera || !qrCodeReaderRef.current) return;
@@ -44,8 +38,7 @@ const QRScanner: React.FC = () => {
         (decodedText) => {
           console.log("Texto decodificado:", decodedText);
           if (isValidUrl(decodedText)) {
-            // Redirigir automáticamente
-            window.location.href = decodedText;
+            window.location.href = decodedText; // Redirigir automáticamente
           } else {
             console.warn("Texto escaneado no es una URL válida:", decodedText);
           }
@@ -65,6 +58,16 @@ const QRScanner: React.FC = () => {
     }
   };
 
+  // Validar si el texto es una URL
+  const isValidUrl = (text: string) => {
+    try {
+      new URL(text);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
     qrCodeReaderRef.current = new Html5Qrcode("reader");
     getBackCamera();
@@ -76,15 +79,17 @@ const QRScanner: React.FC = () => {
   }, []);
 
   return (
-    <div className="container">
-      <h1>QR Code Detector</h1>
+    <div className="flex flex-col items-center justify-center w-full h-screen bg-gray-100">
+      <h1 className="text-lg font-bold mb-4">QR Code Detector</h1>
 
-      <div className="reader-container relative">
-        <div id="reader" className="border-2 border-gray-300 w-full h-96"></div>
+      <div className="relative w-full max-w-md h-[70%]">
+        {/* Aquí se muestra el área del escaneo */}
+        <div id="reader" className="w-full h-full rounded-lg shadow-md"></div>
       </div>
+
       <button
         id="startButton"
-        className={`mt-4 px-4 py-2 rounded-md font-semibold text-white ${
+        className={`mt-4 px-6 py-3 rounded-md font-semibold text-white ${
           scanning ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600"
         }`}
         onClick={scanning ? stopScanning : startScanning}
