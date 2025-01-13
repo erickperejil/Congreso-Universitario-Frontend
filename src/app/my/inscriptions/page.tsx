@@ -39,27 +39,42 @@ export default function MyInscriptions() {
 
 
     const obtenerMensajeMotivacional = (
-      faltantes: number,
-      minimo: number
+      minimo: number,
+      faltante: number
     ): string => {
-      if (faltantes === 0) {
-        return "¡Felicidades! Has inscrito todas las conferencias necesarias, asiste a todas ellas para obtener tu certificado";
+      // Condición: cantidad_asistidas >= minimo - 3
+      if (faltante > 0 && faltante <= 3) {
+        return "🎉 ¡Estás a un paso de alcanzar el mínimo de conferencias requeridas para obtener tu certificado! Aprovecha esta oportunidad e inscribite a una más. ¡Tú puedes lograrlo! 💪";
       }
     
-      if (faltantes === minimo) {
-        return "Estás comenzando, ¡inscríbete en tus primeras conferencias para lograrlo!";
+      // Condición: cantidad_faltante_a_inscribir > 0
+      if (faltante > 0 && faltante == 3) {
+        return `📝 ¡Aún puedes inscribirte en más conferencias! Solo te faltan ${faltante} para alcanzar el mínimo necesario. ¡No dejes pasar esta oportunidad y asegura tu lugar! 🚀`;
       }
     
-      if (faltantes <= minimo / 2) {
-        return "¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así";
+      // Condición: faltante es igual a minimo (aún no se ha comenzado)
+      if (faltante === minimo) {
+        return "💡 ¡No te quedes atrás! Aún no te has inscrito a ninguna conferencia, pero nunca es tarde para comenzar. Inscríbete y participa para obtener conocimientos valiosos y tu certificado. 🌱";
       }
     
-      if (faltantes > minimo / 2 && faltantes <= (minimo * 3) / 4) {
-        return "Estás progresando, pero aún necesitas inscribirte a algunas conferencias más.";
+      // Condición: faltante es 0 (cumplió con el mínimo necesario)
+      if (faltante >= 0) {
+        return "🎉 ¡Felicidades! Te has inscrito en todas las conferencias necesarias, ahora asiste a todas ellas para obtener tu certificado. ¡Gran trabajo! 🌟";
       }
     
-      return "No te desanimes, inscríbete en más conferencias y avanza hacia tu meta.";
+      // Casos genéricos según el progreso
+      if (faltante <= minimo / 2) {
+        return "💪 ¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así.";
+      }
+    
+      if (faltante > minimo / 2 && faltante <= (minimo * 3) / 4) {
+        return "📈 Estás progresando, pero aún necesitas inscribirte a algunas conferencias más.";
+      }
+    
+      // Si faltante es mayor a (minimo * 3) / 4
+      return "🌟 No te desanimes, inscríbete en más conferencias y avanza hacia tu meta.";
     };
+    
     
     
 
@@ -117,13 +132,13 @@ export default function MyInscriptions() {
         Mis conferencias
       </h2>
 
-      <div className="md:w-4/6 w-11/12 h-40 mx-auto flex flex-col">
-        <div className="relative mt-10 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
+      <div className="md:w-4/6 w-11/12 h-44 mx-auto flex flex-col">
+        <div className="relative mt-10 lg:w-1/2 w-full h-40 rounded-full bg-[#14110b] shadow-lg ">
           <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
             {asistenciasInfo.cantidad_inscritas_actualmente}/
             {asistenciasInfo.cantidad_minima_conferencias}
           </h2>
-          {asistenciasInfo.cantidad_asistidas > 0 && (
+          {asistenciasInfo.cantidad_inscritas_actualmente > 0 && asistenciasInfo.cantidad_faltante_a_inscribir > 0 && (
           <motion.div
           className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
           initial={{ width: "0%" }}
@@ -136,36 +151,18 @@ export default function MyInscriptions() {
           }%` }} 
           transition={{ duration: 2, ease: "easeInOut" }} 
          ></motion.div>
-        )}
-          {/* <div
-            className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
-            style={{
-              width: `${
-                asistenciasInfo.cantidad_total_conferencias > 0
-                  ? (asistenciasInfo.cantidad_asistencias /
-                      asistenciasInfo.cantidad_total_conferencias) *
-                    100
-                    : 0
-                  }%`
-              }}
-              transition={{ duration: 2, ease: "easeInOut" }}
-            ></motion.div>
-            {/* <div
-              className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
-              style={{
-                width: `${
-                  asistenciasInfo.cantidad_total_conferencias > 0
-                    ? (asistenciasInfo.cantidad_asistencias /
-                        asistenciasInfo.cantidad_total_conferencias) *
-                      100
-                    : 0
-                }%`,
-              }}
-            ></div> */}
+          )}
+          {asistenciasInfo.cantidad_inscritas_actualmente > 0 && asistenciasInfo.cantidad_faltante_a_inscribir <= 0 && (
+          <motion.div
+          className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-full"
+          initial={{ width: "0%" }}
+          animate={{ width: `100%` }} 
+          transition={{ duration: 2, ease: "easeInOut" }} 
+         ></motion.div>
+          )}
+        </div>
 
-          </div>
-
-          <div>
+      <div>
           <h2 className="montserrat-font mt-6 text-lg">
             {obtenerMensajeMotivacional(
               asistenciasInfo.cantidad_faltante_a_inscribir,
