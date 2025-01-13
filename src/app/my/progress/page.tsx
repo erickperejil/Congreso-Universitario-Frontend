@@ -15,23 +15,42 @@ export default function MyInscriptions() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const obtenerMensajeMotivacional = (
-    faltantes: number,
-    minimo: number
+    minimo: number,
+    faltante: number
   ): string => {
-    if (faltantes === 0) {
-      return "Asiste a todas las conferencias para obtener tu certificado";
+    // Condición: cantidad_asistidas >= minimo - 3
+    if (faltante > 0 && faltante <= 3) {
+      return "🎉 ¡Estás a un paso de alcanzar el mínimo de conferencias requeridas para obtener tu certificado! Aprovecha esta oportunidad y asiste a una más. ¡Tú puedes lograrlo! 💪";
     }
-
-    if (faltantes == (minimo / 2) + 1) {
-      return "¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así";
+  
+    // Condición: cantidad_faltante_a_inscribir > 0
+    if (faltante > 0 && faltante > minimo - 3) {
+      return `📝 ¡Aún puedes inscribirte en más conferencias! Solo te faltan ${faltante} para alcanzar el mínimo necesario. ¡No dejes pasar esta oportunidad y asegura tu lugar! 🚀`;
     }
-
-    if (faltantes > minimo / 2 && faltantes <= (minimo * 3) / 4) {
-      return "Estás progresando, pero aún necesitas asistir a algunas conferencias más.";
+  
+    // Condición: faltante es igual a minimo (aún no se ha comenzado)
+    if (faltante === minimo) {
+      return "💡 ¡No te quedes atrás! Aún no has asistido a ninguna conferencia, pero nunca es tarde para comenzar. Inscríbete y participa para obtener conocimientos valiosos y tu certificado. 🌱";
     }
-
-    return "sigue aprendiendo y creciendo en cada conferencia y avanza hacia tu meta.";
+  
+    // Condición: faltante es 0 (cumplió con el mínimo necesario)
+    if (faltante === 0) {
+      return "🎉 ¡Felicidades! Has cumplido con todas las conferencias necesarias para obtener tu certificado. ¡Gran trabajo! 🌟";
+    }
+  
+    // Casos genéricos según el progreso
+    if (faltante <= minimo / 2) {
+      return "💪 ¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así.";
+    }
+  
+    if (faltante > minimo / 2 && faltante <= (minimo * 3) / 4) {
+      return "📈 Estás progresando, pero aún necesitas asistir a algunas conferencias más.";
+    }
+  
+    // Si faltante es mayor a (minimo * 3) / 4
+    return "🌟 No te desanimes, ve a más conferencias y avanza hacia tu meta.";
   };
+  
 
   useEffect(() => {
     const token = Cookies.get("authToken");
