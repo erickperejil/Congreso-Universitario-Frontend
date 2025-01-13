@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import { Html5Qrcode } from "html5-qrcode";
 
 interface QrScannerProps {
   onScanError?: (errorMessage: string) => void;
@@ -10,53 +10,62 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const requestCameraPermission = async () => {
+    const initializeScanner = async () => {
+      const scanner = new Html5Qrcode("qr-reader");
+
       try {
-        await navigator.mediaDevices.getUserMedia({ video: true });
+        // Solicitar acceso a la cámara y obtener la lista de cámaras disponibles
+        const cameras = await Html5Qrcode.getCameras();
 
-        setTimeout(() => {
-          const scanner = new Html5QrcodeScanner(
-            "qr-reader",
-            {
-              fps: 10,
-              qrbox: { width: 250, height: 250 },
-              rememberLastUsedCamera: true,
-            },
-            false
-          );
+        if (cameras.length === 0) {
+          throw new Error("No se encontraron cámaras disponibles.");
+        }
 
-          scanner.render(
-            (decodedText) => {
-              try {
-                const url = new URL(decodedText); // Validar si es una URL
-                console.log("Código QR escaneado:", url.href);
-                onScanSuccess(url.href); // Ejecutar callback en caso de éxito
-                window.location.href = url.href; // Redirigir al enlace
-              } catch {
-                console.error("Texto escaneado no es una URL válida:", decodedText);
-                onScanError?.("El código QR no contiene una URL válida.");
-              }
-            },
-            (errorMessage) => {
-              console.warn("Error al escanear:", errorMessage);
-              onScanError?.(errorMessage); // Ejecutar callback en caso de error
+        // Seleccionar la cámara trasera si está disponible
+        const backCamera = cameras.find((camera) =>
+          camera.label.toLowerCase().includes("back")
+        ) || cameras[0]; // Si no hay cámara trasera, usar la primera disponible
+
+        console.log("Usando cámara:", backCamera.label);
+
+        // Iniciar el escáner con la cámara seleccionada
+        await scanner.start(
+          backCamera.id,
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+          },
+          (decodedText) => {
+            try {
+              const url = new URL(decodedText); // Validar si es una URL
+              console.log("Código QR escaneado:", url.href);
+              onScanSuccess(url.href); // Ejecutar callback en caso de éxito
+              window.location.href = url.href; // Redirigir al enlace
+            } catch {
+              console.error("Texto escaneado no es una URL válida:", decodedText);
+              onScanError?.("El código QR no contiene una URL válida.");
             }
-          );
-
-          // Limpiar al desmontar
-          return () => {
-            scanner.clear().catch(console.error);
-          };
-        }, 1000); // Delay de 1 segundo antes de iniciar el escáner
+          },
+          (scanError) => {
+            console.warn("Error al escanear:", scanError);
+            onScanError?.(scanError); // Manejar errores de escaneo
+          }
+        );
       } catch (error) {
-        console.error("Error al solicitar acceso a la cámara:", error);
+        console.error("Error al inicializar el escáner:", error);
         setErrorMessage(
           "No se pudo acceder a la cámara. Asegúrate de otorgar permisos."
         );
       }
+
+      // Limpiar el escáner al desmontar
+      return () => {
+        scanner.stop().catch(console.error);
+        scanner.clear();
+      };
     };
 
-    requestCameraPermission();
+    initializeScanner();
   }, [onScanError, onScanSuccess]);
 
   return (
