@@ -52,8 +52,11 @@ const CheckComponent = () => {
     const currentTime = currentDate.toTimeString().split(' ')[0];
     const timestamp = `${formattedDate} ${currentTime}`;
   
+    const url = window.location.href; // Obtiene la URL completa
+    const idUsuario = url.split('/').pop(); // Extrae el último segmento de la URL
+
     const requestData = {
-      idUsuario: '1',
+      idUsuario,
       idConferencia: selectedConference.toString(),
       ...(type === 'entrada' ? { horaEntrada: timestamp } : { horaSalida: timestamp }),
     };
