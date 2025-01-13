@@ -45,7 +45,16 @@ const ConferenciaComponent = ({
   };
 
   const handleCancelar = () => {
-    setCancelShowModal(true)
+    setCancelShowModal(true);
+  };
+
+  const handleDescargar = (url: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = '';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const datosFiltrados = conferencia.datosimportantes.filter(
@@ -107,17 +116,35 @@ const ConferenciaComponent = ({
             <span className="material-symbols-outlined">location_on</span>
             {conferencia.lugar}
           </div>
-          <Button
-            text={conferencia.inscrito ? "Cancelar Inscripcion" : "Inscribirse"}
-            action={conferencia.inscrito? handleCancelar :handleInscribirse }
-            variant="secondary"
-            styleType="outlined"
-            className={`w-full md:w-max ${customStyles?.button || ""}`}
-          >
-            <span className="material-symbols-outlined">
-              {conferencia.inscrito ? "cancel" : "how_to_reg"}
-            </span>
-          </Button>
+          {conferencia.finalizado ? (
+            conferencia.url_carpeta_zip && (
+              <Button
+                text="Descargar Recursos"
+                action={() => handleDescargar(conferencia.url_carpeta_zip)}
+                variant="secondary"
+                styleType="outlined"
+                className={`w-full md:w-max ${customStyles?.button || ""}`}
+              >
+                <span className="material-symbols-outlined">
+                   download
+                </span>
+              </Button>
+            )
+          ) : (
+            <Button
+              text={
+                conferencia.inscrito ? "Cancelar Inscripcion" : "Inscribirse"
+              }
+              action={conferencia.inscrito ? handleCancelar : handleInscribirse}
+              variant="secondary"
+              styleType="outlined"
+              className={`w-full md:w-max ${customStyles?.button || ""}`}
+            >
+              <span className="material-symbols-outlined">
+                {conferencia.inscrito ? "cancel" : "how_to_reg"}
+              </span>
+            </Button>
+          )}
         </div>
         <div
           className={`overflow-hidden lg:w-1/4 relative p-4 pt-0 md:pt-4 cursor-pointer flex items-center`}
@@ -147,11 +174,22 @@ const ConferenciaComponent = ({
             if (onInscribirse) {
               onInscribirse(conferencia);
             }
-
           }}
-          
         />
       )}
+      {/* {descargarshowModal && (
+        <Modal
+          message="¿Deseas Descargar estos recursos?"
+          subMessage={conferencia.titulo}
+          onClose={() => setShowModal(false)}
+          onSuccess={() => {
+            setShowModal(false);
+            if (onInscribirse) {
+              onInscribirse(conferencia);
+            }
+          }}
+        />
+      )} */}
       {cancelshowModal && (
         <Modal
           message="¿Deseas cancelar tu inscripción a esta conferencia?"
@@ -162,7 +200,6 @@ const ConferenciaComponent = ({
             if (onInscribirse) {
               onInscribirse(conferencia);
             }
-
           }}
         />
       )}
@@ -222,8 +259,7 @@ export default function Cronograma({
           diaSeleccionado
         );
         setConferencias(respuesta);
-      }
-      else {
+      } else {
         const respuesta = await fetchConferencias(diaSeleccionado);
         setConferencias(respuesta);
       }
@@ -233,17 +269,19 @@ export default function Cronograma({
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     async function fetchGets() {
       setLoading(true);
       // console.log("id user:", idUsuario);
-      if(idUsuario != 0){
+      if (idUsuario != 0) {
         try {
           if (fetchPrompt === "usuario" && idUsuario !== undefined) {
             // console.log(idUsuario);
-            const respuesta = await fetchConferenciasPorUsuario(idUsuario, null);
+            const respuesta = await fetchConferenciasPorUsuario(
+              idUsuario,
+              null
+            );
             console.log("conferencias de usuario", respuesta);
             setConferencias(respuesta);
           } else if (fetchPrompt === "general" && idUsuario !== undefined) {
@@ -252,16 +290,13 @@ export default function Cronograma({
               diaSeleccionado
             );
             setConferencias(respuesta);
-            
-          }
-          else if (fetchPrompt === "inscritas" && idUsuario !== undefined) {
+          } else if (fetchPrompt === "inscritas" && idUsuario !== undefined) {
             const respuesta = await fetchConferenciasInscritasPorUsuario(
               idUsuario,
               null
             );
             setConferencias(respuesta);
-          }
-          else {
+          } else {
             const respuesta = await fetchConferencias(diaSeleccionado);
             setConferencias(respuesta);
           }
@@ -322,7 +357,7 @@ export default function Cronograma({
               onInscribirse={async (conferencia) => {
                 if (onInscribirse) {
                   await onInscribirse(conferencia);
-                  actualizarConferencias(); 
+                  actualizarConferencias();
                 }
               }}
               actualizarConferencias={actualizarConferencias}

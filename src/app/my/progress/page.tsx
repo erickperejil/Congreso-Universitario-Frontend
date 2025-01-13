@@ -24,7 +24,7 @@ export default function MyInscriptions() {
     }
   
     // Condición: cantidad_faltante_a_inscribir > 0
-    if (faltante > 0 && faltante > minimo - 3) {
+    if (faltante > 0 && faltante == 3) {
       return `📝 ¡Aún puedes inscribirte en más conferencias! Solo te faltan ${faltante} para alcanzar el mínimo necesario. ¡No dejes pasar esta oportunidad y asegura tu lugar! 🚀`;
     }
   
@@ -34,7 +34,7 @@ export default function MyInscriptions() {
     }
   
     // Condición: faltante es 0 (cumplió con el mínimo necesario)
-    if (faltante === 0) {
+    if (faltante <= 0) {
       return "🎉 ¡Felicidades! Has cumplido con todas las conferencias necesarias para obtener tu certificado. ¡Gran trabajo! 🌟";
     }
   
