@@ -124,7 +124,7 @@ const CheckComponent = () => {
   };
 
   const navigateToMainPage = () => {
-    window.location.href = 'http://localhost:3000/colaborador/escaner';
+    window.location.href = 'https://congreso-universitario.vercel.app/colaborador/escaner';
   };
 
   return (

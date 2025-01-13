@@ -204,7 +204,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
           <button
             onClick={() => {
               if (id) {
-                window.location.href = `http://localhost:3000/colaborador/confirmar/${id}`;
+                window.location.href = `https://congreso-universitario.vercel.app/colaborador/confirmar/${id}`;
               }
             }}
             className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded"
