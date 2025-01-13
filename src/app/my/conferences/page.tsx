@@ -52,7 +52,7 @@ export default function Conferences() {
       {errorMessage && (
       <Modal
         hideButtons
-        message="Error"
+        message="Advertencia"
         subMessage={errorMessage}
         onClose={() => setErrorMessage(null)} // Cierra la modal al hacer clic en "Cerrar"
         onSuccess={() => setErrorMessage(null)} // Podrías agregar acciones específicas si se requiere

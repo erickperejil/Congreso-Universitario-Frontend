@@ -193,7 +193,6 @@ export default function Cronograma({
   subtitleStyles,
   onInscribirse,
 }: CronogramaProps) {
-  const [diaSeleccionado, setDiaSeleccionado] = useState("24/01/2025");
   const [conferencias, setConferencias] = useState<Conferencia[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -202,6 +201,8 @@ export default function Cronograma({
     { fecha: "12/01/2025", label: "Domingo 12" },
     { fecha: "13/01/2025", label: "Lunes 13" },
   ];
+
+  const [diaSeleccionado, setDiaSeleccionado] = useState(dias[0].fecha);
 
   const actualizarConferencias = async () => {
     setLoading(true);
