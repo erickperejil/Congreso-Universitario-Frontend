@@ -132,45 +132,50 @@ export default function MyInscriptions() {
         Mis conferencias
       </h2>
 
-      <div className="md:w-4/6 w-11/12 h-44 mx-auto flex flex-col">
-        <div className="relative mt-10 lg:w-1/2 w-full h-10 rounded-full bg-[#14110b] shadow-lg ">
-          <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
-            {asistenciasInfo.cantidad_inscritas_actualmente}/
-            {asistenciasInfo.cantidad_minima_conferencias}
-          </h2>
-          {asistenciasInfo.cantidad_inscritas_actualmente > 0 && asistenciasInfo.cantidad_faltante_a_inscribir > 0 && (
-          <motion.div
+      <div className="md:w-4/6 w-11/12 mx-auto flex flex-col space-y-6">
+  <div className="relative mt-10 lg:w-1/2 w-full h-10 rounded-full bg-[#14110b] shadow-lg">
+    <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
+      {asistenciasInfo.cantidad_inscritas_actualmente}/
+      {asistenciasInfo.cantidad_minima_conferencias}
+    </h2>
+    {asistenciasInfo.cantidad_inscritas_actualmente > 0 &&
+      asistenciasInfo.cantidad_faltante_a_inscribir > 0 && (
+        <motion.div
           className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
           initial={{ width: "0%" }}
-          animate={{ width: `${
-            asistenciasInfo.cantidad_total_conferencias > 0
-              ? (asistenciasInfo.cantidad_inscritas_actualmente /
-                  asistenciasInfo.cantidad_minima_conferencias) *
-                100
-              : 0
-          }%` }} 
-          transition={{ duration: 2, ease: "easeInOut" }} 
-         ></motion.div>
-          )}
-          {asistenciasInfo.cantidad_inscritas_actualmente > 0 && asistenciasInfo.cantidad_faltante_a_inscribir <= 0 && (
-          <motion.div
+          animate={{
+            width: `${
+              asistenciasInfo.cantidad_total_conferencias > 0
+                ? (asistenciasInfo.cantidad_inscritas_actualmente /
+                    asistenciasInfo.cantidad_minima_conferencias) *
+                  100
+                : 0
+            }%`,
+          }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        ></motion.div>
+      )}
+    {asistenciasInfo.cantidad_inscritas_actualmente > 0 &&
+      asistenciasInfo.cantidad_faltante_a_inscribir <= 0 && (
+        <motion.div
           className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-full"
           initial={{ width: "0%" }}
-          animate={{ width: `100%` }} 
-          transition={{ duration: 2, ease: "easeInOut" }} 
-         ></motion.div>
-          )}
-        </div>
+          animate={{ width: `100%` }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        ></motion.div>
+      )}
+  </div>
 
-      <div>
-          <h2 className="montserrat-font mt-6 text-lg">
-            {obtenerMensajeMotivacional(
-              asistenciasInfo.cantidad_faltante_a_inscribir,
-              asistenciasInfo.cantidad_minima_conferencias
-            )}
-          </h2>
-          </div>
-        </div>
+  <div>
+    <h2 className="montserrat-font text-lg text-center">
+      {obtenerMensajeMotivacional(
+        asistenciasInfo.cantidad_faltante_a_inscribir,
+        asistenciasInfo.cantidad_minima_conferencias
+      )}
+    </h2>
+  </div>
+</div>
+
         <Cronograma
         fetchPrompt="inscritas"
         idUsuario={idUsuario}
