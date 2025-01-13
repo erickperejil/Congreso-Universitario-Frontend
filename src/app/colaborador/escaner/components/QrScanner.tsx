@@ -106,16 +106,16 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
           id="qr-reader"
           className="border-2 border-gray-600 rounded-lg w-full max-w-[90vw] h-auto aspect-square"
         ></div>
-        <button
+        <p className="mt-4 text-sm text-center text-gray-700">
+          Asegúrate de que el código QR esté completamente dentro del recuadro.
+        </p>
+      </div>
+      <button
           onClick={changeCamera}
           className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
         >
           Cambiar Cámara
         </button>
-        <p className="mt-4 text-sm text-center text-gray-700">
-          Asegúrate de que el código QR esté completamente dentro del recuadro.
-        </p>
-      </div>
     </div>
   );
 };
