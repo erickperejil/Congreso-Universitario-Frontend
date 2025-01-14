@@ -34,7 +34,6 @@ import { genders } from "../constants/genders";
 import { Career } from "@/interfaces/Career";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { noAuto } from "@fortawesome/fontawesome-svg-core";
 
 const Register = () => {
     const router = useRouter();

@@ -10,8 +10,6 @@ import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Cookies from 'js-cookie';
 import Loader from "./Loading";
 import { toast } from "react-toastify";
-import { h2 } from "framer-motion/client";
-
 
 const UserProfile: React.FC = ({ id }: { id?: string }) => {
   const [isLoading, setIsLoading] = useState(true);
