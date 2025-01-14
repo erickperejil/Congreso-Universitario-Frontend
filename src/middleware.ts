@@ -1,4 +1,4 @@
-/* import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
@@ -72,7 +72,7 @@ export const config = {
     matcher: [
         '/((?!api|_next|img/|pdf/|logos/|fonts/|public/|login|register|$).*)',
     ],
-}; */
+}; 
 
 
 
@@ -153,7 +153,7 @@ export const config = {
  */
 
 
-import { NextResponse } from 'next/server';
+/* import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
@@ -227,3 +227,4 @@ export function middleware(request: NextRequest) {
 export const config = {
     matcher: ['/((?!api|_next|img/|pdf/|logos/|fonts/|public/|login|register).*)'],
 };
+ */
