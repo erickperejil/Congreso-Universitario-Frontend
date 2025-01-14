@@ -158,6 +158,8 @@ import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 export function middleware(request: NextRequest) {
+    const response = NextResponse.next();
+    response.headers.set('Cache-Control', 'no-store'); // Evita que se almacene en caché
     const token = request.cookies.get('authToken')?.value;
 
     // Define rutas públicas
