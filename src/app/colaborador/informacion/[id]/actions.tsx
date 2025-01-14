@@ -10,7 +10,7 @@ export const isTokenValid = (token: string): boolean => {
         console.log("payload", payload);
 
         // Verifica el rol del usuario
-        if (payload.tipo_usuario === "colaborador") {
+        if (payload.tipo_usuario === "organizador") {
             return true;
         } else {
             return false;
