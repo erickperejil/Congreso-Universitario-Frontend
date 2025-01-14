@@ -74,6 +74,8 @@ export const config = {
     ],
 }; */
 
+"use client";
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
@@ -102,6 +104,8 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
+    console.log('Token:', token);
+
     try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const decoded: any = jwt.decode(token);
@@ -109,6 +113,8 @@ export function middleware(request: NextRequest) {
         if (decoded?.exp && decoded.exp < Date.now() / 1000) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
+
+        console.log("decoded", decoded);
 
         switch (decoded.tipo_usuario) {
             case 'administrador':
