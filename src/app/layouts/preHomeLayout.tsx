@@ -1,11 +1,11 @@
+import { ToastContainer } from 'react-toastify';
+
 export default function PreHomeLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex min-h-screen">
             {/* banner izquierdo */}
             <div className="w-full md:w-2/5 xl:w-3/5 hidden md:grid md:bg-[url('/img/landing/promo.enc')] md:bg-repeat md:bg-center md:bg-black md:brightness-90 xl:bg-[#080816] xl:bg-none z-10 relative">
                 <div className="hiddden md:absolute inset-0 bg-black bg-opacity-40 z-10 xl:hidden"></div>
-
-                {/* La imagen solo se mostrará en pantallas grandes, oculta en dispositivos pequeños */}
                 <img
                     src="/img/landing/promo.enc"
                     alt="login ilustracion"
@@ -14,11 +14,12 @@ export default function PreHomeLayout({ children }: { children: React.ReactNode 
             </div>
 
 
-
             {/* formulario de login */}
             <div className="box-border w-full md:w-3/5 xl:w-2/5 bg-[#101017] text-white py-4">
+            <ToastContainer />
+
                 <div className="flex flex-col justify-center items-center w-full min-h-screen fade-in-up">
-                    <img src="/logos/logo_cit_blanco.webp" alt="logo" className="w-16" />
+                    <img src="/logos/logo_cit_blanco.webp" alt="logo" className="w-16 mb-2" />
                     {children}
                 </div>
             </div>

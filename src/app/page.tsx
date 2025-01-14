@@ -161,7 +161,7 @@ export default function Home() {
         <img
             src="/img/landing/promo.enc"
             alt="Cronograma del evento"
-            className="rounded-lg w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
+            className="rounded-tl-[40px] rounded-br-[40px] w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
           />
           <div className="flex flex-col gap-8 text-center md:text-left text-3xl md:text-6xl leading-none">
             <h2 className="text-center lg:text-left">Inteligencia, Innovación y
@@ -209,7 +209,7 @@ export default function Home() {
           <img
             src="/img/landing/nuestro-objetivo.webp"
             alt="Cronograma del evento"
-            className="rounded-lg w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
+            className="rounded-tl-[40px] rounded-tr-sm rounded-br-[40px] w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
           />
         </section>
 
@@ -217,11 +217,11 @@ export default function Home() {
         <img
             src="/img/landing/promo.enc"
             alt="Cronograma del evento"
-            className="rounded-lg w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
+            className="rounded-tl-[40px] rounded-br-[40px] w-full md:w-[50%] max-w-[450px] shadow-[8px_8px_15px_rgba(0,0,0,0.5),-4px_-4px_10px_rgba(255,255,255,0.2)]"
           />
           <div className="flex flex-col gap-8 text-center md:text-left text-3xl md:text-6xl leading-none">
             <h2 className="text-center lg:text-left">Detalles de Pago</h2>
-            <p className="text-base montserrat-font text-center lg:text-left">Pgaaa</p>
+            <p className="text-base montserrat-font text-center lg:text-left">Cuenta 282782</p>
           </div>
         </section>
 
@@ -252,7 +252,7 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <footer className="relative py-4 bg-[#f8b133] mt-36 h-48 text-black">
+      <footer className="relative py-4 bg-[#f8b133] mt-36 h-48 text-black overflow-hidden">
         {/* Contenido del footer */}
         <div className="flex flex-col items-start justify-center ml-12 h-full text-xl">
           <p>UNAH 2025</p>

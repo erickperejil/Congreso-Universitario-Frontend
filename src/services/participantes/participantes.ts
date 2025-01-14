@@ -4,7 +4,7 @@ const BASE_URL = "https://backend-congreso.vercel.app";
 
 export async function obtenerUsuarios(): Promise<Participantes[]> {
     try {
-      const response = await fetch('https://backend-congreso.vercel.app/admin/validaciones', {
+      const response = await fetch('https://backend-congreso.vercel.app/admin/certificates/accepted/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export async function obtenerUsuarios(): Promise<Participantes[]> {
   }
 
   
-export async function obtenerUsuariosParaChequear(): Promise<Participantes[]> {
+export async function obtenerUsuariosParaChequear(estado: boolean | null): Promise<Participantes[]> {
   try {
     const response = await fetch('https://backend-congreso.vercel.app/admin/validaciones', {
       method: 'POST',
@@ -35,7 +35,7 @@ export async function obtenerUsuariosParaChequear(): Promise<Participantes[]> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        estado: null,
+        estado: estado,
       }),
     });
 

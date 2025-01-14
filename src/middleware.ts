@@ -116,8 +116,8 @@ export function middleware(request: NextRequest) {
                 }
                 break;
             case 'organizador':
-                if (!request.nextUrl.pathname.startsWith('/organizador')) {
-                    return NextResponse.redirect(new URL('/organizador', request.url));
+                if (!request.nextUrl.pathname.startsWith('/colaborador')) {
+                    return NextResponse.redirect(new URL('/colaborador/escaner', request.url));
                 }
                 break;
             case 'comun':
@@ -126,8 +126,8 @@ export function middleware(request: NextRequest) {
                 }
                 break;
             case 'colaborador':
-                if (!request.nextUrl.pathname.startsWith('/colaborador')) {
-                    return NextResponse.redirect(new URL('/colaborador/escaner', request.url));
+                if (!request.nextUrl.pathname.startsWith('/organizador')) {
+                    return NextResponse.redirect(new URL('/organizador', request.url));
                 }
                 break;
             default:

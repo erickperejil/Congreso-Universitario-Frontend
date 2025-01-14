@@ -74,7 +74,7 @@ export default function ForgotPassword() {
       general: ""
     }));
 
-    const emailError = validateEmailForgotPassword(email);
+    const emailError = validateEmailForgotPassword(email.toLowerCase());
     setErrors((prevErrors) => ({ ...prevErrors, email: emailError }));
 
     if (emailError) {
@@ -151,7 +151,8 @@ export default function ForgotPassword() {
 
     try {
       // Envía la petición para verificar el código
-      const response = await sendCodeToResetPasswordF(email, Number(code));
+      const response = await sendCodeToResetPasswordF(email.toLowerCase(), Number(code));
+      console.log("edj", response)
       if (response.error) {
         console.error('Error al verificar el código:', response.error);
         setErrors((prev) => ({
@@ -195,7 +196,7 @@ export default function ForgotPassword() {
     }
 
     try {
-      const response = await sendNewPasswordF(email, password);
+      const response = await sendNewPasswordF(email.toLowerCase(), password);
 
       if (response.error) {
         console.error('Error al enviar la nueva contraseña:', response.error);

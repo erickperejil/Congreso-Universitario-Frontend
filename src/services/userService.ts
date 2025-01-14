@@ -177,7 +177,7 @@ export const sendEmailToResetPassword = async (email: string) => {
     }
 
     try {
-        const response = await fetch(`${API_URL}/usuario/verificacion/correo`, {
+        const response = await fetch(`${API_URL}/usuario/verificacion/contrasena`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -220,8 +220,14 @@ export const sendCodeToResetPassword = async (email : string, code : number) => 
             return { error: errorData.message || `Error ${response.status}: ${response.statusText}` };
         }
 
+
         const responseData = await response.json();
-        return { responseData };
+        if(responseData.codigo_resultado === "1"){
+            return { responseData };
+        }
+
+        return { error: responseData.message || `Error ${response.status}: ${response.statusText}` };
+
     } catch (error) {
         if (error instanceof Error) {
             return { error: error.message };

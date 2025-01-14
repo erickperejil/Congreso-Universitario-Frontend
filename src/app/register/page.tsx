@@ -33,6 +33,8 @@ import { checkEmailExists, getUniversities, getCareers, handleRegister } from ".
 import { genders } from "../constants/genders";
 import { Career } from "@/interfaces/Career";
 import Image from "next/image";
+import { toast } from "react-toastify";
+import { noAuto } from "@fortawesome/fontawesome-svg-core";
 
 const Register = () => {
     const router = useRouter();
@@ -88,6 +90,19 @@ const Register = () => {
         general: "",
         receiptImage: "",
     });
+
+    useEffect(() => {
+        toast.info("¡Bienvenido! Sera necesario que tengas una fotografia de tu recibo a mano para poder completar el registro", {
+            position: "top-right",
+            autoClose: false,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined, 
+        });
+
+    }, []);
 
     /* Trae todas las universidades y carreras para el select */
     useEffect(() => {
@@ -461,11 +476,8 @@ const Register = () => {
 
             if (response.error) {
                 console.error('Error al registrar usuario:', response.error);
-
-                if (response.error.statusCode === 500) {
-                    setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. Si el problema persiste, contacta al soporte. ¡Gracias por tu paciencia!");
+                    setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. Si el problema persiste, contacta al soporte. ¡Gracias por tu paciencia!. El servidor respondio con:" + response.error);
                     setShowModal(true);
-                }
                 return;
             }
 
@@ -500,7 +512,7 @@ const Register = () => {
                     <div
                         key={step}
                         className={`grid place-items-center w-10 h-10 cursor-pointer rounded-full
-                                ${step < currentStep ? "bg-gray-400" : ""} 
+                                ${step > currentStep ? "bg-gray-400" : ""}
                                 ${step === currentStep
                                 ? "bg-[#f8b133] w-12 h-12"
                                 : "bg-[#fff]"
@@ -914,6 +926,7 @@ const Register = () => {
                         Iniciar Sesión
                     </Link>
                 </p>
+
                 {showModal && (
                     <ModalWarning
                         title={modalMessage}
