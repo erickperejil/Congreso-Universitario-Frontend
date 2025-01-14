@@ -213,12 +213,12 @@ export function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/organizador', request.url));
         }
 
+        return NextResponse.next();
     } catch (error) {
         console.error("Error decoding token:", error);
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    return NextResponse.next();
 }
 
 // Configurar el middleware para aplicar solo en rutas específicas
