@@ -74,14 +74,15 @@ export const config = {
     ],
 }; */
 
-"use client";
 
+
+/* 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
-
 export function middleware(request: NextRequest) {
+
     const response = NextResponse.next();
 
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -100,11 +101,8 @@ export function middleware(request: NextRequest) {
 
 
     if (!token) {
-        response.headers.set('Clear-Session-Storage', 'true');
         return NextResponse.redirect(new URL('/login', request.url));
     }
-
-    console.log('Token:', token);
 
     try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,8 +112,6 @@ export function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        console.log("decoded", decoded);
-
         switch (decoded.tipo_usuario) {
             case 'administrador':
                 if (!request.nextUrl.pathname.startsWith('/admin')) {
@@ -123,8 +119,8 @@ export function middleware(request: NextRequest) {
                 }
                 break;
             case 'organizador':
-                if (!request.nextUrl.pathname.startsWith('/colaborador')) {
-                    return NextResponse.redirect(new URL('/colaborador/escaner', request.url));
+                if (!request.nextUrl.pathname.startsWith('/organizador')) {
+                    return NextResponse.redirect(new URL('/organizador', request.url));
                 }
                 break;
             case 'comun':
@@ -133,8 +129,8 @@ export function middleware(request: NextRequest) {
                 }
                 break;
             case 'colaborador':
-                if (!request.nextUrl.pathname.startsWith('/organizador')) {
-                    return NextResponse.redirect(new URL('/organizador', request.url));
+                if (!request.nextUrl.pathname.startsWith('/colaborador')) {
+                    return NextResponse.redirect(new URL('/colaborador/escaner', request.url));
                 }
                 break;
             default:
@@ -154,3 +150,73 @@ export const config = {
         '/((?!api|_next|img/|pdf/|logos/|fonts/|public/|login|register|$).*)',
     ],
 }
+ */
+
+
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import jwt from 'jsonwebtoken';
+
+export function middleware(request: NextRequest) {
+    const token = request.cookies.get('authToken')?.value;
+
+    // Define rutas públicas
+    const publicRoutes = ['/login', '/register', '/colaborador/informacion'];
+
+    // Permitir acceso si la ruta es pública
+    if (publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
+        return NextResponse.next();
+    }
+
+    // Redirigir si no hay token
+    if (!token) {
+        console.warn("No token found. Redirecting to /login.");
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const decoded : any= jwt.decode(token);
+
+        if (decoded?.exp && decoded.exp < Date.now() / 1000) {
+            console.warn("Token expired. Redirecting to /login.");
+            return NextResponse.redirect(new URL('/login', request.url));
+        }
+
+        console.log("Decoded token:", decoded);
+
+        // Control de acceso basado en tipo de usuario
+        const tipoUsuario = decoded?.tipo_usuario;
+
+        if (tipoUsuario === 'administrador' && !request.nextUrl.pathname.startsWith('/admin')) {
+            console.warn("Acceso denegado. Redirigiendo a /admin/home.");
+            return NextResponse.redirect(new URL('/admin/home', request.url));
+        }
+
+        if (tipoUsuario === 'organizador' && !request.nextUrl.pathname.startsWith('/colaborador')) {
+            console.warn("Acceso denegado. Redirigiendo a /colaborador/escaner.");
+            return NextResponse.redirect(new URL('/colaborador/escaner', request.url));
+        }
+
+        if (tipoUsuario === 'comun' && !request.nextUrl.pathname.startsWith('/my')) {
+            console.warn("Acceso denegado. Redirigiendo a /my/profile.");
+            return NextResponse.redirect(new URL('/my/profile', request.url));
+        }
+
+        if (tipoUsuario === 'colaborador' && !request.nextUrl.pathname.startsWith('/organizador')) {
+            console.warn("Acceso denegado. Redirigiendo a /organizador.");
+            return NextResponse.redirect(new URL('/organizador', request.url));
+        }
+
+    } catch (error) {
+        console.error("Error decoding token:", error);
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+    return NextResponse.next();
+}
+
+// Configurar el middleware para aplicar solo en rutas específicas
+export const config = {
+    matcher: ['/((?!api|_next|img/|pdf/|logos/|fonts/|public/|login|register).*)'],
+};
