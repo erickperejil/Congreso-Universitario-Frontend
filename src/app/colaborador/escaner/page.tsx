@@ -5,9 +5,17 @@ import Header from '../components/header';
 
 const ScanPage: React.FC = () => {
   const handleScanSuccess = (decodedText: string) => {
-    alert(`QR Code Detected: ${decodedText}`);
-    console.log(decodedText);
+    // Verificar si el texto decodificado es una URL válida
+    try {
+      const url = new URL(decodedText);
+      console.log(`Redirigiendo a: ${url.href}`);
+      window.location.href = url.href; // Redirige a la URL
+    } catch (error) {
+      console.error("El texto escaneado no es una URL válida:", decodedText, error);
+      alert(`Texto detectado no válido: ${decodedText}`);
+    }
   };
+  
 
   const handleScanError = (errorMessage: string) => {
     console.warn(`QR Scan Error: ${errorMessage}`);
@@ -20,7 +28,6 @@ const ScanPage: React.FC = () => {
 
       {/* Contenido principal */}
       <main className="flex flex-col items-center justify-center flex-grow px-4">
-
         {/* Escáner QR */}
         <div className="">
           <QrScanner onScanSuccess={handleScanSuccess} onScanError={handleScanError} />

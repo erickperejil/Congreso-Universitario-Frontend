@@ -98,6 +98,7 @@ export function middleware(request: NextRequest) {
 
 
     if (!token) {
+        response.headers.set('Clear-Session-Storage', 'true');
         return NextResponse.redirect(new URL('/login', request.url));
     }
 

@@ -30,6 +30,7 @@ export interface CreateConferencia {
     cupos_disponibles: number;
     finalizado: boolean;
     inscrito: boolean;
+    url_carpeta_zip: string;
   }
 
   export interface ConferenciaCompleta {

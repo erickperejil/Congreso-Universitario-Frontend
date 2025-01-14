@@ -20,7 +20,7 @@ const nextConfig = {
       },
       
     ],
-    domains: ['1.bp.blogspot.com','res.cloudinary.com'],
+    domains: ['1.bp.blogspot.com','res.cloudinary.com','img.icons8.com'],
   },
 };
 

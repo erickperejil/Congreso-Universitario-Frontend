@@ -39,27 +39,42 @@ export default function MyInscriptions() {
 
 
     const obtenerMensajeMotivacional = (
-      faltantes: number,
-      minimo: number
+      minimo: number,
+      asistidas: number
     ): string => {
-      if (faltantes === 0) {
-        return "¡Felicidades! Has inscrito todas las conferencias necesarias, asiste a todas ellas para obtener tu certificado";
+      // Condición: cantidad_asistidas >= minimo - 3
+      if (asistidas > 0 && asistidas <= 3) {
+        return "🎉 ¡Estás a un paso de alcanzar el mínimo de conferencias requeridas para obtener tu certificado! Aprovecha esta oportunidad e inscribite a más conferencias. ¡Tú puedes lograrlo! 💪";
       }
     
-      if (faltantes === minimo) {
-        return "Estás comenzando, ¡inscríbete en tus primeras conferencias para lograrlo!";
+      // Condición: cantidad_asistidas_a_inscribir > 0
+      if (asistidas > 0 && asistidas == 3) {
+        return `📝 ¡Aún puedes inscribirte en más conferencias! Solo te faltan ${asistidas} para alcanzar el mínimo necesario. ¡No dejes pasar esta oportunidad y asegura tu lugar! 🚀`;
       }
     
-      if (faltantes <= minimo / 2) {
-        return "¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así";
+      // Condición: asistidas es igual a minimo (aún no se ha comenzado)
+      if (asistidas === 0) {
+        return "💡 ¡No te quedes atrás! Aún no te has inscrito a ninguna conferencia, pero nunca es tarde para comenzar. Inscríbete y participa para obtener conocimientos valiosos y tu certificado. 🌱";
       }
     
-      if (faltantes > minimo / 2 && faltantes <= (minimo * 3) / 4) {
-        return "Estás progresando, pero aún necesitas inscribirte a algunas conferencias más.";
+      // Condición: asistidas es 0 (cumplió con el mínimo necesario)
+      if (asistidas >= minimo) {
+        return "🎉 ¡Felicidades! Te has inscrito en todas las conferencias necesarias, ahora asiste a todas ellas para obtener tu certificado. ¡Gran trabajo! 🌟";
       }
     
-      return "No te desanimes, inscríbete en más conferencias y avanza hacia tu meta.";
+      // Casos genéricos según el progreso
+      if (asistidas <= minimo / 2) {
+        return "💪 ¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así.";
+      }
+    
+      if (asistidas > minimo / 2 && asistidas <= (minimo * 3) / 4) {
+        return "📈 Estás progresando, pero aún necesitas inscribirte a algunas conferencias más.";
+      }
+    
+      // Si asistidas es mayor a (minimo * 3) / 4
+      return "🌟 No te desanimes, inscríbete en más conferencias y avanza hacia tu meta.";
     };
+    
     
     
 
@@ -117,63 +132,50 @@ export default function MyInscriptions() {
         Mis conferencias
       </h2>
 
-      <div className="md:w-4/6 w-11/12 h-40 mx-auto flex flex-col">
-        <div className="relative mt-10 lg:w-1/2 w-full h-8 rounded-full bg-[#14110b] shadow-lg ">
-          <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
-            {asistenciasInfo.cantidad_inscritas_actualmente}/
-            {asistenciasInfo.cantidad_minima_conferencias}
-          </h2>
-          {asistenciasInfo.cantidad_asistidas > 0 && (
-          <motion.div
+      <div className="md:w-4/6 w-11/12 mx-auto flex flex-col space-y-6">
+  <div className="relative mt-10 lg:w-1/2 w-full h-10 rounded-full bg-[#14110b] shadow-lg">
+    <h2 className="absolute inset-0 flex items-center justify-center text-center top-0 text-white">
+      {asistenciasInfo.cantidad_inscritas_actualmente}/
+      {asistenciasInfo.cantidad_minima_conferencias}
+    </h2>
+    {asistenciasInfo.cantidad_inscritas_actualmente > 0 &&
+      asistenciasInfo.cantidad_faltante_a_inscribir > 0 && (
+        <motion.div
           className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
           initial={{ width: "0%" }}
-          animate={{ width: `${
-            asistenciasInfo.cantidad_total_conferencias > 0
-              ? (asistenciasInfo.cantidad_inscritas_actualmente /
-                  asistenciasInfo.cantidad_minima_conferencias) *
-                100
-              : 0
-          }%` }} 
-          transition={{ duration: 2, ease: "easeInOut" }} 
-         ></motion.div>
-        )}
-          {/* <div
-            className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
-            style={{
-              width: `${
-                asistenciasInfo.cantidad_total_conferencias > 0
-                  ? (asistenciasInfo.cantidad_asistencias /
-                      asistenciasInfo.cantidad_total_conferencias) *
-                    100
-                    : 0
-                  }%`
-              }}
-              transition={{ duration: 2, ease: "easeInOut" }}
-            ></motion.div>
-            {/* <div
-              className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-l-full"
-              style={{
-                width: `${
-                  asistenciasInfo.cantidad_total_conferencias > 0
-                    ? (asistenciasInfo.cantidad_asistencias /
-                        asistenciasInfo.cantidad_total_conferencias) *
-                      100
-                    : 0
-                }%`,
-              }}
-            ></div> */}
+          animate={{
+            width: `${
+              asistenciasInfo.cantidad_total_conferencias > 0
+                ? (asistenciasInfo.cantidad_inscritas_actualmente /
+                    asistenciasInfo.cantidad_minima_conferencias) *
+                  100
+                : 0
+            }%`,
+          }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        ></motion.div>
+      )}
+    {asistenciasInfo.cantidad_inscritas_actualmente > 0 &&
+      asistenciasInfo.cantidad_faltante_a_inscribir <= 0 && (
+        <motion.div
+          className="h-full border border-[#F2AE30] bg-[#F2AE30] rounded-full"
+          initial={{ width: "0%" }}
+          animate={{ width: `100%` }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+        ></motion.div>
+      )}
+  </div>
 
-          </div>
+  <div>
+    <h2 className="montserrat-font text-lg text-center">
+      {obtenerMensajeMotivacional(
+        asistenciasInfo.cantidad_minima_conferencias,
+        asistenciasInfo.cantidad_inscritas_actualmente
+      )}
+    </h2>
+  </div>
+</div>
 
-          <div>
-          <h2 className="montserrat-font mt-6 text-lg">
-            {obtenerMensajeMotivacional(
-              asistenciasInfo.cantidad_faltante_a_inscribir,
-              asistenciasInfo.cantidad_minima_conferencias
-            )}
-          </h2>
-          </div>
-        </div>
         <Cronograma
         fetchPrompt="inscritas"
         idUsuario={idUsuario}
@@ -184,7 +186,8 @@ export default function MyInscriptions() {
           imageContainer: "border-blue-400 border-b-transparent",
           ponente: "border-b-blue-200 border-x-blue-200 border-t-transparent montserrat-font",
           content: "border-transparent",
-          datosimportantes: "text-slate-900 montserrat-font"
+          datosimportantes: "text-slate-900 montserrat-font",
+          dateStyles: "block"
         }}
         dayButtonStyles={{
           default: "text-[#101017] border-[#101017] hidden",

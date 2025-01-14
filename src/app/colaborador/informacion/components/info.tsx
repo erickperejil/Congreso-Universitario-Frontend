@@ -145,7 +145,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
           ></div>
         </div>
         <p className="text-sm text-center mt-2">
-          {cantidad_asistidas} / {cantidad_minima_conferencias} conferencias ({Math.min(progress, 100).toFixed(2)}%)
+          Llevas {cantidad_asistidas} / {cantidad_minima_conferencias} conferencias para conseguir tu diploma ({Math.min(progress, 100).toFixed(2)}%) 
         </p>
       </div>
     );
@@ -204,7 +204,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
           <button
             onClick={() => {
               if (id) {
-                window.location.href = `http://localhost:3000/colaborador/confirmar/${id}`;
+                window.location.href = `https://congreso-universitario.vercel.app/colaborador/confirmar/${id}`;
               }
             }}
             className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded"
