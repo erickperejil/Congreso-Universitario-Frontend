@@ -174,9 +174,14 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
+
+
     try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const decoded : any= jwt.decode(token);
+        const decoded: any = jwt.decode(token);
+        console.log("Ruta solicitada:", request.nextUrl.pathname);
+        console.log("Token decodificado:", decoded);
+        console.log("Tipo de usuario:", decoded?.tipo_usuario);
 
         if (decoded?.exp && decoded.exp < Date.now() / 1000) {
             console.warn("Token expired. Redirecting to /login.");

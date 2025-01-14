@@ -5,13 +5,13 @@ const BASE_URL = "https://backend-congreso.vercel.app";
 export async function obtenerUsuarios(): Promise<Participantes[]> {
     try {
       const response = await fetch('https://backend-congreso.vercel.app/admin/certificates/accepted/users', {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
+/*         body: JSON.stringify({
           estado: true,
-        }),
+        }), */
       });
   
       if (!response.ok) {
