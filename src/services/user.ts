@@ -133,3 +133,29 @@ export const fetchAsistenciasByUsuarioId = async (id_usuario: number): Promise<A
   }
 };
 
+export const downloadCertificateById = async (id_usuario: number): Promise<void> => {
+  try {
+    const response = await fetch(`https://backend-congreso.vercel.app/admin/certificates/download/${id_usuario}`);
+
+    if (!response.ok) {
+      console.error(`Error al descargar el certificado: ${response.status} - ${response.statusText}`);
+      const errorText = await response.text();
+      console.error("Response text:", errorText);
+      return;
+    }
+
+    const certificateBlob = await response.blob();
+    const url = window.URL.createObjectURL(certificateBlob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `certificado_${id_usuario}.pdf`; // Cambia la extensión si es necesario
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    console.log('Certificado descargado exitosamente.');
+  } catch (error) {
+    console.error("Error al descargar el certificado:", error);
+  }
+};

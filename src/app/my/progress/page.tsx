@@ -2,10 +2,11 @@
 import { useState, useEffect } from "react";
 import Cronograma from "@/components/cronograma";
 import Cookies from "js-cookie";
-import { fetchAsistenciasByUsuarioId } from "@/services/user";
+import { downloadCertificateById, fetchAsistenciasByUsuarioId } from "@/services/user";
 import { motion } from "framer-motion";
 import Loader from "@/components/Loading";
 import { Asistencias } from "@/interfaces/participantes";
+import Button from "@/components/Button";
 
 export default function MyInscriptions() {
   const [idUsuario, setIdUsuario] = useState<number>(0);
@@ -51,6 +52,19 @@ export default function MyInscriptions() {
     return "🌟 No te desanimes, ve a más conferencias y avanza hacia tu meta.";
   };
 
+  const handleDescargar = async () => {
+    try {
+      if (!idUsuario) {
+        console.error("ID de usuario no disponible para la descarga.");
+        return;
+      }
+      await downloadCertificateById(idUsuario);
+      console.log("Descarga completada exitosamente.");
+    } catch (error) {
+      console.error("Error al intentar descargar recursos:", error);
+    }
+  };
+  
   useEffect(() => {
     const token = Cookies.get("authToken");
     if (token) {
@@ -194,6 +208,23 @@ export default function MyInscriptions() {
           </h2>
         </div>
       </div>
+      {asistenciasInfo &&
+    asistenciasInfo.cantidad_asistidas >=
+      asistenciasInfo.cantidad_minima_conferencias && (
+      <div className="mx-auto lg:mb-12">
+                <Button
+                  text="Descargar Recursos"
+                  action={handleDescargar}
+                  variant="primary"
+                  styleType="outlined"
+                  className="w-full md:w-max mx-auto lg:mx-0 mt-4 tracking-wide"
+                >
+                  <span className="material-symbols-outlined">
+                    download
+                  </span>
+                </Button>
+      </div>
+    )}
       <div className="lg:-mt-12">
         <Cronograma
           fetchPrompt="usuario"

@@ -37,6 +37,7 @@ export default function MyInscriptions() {
       }
     };
 
+    
 
     const obtenerMensajeMotivacional = (
       minimo: number,
