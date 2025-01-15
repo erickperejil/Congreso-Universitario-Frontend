@@ -62,9 +62,10 @@ export default function MyInscriptions() {
       }
     
       // Casos genéricos según el progreso
-      if (asistidas <= minimo / 2) {
+      if (asistidas <= Math.floor(minimo / 2) + (minimo % 2 === 1 ? 1 : 0)) {
         return "💪 ¡Buen trabajo! Ya has cumplido más de la mitad del camino, sigue así.";
       }
+      
     
       if (asistidas > minimo / 2 && asistidas <= (minimo * 3) / 4) {
         return "📈 Estás progresando, pero aún necesitas inscribirte a algunas conferencias más.";
