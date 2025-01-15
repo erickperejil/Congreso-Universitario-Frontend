@@ -45,9 +45,7 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
 
     // Manejador para cerrar el sidebar al hacer clic fuera
     const handleClickOutside = (event: MouseEvent) => {
-        console.log('Click outside');
         const sidebar = document.getElementById("logo-sidebar");
-        console.log('Sidebar:', sidebar);
         if (
             isSidebarOpen &&
             sidebar &&

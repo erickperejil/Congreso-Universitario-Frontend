@@ -66,19 +66,16 @@ const TablaParticipantes = () => {
   };
 
   const handleCloseModal = () => {
-    console.log("Cerrando modal");
     setSelectedUser(null);
     setIsModalOpen(false);
   };
 
   const handleValidate = async () => {
     if (selectedUser) {
-      console.log("Aceptar usuario:", selectedUser.id_usuario);
       setLoadingButton(true);
 
       try {
         const response = await actualizarEstadoUsuario(selectedUser.id_usuario.toString(), true);
-        console.log("Usuario validado con éxito:", response);
         fetchUsuarios();
 
         if(response.resultado.codigo === 1) {
@@ -106,10 +103,8 @@ const TablaParticipantes = () => {
   const handleDeny = async () => {
     if (selectedUser) {
       setLoadingButton(true);
-      console.log("Denegar usuario:", selectedUser.id_usuario);
       try {
         const response = await actualizarEstadoUsuario(selectedUser.id_usuario.toString(), false);
-        console.log("Usuario denegado con éxito:", response);
         fetchUsuarios();
 
         if(response.resultado.codigo === 1) {

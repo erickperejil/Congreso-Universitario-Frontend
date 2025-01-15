@@ -23,11 +23,9 @@ const UserProfile: React.FC = ({ id }: { id?: string }) => {
     const processToken = () => {
       const token = Cookies.get("authToken");
       if (token) {
-        console.log("Token decodificado:", token);
         try {
           const parts = token.split(".");
           const payload = JSON.parse(atob(parts[1]));
-          console.log("Payload decodificado:", payload);
           if (payload.tipo_usuario === "comun") {
             setShowQR(true);
           }
@@ -44,7 +42,6 @@ const UserProfile: React.FC = ({ id }: { id?: string }) => {
         setIsLoading(true);
         if (idUsuario) {
           const userData = await fetchUsuarioById(idUsuario);
-          console.log("Usuario cargado:", userData);
           if (userData) {
             setUser(userData);
             setFormData({
@@ -54,7 +51,6 @@ const UserProfile: React.FC = ({ id }: { id?: string }) => {
               contrasena: null,
               dni: null
             });
-            console.log("Usuario cargado:", userData);
           }
         } else {
           console.warn("No se encontró un ID de usuario válido.");

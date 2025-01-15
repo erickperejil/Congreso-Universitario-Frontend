@@ -39,7 +39,6 @@ function Login() {
 
                 setShowRegisterButton(response.responseData.resultado);
 
-                console.log('Response:', response.responseData.resultado);
             } catch (err) {
                 console.error('Unexpected error:', err);
             }
@@ -142,7 +141,6 @@ function Login() {
     }
 
     const handleResendEmail = async () => {
-        console.log("correo", email);
         setButtonDisabled(true);
 
 

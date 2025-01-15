@@ -25,7 +25,6 @@ export default function Home() {
 
         setShowRegisterButton(response.responseData.resultado);
 
-        console.log('Response:', response.responseData.resultado);
       } catch (err) {
         console.error('Unexpected error:', err);
       }
@@ -170,7 +169,7 @@ export default function Home() {
               <a href="/pdf/cronograma.pdf" download="Cronograma_CIT">
                 <Button
                   text="Descargar cronograma"
-                  action={() => (console.log("e"))}
+                  action={() => (console.info("e"))}
                   variant="primary"
                   styleType="outlined"
                   className="w-full md:w-max mx-auto mx-auto lg:mx-0 mt-4 tracking-wide"

@@ -24,8 +24,6 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  console.log(isAccepted, "isAccepted");
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-gray-100 rounded-lg shadow-lg p-6 w-[90%] max-w-md relative">

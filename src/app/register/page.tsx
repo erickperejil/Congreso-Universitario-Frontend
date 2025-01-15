@@ -114,7 +114,6 @@ const Register = () => {
 
             if (response.universities) {
                 setUniversities(response.universities);
-                console.log("Universidades:", response.universities);
             }
         };
 
@@ -125,7 +124,6 @@ const Register = () => {
                 return;
             }
 
-            console.log(response.data)
             setCarrers(response.data);
         }
 
@@ -142,9 +140,8 @@ const Register = () => {
             );
             if (unah) {
                 setUNAHId(unah.id);
-                console.log("UNAH encontrada:", unah);
             } else {
-                console.log("UNAH no encontrada");
+                console.warn("UNAH no encontrada");
             }
         }
     }, [universities]);
@@ -282,7 +279,6 @@ const Register = () => {
     const handleUniversityChange = (
         event: React.ChangeEvent<HTMLSelectElement>
     ) => {
-        console.log(event.target.value);
         setUniversityID(Number(event.target.value));
     };
 
@@ -413,10 +409,8 @@ const Register = () => {
 
     function handleBackStep(event: React.FormEvent): void {
         event.preventDefault(); // Detiene el envío del formulario
-        console.log("Retrocediendo...", currentStep);
 
         setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep));
-        console.log("Retrocediendo...", currentStep);
     }
 
     const buildFormData = (): RegisterFormInterface => {
@@ -468,7 +462,6 @@ const Register = () => {
     const handleSubmit = async () => {
         setSending(true);
         const formData: RegisterFormInterface = buildFormData();
-        console.log("Datos a enviar:", formData);
 
         try {
             const response = await handleRegister(formData);

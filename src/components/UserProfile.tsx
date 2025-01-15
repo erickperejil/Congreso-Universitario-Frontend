@@ -29,9 +29,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log("entrando en ue")
         if (!id) return;
-        console.log("entrando en ue2")
 
         const loadUser = async (idUsuario: number) => {
             try {
@@ -45,7 +43,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
                             apellidos: userData.apellidos,
                             correo: userData.correo,
                         });
-                        console.log("Usuario cargado:", userData);
                     } else {
                         setError("No se encontró un usuario con el ID proporcionado.");
                     }
@@ -124,7 +121,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ isVisualizing }) => {
             new URL(url); // Intenta crear una nueva URL con el string dado.
             return true;
         } catch (e) {
-            console.log("Error al validar la URL:", e);
+            console.error("Error al validar la URL:", e);
             return false;
         }
     }

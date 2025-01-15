@@ -138,7 +138,6 @@ export default function ForgotPassword() {
 
     // Obtiene el código ingresado
     const code = inputRefs.current.map((input) => input?.value).join("");
-    console.log('Código ingresado:', code);
 
     // Valida si el correo está presente
     if (!email) {
@@ -152,7 +151,6 @@ export default function ForgotPassword() {
     try {
       // Envía la petición para verificar el código
       const response = await sendCodeToResetPasswordF(email.toLowerCase(), Number(code));
-      console.log("edj", response)
       if (response.error) {
         console.error('Error al verificar el código:', response.error);
         setErrors((prev) => ({

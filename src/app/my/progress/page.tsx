@@ -62,7 +62,6 @@ export default function MyInscriptions() {
         // Llamar al API después de setear el ID
         (async () => {
           const data = await fetchAsistenciasByUsuarioId(payload.id_usuario);
-          console.log("asistencia", data);
           setAsistenciasInfo(data);
           setIsLoading(false);
         })();

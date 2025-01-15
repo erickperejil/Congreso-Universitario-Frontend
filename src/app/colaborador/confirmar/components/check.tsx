@@ -13,7 +13,6 @@ const CheckComponent = () => {
       const today = new Date().toISOString().split('T')[0];
       const requestData = { fecha: today };
 
-      console.log('Datos enviados al backend:', requestData);
 
       try {
         const response = await fetch('https://backend-congreso.vercel.app/conferencias/fecha', {
@@ -25,7 +24,6 @@ const CheckComponent = () => {
         });
 
         const data = await response.json();
-        console.log('Respuesta del backend:', data);
         setConferences(data.conferencias || []);
       } catch (error) {
         console.error('Error fetching conferences:', error);
@@ -61,7 +59,6 @@ const CheckComponent = () => {
       ...(type === 'entrada' ? { horaEntrada: timestamp } : { horaSalida: timestamp }),
     };
   
-    console.log(`Datos enviados al backend para hora ${type}:`, requestData);
   
     try {
       const url =
@@ -80,7 +77,6 @@ const CheckComponent = () => {
       });
   
       const data = await response.json();
-      console.log(`Respuesta del backend para hora ${type}:`, data);
   
       const errorMessages: Record<
         'entrada' | 'salida',
@@ -183,7 +179,7 @@ const CheckComponent = () => {
               onClick={closeModal}
               className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md mt-4"
             >
-              Cerrar Modal
+              Cerrar
             </button>
             {showBackButton && (
               <button

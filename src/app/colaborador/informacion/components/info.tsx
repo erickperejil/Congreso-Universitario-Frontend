@@ -61,18 +61,14 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
   useEffect(() => {
       const processToken = () => {
       const token = Cookies.get("authToken");
-      console.log(token);
   
       if (token) {
-        console.log("Token encontrado");
         setTokenValido(isTokenValid(token));
-        console.log("Token válido?", isTokenValid(token));
       } else {
         setTokenValido(false);
       }
 
 
-      console.log(tokenValido);
     };
   
     processToken();
@@ -80,7 +76,6 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
 
   useEffect(() => {
     if(!tokenValido) {
-      console.log("Token inválido");
        setNavbarVisible(false);
      } else {
         setNavbarVisible(true);

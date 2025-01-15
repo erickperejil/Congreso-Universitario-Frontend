@@ -64,7 +64,6 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onImageUploa
   };
 
   const handleConfirm = () => {
-    console.log('Confirming images:', tempImages);
     onImageUpload(tempImages); // Update main component only on confirm
     onClose();
   };

@@ -73,7 +73,6 @@ const ConferenciaComponent = ({
 
   // const handleCupo = () => {
   //   // router.push("/login");
-  //   console.log("Cronograma descargado");
   // };
 
   return (
@@ -267,7 +266,6 @@ export default function Cronograma({
         setConferencias(respuesta);
       } else {
         const respuesta = await fetchConferencias(diaSeleccionado);
-        console.log("conferencias", respuesta);
         setConferencias(respuesta);
       }
     } catch (error) {
@@ -280,16 +278,13 @@ export default function Cronograma({
   useEffect(() => {
     async function fetchGets() {
       setLoading(true);
-      // console.log("id user:", idUsuario);
       if (idUsuario != 0) {
         try {
           if (fetchPrompt === "usuario" && idUsuario !== undefined) {
-            // console.log(idUsuario);
             const respuesta = await fetchConferenciasPorUsuario(
               idUsuario,
               null
             );
-            console.log("conferencias de usuario", respuesta);
             setConferencias(respuesta);
           } else if (fetchPrompt === "general" && idUsuario !== undefined) {
             const respuesta = await fetchConferenciasPorUsuarioGeneral(
@@ -305,7 +300,6 @@ export default function Cronograma({
             setConferencias(respuesta);
           } else {
             const respuesta = await fetchConferencias(diaSeleccionado);
-            console.log("conferencias", respuesta); 
             setConferencias(respuesta);
           }
         } catch (error) {

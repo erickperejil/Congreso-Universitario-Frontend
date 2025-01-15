@@ -16,7 +16,6 @@ export const login = async (email: string, password: string): Promise<{ error?: 
             const errorData = await response.json();
             return { error: errorData.message || 'Error', statusCode: response.status, codigoResultado: errorData.codigoResultado }; 
         }
-        console.log('Login response:', response);
 
         const data = await response.json();
         return { token: data.token }; 

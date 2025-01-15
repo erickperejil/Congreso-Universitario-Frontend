@@ -4,8 +4,6 @@ import { ActualizarUser, UsuarioRecibo } from "@/interfaces/user";
 
 
 export const updateUser = async (id_usuario:number, formData: ActualizarUser): Promise<UsuarioRecibo | null> => {
-  console.log("enviando ", JSON.stringify(formData))
-  console.log(id_usuario)
     try {
         const response = await fetch(`https://backend-congreso.vercel.app/admin/actualizar/usuario/${id_usuario}`, {
             method: 'PUT',
@@ -63,8 +61,6 @@ export const fetchUsuarioById = async (id: number): Promise<UsuarioRecibo | null
     const data = await response.json();
 
     if (data?.resultado) {
-      console.log(data)
-      console.log("service login",data.resultado)
       return data.resultado[0] as UsuarioRecibo;
     } else {
       console.error("No se encontró información del usuario en la respuesta.");

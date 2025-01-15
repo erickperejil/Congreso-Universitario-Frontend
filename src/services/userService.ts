@@ -48,7 +48,6 @@ export const register = async (formData: RegisterFormInterface) => {
         genero: gender.abrev,
     };
 
-    console.log('newFormData:', newFormData)
     try {
         const response = await fetch(`${API_URL}/usuario/registrar`, {
             method: 'POST',
@@ -94,7 +93,6 @@ export const sendCodeToVerifyUser = async (email: string, code: number) => {
         }
 
         const responseData = await response.json();
-        console.log('responseData:', responseData);
         if(responseData.codigo_resultado == 1){
             return { responseData };
         }

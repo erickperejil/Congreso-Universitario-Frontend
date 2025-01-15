@@ -19,17 +19,15 @@ export default function MyInscriptions() {
       try {
         let response;
         if (conferencia.inscrito) {
-          console.log(`Cancelando inscripción para la conferencia: ${conferencia.id_conferencia}`);
           response = await cancelarInscripcionConferencia(idUsuario, conferencia.id_conferencia);
         } else {
-          console.log(`Inscribiéndose a la conferencia: ${conferencia.id_conferencia}`);
           response = await inscribirseEnConferencia(idUsuario, conferencia.id_conferencia);
         }
     
         if (response.codigoResultado === -1) {
           setErrorMessage(response.message || "Ha ocurrido un error.");
         } else {
-          console.log("Acción exitosa:", response);
+          console.assert("Acción exitosa:", response);
         }
       } catch (error) {
         console.error("Error durante la acción (inscribir o cancelar):", error);
@@ -89,7 +87,6 @@ export default function MyInscriptions() {
         // Llamar al API después de setear el ID
         (async () => {
           const data = await fetchAsistenciasByUsuarioId(payload.id_usuario);
-          console.log("asistencia", data)
           setAsistenciasInfo(data);
           setIsLoading(false);
         })();

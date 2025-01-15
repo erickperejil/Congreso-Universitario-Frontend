@@ -77,7 +77,6 @@ export async function obtenerConferencia(id : string): Promise<ConferenciaComple
     }
 
     const data = await response.json();
-    console.log(data);
 
     return data.conferencia[0] as ConferenciaCompleta;
   } catch (error) {
@@ -102,7 +101,6 @@ export const obtenerConferencias = async (dia: string|null): Promise<Conferencia
       }
   
       const data = await response.json();
-      console.log(data);
       return data.conferencias;
     } catch (error) {
       console.error('Error al obtener los usuarios:', error);
@@ -114,7 +112,6 @@ export const obtenerConferencias = async (dia: string|null): Promise<Conferencia
   export const eliminarConferencia = async (id: number): Promise<{ message: string }> => {
     try {
       const response = await axios.delete(`${BASE_URL}/conferencias/eliminar/${id}`);
-      console.log(response)
       return response.data; // Retorna el mensaje de la respuesta
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

@@ -1,6 +1,5 @@
 export function isLoginInputsValids(email: string, password: string): boolean {
 
-    console.log(email, password);
 
     if (email === "" || password === "") {
         return false;

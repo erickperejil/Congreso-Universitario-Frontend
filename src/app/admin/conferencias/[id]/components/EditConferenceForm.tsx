@@ -81,7 +81,6 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                 setPonenteImg(result.img_ponente);
                 setConferenceImg(result.img_conferencia);
                 seturl_carpeta_zip(result.url_carpeta_zip);
-                console.log("conf", result);
             } catch (error) {
                 console.error("Error al obtener la conferencia", error);
             } finally {
@@ -129,7 +128,6 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
         setLoading(true);
 
         if (!isEditingConference) {
-            console.log("isEditingConference flag is false, skipping submission");
             setLoading(false);
             return;
         }
@@ -160,11 +158,9 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                 id_ponente: conferencia.id_ponente || 0,
             };
 
-            console.log("Creando Conferencia", newConference);
 
             // Llamada al backend
             const response = await editarConferencia(newConference);
-            console.log("Respuesta del servidor", response);
 
             if (response) {
                 toast.success("Conferencia editada exitosamente");
@@ -180,17 +176,16 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
         }
     };
 
-    const formatToDDMMYYYY = (dateString: string) => {
+/*     const formatToDDMMYYYY = (dateString: string) => {
         const date = new Date(dateString); // Asumiendo que dateString es "2025-01-24"
         const day = String(date.getDate()).padStart(2, '0'); // 24
         const month = String(date.getMonth() + 1).padStart(2, '0'); // 01
         const year = date.getFullYear(); // 2025
         return `${day}/${month}/${year}`;
-    };
+    }; */
 
-    const formattedDate = formatToDDMMYYYY('2025-01-24');
-    console.log(formattedDate); // "24/01/2025"
-
+/*     const formattedDate = formatToDDMMYYYY('2025-01-24');
+ */
 
     const handleEditConference = () => {
         if (!conferenceImg) {
@@ -209,7 +204,6 @@ const ConferenciaForm: React.FC<ConferenciaFormProps> = ({ id, isVisualizing = t
                     return; // Detén la ejecución si no hay imagen
                 } */
 
-        console.log("Create button clicked, setting isEditingConference to true");
         setEditingConference(true);
         formRef.current?.requestSubmit(); // Envía el formulario si pasa la validación
     };

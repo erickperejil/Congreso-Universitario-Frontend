@@ -7,7 +7,6 @@ export const isTokenValid = (token: string): boolean => {
         }
 
         const payload = JSON.parse(atob(parts[1]));
-        console.log("payload", payload);
 
         // Verifica el rol del usuario
         if (payload.tipo_usuario === "organizador") {

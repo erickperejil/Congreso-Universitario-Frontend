@@ -68,10 +68,9 @@ const TableComponent = () => {
   };
 
   const handleDelete = async (id: number) => {
-    console.log(id)
     try {
       const result = await eliminarConferencia(id);
-      console.log(result.message);
+      console.info("Conferencia eliminada:", result);
       await fetchConferencias();
     } catch (error) {
       console.error("No se pudo eliminar la conferencia:", error);

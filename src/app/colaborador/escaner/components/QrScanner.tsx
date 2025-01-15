@@ -24,7 +24,6 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
           (decodedText) => {
             try {
               const url = new URL(decodedText); // Validar si es una URL
-              console.log("Código QR escaneado:", url.href);
               onScanSuccess(url.href); // Ejecutar callback en caso de éxito
               window.location.href = url.href; // Redirigir al enlace
             } catch {
@@ -56,7 +55,6 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScanError, onScanSuccess }) => 
       setCurrentCameraIndex(nextIndex);
 
       const cameraId = cameras[nextIndex].deviceId;
-      console.log("Cambiando a cámara:", cameras[nextIndex].label);
 
       await startScanner(cameraId);
     }
