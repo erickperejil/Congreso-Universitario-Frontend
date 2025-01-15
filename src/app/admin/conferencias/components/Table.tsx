@@ -6,6 +6,7 @@ import { eliminarConferencia, obtenerConferencias } from "@/services/conferencia
 import { Conferencia } from "@/interfaces/conferencias";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/Loading";
+import Modal from "@/components/Modal";
 
 const TableComponent = () => {
   const router = useRouter();
@@ -16,6 +17,7 @@ const TableComponent = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [deleteShowModal, setDeleteShowModal] = useState<boolean>(false);
 
   const fetchConferencias = async () => {
     try {
@@ -76,6 +78,10 @@ const TableComponent = () => {
       console.error("No se pudo eliminar la conferencia:", error);
     }
   };
+
+  const handleModal = async () =>{
+    setDeleteShowModal(true)
+  }
 
 
   // const handleActionChange = (index: number) => {
@@ -140,6 +146,7 @@ const TableComponent = () => {
           </thead>
           <tbody>
             {filteredData.map((conferencia, index) => (
+              
               <tr
                 key={index}
                 className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
@@ -152,12 +159,17 @@ const TableComponent = () => {
                 <td className="px-4 py-2 border-b">{conferencia.cupos_disponibles}</td>
                 <td className="px-4 py-2 border-b text-center">
                   <div className="flex flex-col lg:flex-row items-center justify-center gap-1">
-                    {/* <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
-                      onClick={() => {}}
-                    >
-                      {actions[index]}
-                    </button> */}
+                    {deleteShowModal && (
+                      <Modal
+                        message="¿Deseas eliminar esta conferencia?"
+                        subMessage={conferencia.titulo}
+                        onClose={() => setDeleteShowModal(false)}
+                        onSuccess={() => {
+                          setDeleteShowModal(false);
+                          handleDelete(conferencia.id_conferencia)
+                        }}
+                      />
+                    )}
                     <button
                       onClick={() => handleView(conferencia.id_conferencia)}
                       className={`bg-blue-500 text-white px-2 py-1 rounded shadow hover:bg-blue-600 text-sm font-300 flex items-center gap-1 w-full`}
@@ -173,7 +185,7 @@ const TableComponent = () => {
                       Editar
                     </button>
                     <button
-                      onClick={() => handleDelete(conferencia.id_conferencia)}
+                      onClick={() => handleModal()}
                       className={`bg-red-400 text-white px-2 py-1 rounded shadow hover:bg-blue-600 text-sm font-300 flex items-center gap-1 w-full`}
                     >
                       <FaFolderMinus size={20} />
@@ -186,6 +198,8 @@ const TableComponent = () => {
           </tbody>
         </table>
       </div>
+
+
     </div>
   );
 };
