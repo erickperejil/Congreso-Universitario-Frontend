@@ -10,13 +10,20 @@ import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Cookies from 'js-cookie';
 import Loader from "./Loading";
 import { toast } from "react-toastify";
+import {useRouter} from 'next/navigation';
 
 const UserProfile: React.FC = ({ id }: { id?: string }) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<UsuarioRecibo | null>(null);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({ nombres: "", apellidos: "", correo: "", dni: null, contrasena: null });
   const [showQR, setShowQR] = useState(false);
+
+  useEffect(() => {
+    console.log("Datos actualizados, refrescando...");
+    router.refresh(); // Se ejecuta solo cuando alguna dependencia cambia.
+  }, [router]);
 
   useEffect(() => {
     if (id) return;
