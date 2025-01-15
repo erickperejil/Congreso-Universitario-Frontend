@@ -91,7 +91,7 @@ const Register = () => {
     });
 
     useEffect(() => {
-        toast.info("¡Bienvenido! Sera necesario que tengas una fotografia de tu recibo a mano para poder completar el registro", {
+        toast.info("¡Bienvenido/a! Ten a mano una foto de tu recibo para completar el registro.", {
             position: "top-right",
             autoClose: false,
             hideProgressBar: false,

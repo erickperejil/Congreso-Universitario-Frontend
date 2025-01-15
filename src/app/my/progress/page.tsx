@@ -186,7 +186,7 @@ export default function MyInscriptions() {
         </div>
 
         <div>
-          <h2 className="montserrat-font mt-6 text-lg">
+          <h2 className="montserrat-font mt-6 text-lg text-center lg:text-left">
             {obtenerMensajeMotivacional(
               asistenciasInfo.cantidad_minima_conferencias,
               asistenciasInfo.cantidad_asistidas

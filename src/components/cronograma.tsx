@@ -78,16 +78,19 @@ const ConferenciaComponent = ({
 
   return (
     <div
-      className={`w-full overflow-hidden border flex flex-col mb-6 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"}`}
+      className={`w-full overflow-hidden border flex flex-col mb-6 rounded-md ${customStyles?.container || "border-slate-100 border-b-[#ffffff82]"} `}
     >
       <div
-        className={`w-full min-h-14 sm:flex-row flex-col flex items-center text-2xl p-3 font-bold montserrat-font ${customStyles?.header || ""}`}
+        className={`w-full min-h-14 lg:flex-row flex-col flex items-center justify-center text-2xl p-3 font-bold montserrat-font sm:gap-0 lg:gap-4 ${customStyles?.header || ""}`}
       >
-        <h3 className={`mr-8 ${customStyles?.dateStyles || "hidden"}`}>
+        <h3 className={`${customStyles?.dateStyles || "hidden"}`}>
           {conferencia.fecha}
         </h3>
-
+        <p>
         {` ${conferencia.horario} `}
+
+        </p>
+
       </div>
       <div
         className={`w-full border lg:h-52 lg:flex rounded-b-md ${customStyles?.content || "border-slate-100 border-t-[#ffffff82]"}`}
@@ -264,6 +267,7 @@ export default function Cronograma({
         setConferencias(respuesta);
       } else {
         const respuesta = await fetchConferencias(diaSeleccionado);
+        console.log("conferencias", respuesta);
         setConferencias(respuesta);
       }
     } catch (error) {
@@ -301,6 +305,7 @@ export default function Cronograma({
             setConferencias(respuesta);
           } else {
             const respuesta = await fetchConferencias(diaSeleccionado);
+            console.log("conferencias", respuesta); 
             setConferencias(respuesta);
           }
         } catch (error) {
@@ -315,7 +320,7 @@ export default function Cronograma({
   }, [diaSeleccionado, fetchPrompt, idUsuario]);
 
   return (
-    <div className="mt-16 w-full flex flex-col items-center select-none">
+    <div className="w-5/6 mt-10  w-full flex flex-col items-center select-none mx-auto">
       <h2 className={`sm:text-6xl text-5xl mb-10 ${titleStyles || ""}`}>
         Conferencias
       </h2>
@@ -352,9 +357,9 @@ export default function Cronograma({
             <Loader />
           </div>
         ) : (
-          conferencias.map((conferencia) => (
+          conferencias.map((conferencia,) => (
             <ConferenciaComponent
-              key={conferencia.horario}
+              key={conferencia.id_conferencia}
               conferencia={conferencia}
               customStyles={customStyles}
               onInscribirse={async (conferencia) => {

@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+/* import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
@@ -72,7 +72,7 @@ export const config = {
     matcher: [
         '/((?!api|_next|img/|pdf/|logos/|fonts/|public/|login|register|$).*)',
     ],
-}; 
+};  */
 
 
 
@@ -153,13 +153,11 @@ export const config = {
  */
 
 
-/* import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 export function middleware(request: NextRequest) {
-    const response = NextResponse.next();
-    response.headers.set('Cache-Control', 'no-store'); // Evita que se almacene en caché
     const token = request.cookies.get('authToken')?.value;
 
     // Define rutas públicas
@@ -177,20 +175,14 @@ export function middleware(request: NextRequest) {
     }
 
 
-
     try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const decoded: any = jwt.decode(token);
-        console.log("Ruta solicitada:", request.nextUrl.pathname);
-        console.log("Token decodificado:", decoded);
-        console.log("Tipo de usuario:", decoded?.tipo_usuario);
 
         if (decoded?.exp && decoded.exp < Date.now() / 1000) {
             console.warn("Token expired. Redirecting to /login.");
             return NextResponse.redirect(new URL('/login', request.url));
         }
-
-        console.log("Decoded token:", decoded);
 
         // Control de acceso basado en tipo de usuario
         const tipoUsuario = decoded?.tipo_usuario;
@@ -223,8 +215,19 @@ export function middleware(request: NextRequest) {
 
 }
 
-// Configurar el middleware para aplicar solo en rutas específicas
 export const config = {
-    matcher: ['/((?!api|_next|img/|pdf/|logos/|fonts/|public/|login|register).*)'],
+    matcher: [
+        '/((?!api|_next|img/|pdf/|logos/|fonts/|public/|login|register|$).*)',
+    ],
 };
+
+
+
+
+
+
+/*     // Configurar el middleware para aplicar solo en rutas específicas
+    export const config = {
+        matcher: ['/((?!api|_next|img/|pdf/|logos/|fonts/|public/|login|register).*)'],
+    };
  */

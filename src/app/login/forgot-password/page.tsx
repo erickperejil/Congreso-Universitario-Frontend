@@ -249,9 +249,10 @@ export default function ForgotPassword() {
 
           {showInputCode && (
             <div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 text-center">
                 <p className="leading-4 text-[#ab9a9a] text-center">Ingresa el código que acabamos de enviarte a
                   <span className="text-white font-semibold">{" "}{email}</span> para verificar que eres tú</p>
+                <p className="text-[#ab9a9a]">Si no lo encuentras revisa la bandeja de <span className="text-white">spam.</span></p>
                 <InputFields inputRefs={inputRefs} handleInputChange={handleInputCodeChange} />
 
               </div>

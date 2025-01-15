@@ -128,7 +128,7 @@ export default function MyInscriptions() {
 
   return (
     <div className="h-screen w-full overflow-y-scroll flex flex-col">
-      <h2 className="md:w-4/6 w-11/12 mx-auto text-3xl mt-10">
+      <h2 className="md:w-4/6 w-11/12 mx-auto text-3xl mt-8">
         Mis conferencias
       </h2>
 
@@ -167,7 +167,7 @@ export default function MyInscriptions() {
   </div>
 
   <div>
-    <h2 className="montserrat-font text-lg text-left">
+    <h2 className="montserrat-font text-lg text-center lg:text-left">
       {obtenerMensajeMotivacional(
         asistenciasInfo.cantidad_minima_conferencias,
         asistenciasInfo.cantidad_inscritas_actualmente

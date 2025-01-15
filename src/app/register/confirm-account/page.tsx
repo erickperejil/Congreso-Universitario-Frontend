@@ -243,7 +243,7 @@ function ConfirmationScreen({
           <span className="text-white font-semibold"> {email}</span>{" "}
           con un código para confirmar tu cuenta. Por favor ingrésalo a continuación.
         </p>
-        <p className="text-[#ab9a9a]">Si no lo encuentras revisa la bandeja de spam.</p>
+        <p className="text-[#ab9a9a] text-xl">Si no lo encuentras revisa la bandeja de <span className="text-white">spam.</span></p>
         <div className="text-white font-semibold text-xl">
           {timeLeft > 0 ? `Tiempo restante: ${formatTime(timeLeft)}` : "El tiempo ha expirado. Reenvía el correo."}
         </div>

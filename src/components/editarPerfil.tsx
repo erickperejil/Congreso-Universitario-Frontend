@@ -44,6 +44,7 @@ const UserProfile: React.FC = ({ id }: { id?: string }) => {
         setIsLoading(true);
         if (idUsuario) {
           const userData = await fetchUsuarioById(idUsuario);
+          console.log("Usuario cargado:", userData);
           if (userData) {
             setUser(userData);
             setFormData({
