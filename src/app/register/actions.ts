@@ -3,8 +3,6 @@ import { university, UniversityExtended } from '@/interfaces/University';
 import { register as registerUser, emailExists, uploadReceiptImage } from '@/services/userService';
 
 export const handleRegister = async (formData: RegisterFormInterface) => {
-    console.log('formData:', formData);
-    console.log('image:', formData.recibo);
     try {
         if (formData.recibo) {
             const response = await handleUploadReceiptImage(formData.recibo);
@@ -12,12 +10,10 @@ export const handleRegister = async (formData: RegisterFormInterface) => {
                 throw new Error(response.error);
             }
 
-            console.log('response:', response);
 
             formData = { ...formData, img_recibo: response.responseData.imageUrl };
         }
 
-        console.log('formData 2:', formData);
 
         const result = await registerUser(formData);
         return result; // Devuelve la respuesta para ser manejada en el componente
@@ -56,7 +52,6 @@ export const getUniversities = async () => {
             const errorData = await response.json();
             return { error: errorData.message || 'Error' };
         }
-        console.log('Login response:', response);
 
         const data = await response.json();
 
@@ -86,7 +81,6 @@ export const getCareers = async () => {
             const errorData = await response.json();
             return { error: errorData.message || 'Error' };
         }
-        console.log('Login response:', response);
 
         const data = await response.json();
 

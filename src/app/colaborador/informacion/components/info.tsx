@@ -61,18 +61,14 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
   useEffect(() => {
       const processToken = () => {
       const token = Cookies.get("authToken");
-      console.log(token);
   
       if (token) {
-        console.log("Token encontrado");
         setTokenValido(isTokenValid(token));
-        console.log("Token válido?", isTokenValid(token));
       } else {
         setTokenValido(false);
       }
 
 
-      console.log(tokenValido);
     };
   
     processToken();
@@ -80,7 +76,6 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
 
   useEffect(() => {
     if(!tokenValido) {
-      console.log("Token inválido");
        setNavbarVisible(false);
      } else {
         setNavbarVisible(true);
@@ -183,13 +178,25 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ id }) => {
           Hola {data.nombre_usuario}!!
         </p>
         <p className="text-sm mt-2">
-          📋 Actualmente estás inscrito en{" "}
-          <span className="font-bold">
-            {data.cantidad_inscritas_actualmente}
-          </span>{" "}
-          {data.cantidad_inscritas_actualmente === 1 ? "conferencia" : "conferencias"}.
-          ¡Sigue así y no olvides asistir para alcanzar tus metas! 🌟
+          {data.cantidad_inscritas_actualmente === 0 ? (
+            <>
+              🎉 ¡Anímate! Aún no estás inscrito.{" "}
+              <span className="font-bold">Inscríbete</span> para poder conseguir tu diploma. 🌟
+            </>
+          ) : (
+            <>
+              📋 Actualmente estás inscrito en{" "}
+              <span className="font-bold">
+                {data.cantidad_inscritas_actualmente}
+              </span>{" "}
+              {data.cantidad_inscritas_actualmente === 1
+                ? "conferencia"
+                : "conferencias"}
+              . ¡Sigue así y no olvides asistir para alcanzar tus metas! 🌟
+            </>
+          )}
         </p>
+
 
         {/* Barra de progreso */}
         {renderProgressBar()}

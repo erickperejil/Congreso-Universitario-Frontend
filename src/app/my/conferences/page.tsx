@@ -29,17 +29,14 @@ export default function Conferences() {
     try {
       let response;
       if (conferencia.inscrito) {
-        console.log(`Cancelando inscripción para la conferencia: ${conferencia.id_conferencia}`);
         response = await cancelarInscripcionConferencia(idUsuario, conferencia.id_conferencia);
       } else {
-        console.log(`Inscribiéndose a la conferencia: ${conferencia.id_conferencia}`);
         response = await inscribirseEnConferencia(idUsuario, conferencia.id_conferencia);
       }
   
       if (response.codigoResultado === -1) {
         setErrorMessage(response.message || "Ha ocurrido un error.");
       } else {
-        console.log("Acción exitosa:", response);
       }
     } catch (error) {
       console.error("Error durante la acción (inscribir o cancelar):", error);
@@ -59,7 +56,7 @@ export default function Conferences() {
       />
     )}
 
-      <h2 className="md:w-4/6 w-11/12 mx-auto text-3xl md:mt-10 mt-14">
+      <h2 className="md:w-4/6 w-11/12 mx-auto text-3xl lg:mt-10 mt-2">
         Conferencias
       </h2>
       <Cronograma

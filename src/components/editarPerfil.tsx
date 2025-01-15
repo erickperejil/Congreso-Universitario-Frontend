@@ -10,22 +10,32 @@ import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Cookies from 'js-cookie';
 import Loader from "./Loading";
 import { toast } from "react-toastify";
+import {useRouter} from 'next/navigation';
 
-
-const UserProfile: React.FC = ({id} : {id?: string}) => {
+const UserProfile: React.FC = ({ id }: { id?: string }) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<UsuarioRecibo | null>(null);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({ nombres: "", apellidos: "", correo: "", dni: null, contrasena: null});
+  const [formData, setFormData] = useState({ nombres: "", apellidos: "", correo: "", dni: null, contrasena: null });
+  const [showQR, setShowQR] = useState(false);
 
   useEffect(() => {
-    if(id) return;
+    console.log("Datos actualizados, refrescando...");
+    router.refresh(); // Se ejecuta solo cuando alguna dependencia cambia.
+  }, [router]);
+
+  useEffect(() => {
+    if (id) return;
     const processToken = () => {
       const token = Cookies.get("authToken");
       if (token) {
         try {
           const parts = token.split(".");
           const payload = JSON.parse(atob(parts[1]));
+          if (payload.tipo_usuario === "comun") {
+            setShowQR(true);
+          }
           return payload.id_usuario;
         } catch (error) {
           console.error("Error al decodificar el token:", error);
@@ -33,8 +43,8 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
       }
       return null; // Retornar `null` si no hay token o no es válido
     };
-  
-    const loadUser = async (idUsuario:number) => {
+
+    const loadUser = async (idUsuario: number) => {
       try {
         setIsLoading(true);
         if (idUsuario) {
@@ -48,7 +58,6 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
               contrasena: null,
               dni: null
             });
-            console.log("Usuario cargado:", userData);
           }
         } else {
           console.warn("No se encontró un ID de usuario válido.");
@@ -59,12 +68,10 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
         setIsLoading(false); // Finaliza el estado de carga
       }
     };
-  
+
     const idUsuario = processToken();
     loadUser(idUsuario);
   }, []);
-  
-
 
 
   // const router = useRouter();
@@ -84,18 +91,18 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
 
   const handleSave = async () => {
     if (!user) return;
-  
+
     try {
       setIsLoading(true);
       const updatedUser = await updateUser(user.id_usuario, formData);
-  
+
       if (updatedUser) {
         setUser((prevUser) =>
           prevUser
             ? {
-                ...prevUser,
-                ...formData, 
-              }
+              ...prevUser,
+              ...formData,
+            }
             : null
         );
         toast.success("Información actualizada exitosamente");
@@ -110,7 +117,7 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
       setIsLoading(false); // Finaliza el estado de carga
     }
   };
-  
+
   const handleCancel = () => {
     setEditing(false);
     if (user) {
@@ -127,23 +134,26 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader/>
+        <Loader />
       </div>
     );
   }
 
-  return (
+  return (<>
+    <h2 className="text-3xl text-black border-b-[1px] border-gray-300 pb-1">Datos Personales</h2>
     <div className="w-full flex lg:flex-row flex-col ">
-      <div className="lg:w-1/4 w-full md:mt-16 mt-10 p-4 flex items-start justify-center">
-        <div className="bg-orange-500 h-64 w-64 mt-2 relative">
-          <Image
-            src={user?.url_qr || "/imagen.svg"}
-            alt="UserQR"
-            layout="fill"
-            objectFit="cover" 
-          />
+      {showQR && (
+        <div className="lg:w-1/4 w-full md:mt-16 mt-10 p-4 flex items-start justify-center">
+          <div className="bg-orange-500 h-64 w-64 mt-2 relative">
+            <Image
+              src={user?.url_qr || "/imagen.svg"}
+              alt="UserQR"
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
         </div>
-      </div>
+      )}
       <div className=" lg:w-3/4 w-full flex flex-col justify-center lg:pr-12 pr-4 md:mt-16 mt-8">
         {/* datos */}
         <div className=" w-full h-3/4 flex flex-col p-4 justify-center">
@@ -297,6 +307,7 @@ const UserProfile: React.FC = ({id} : {id?: string}) => {
         </div>
       </div>
     </div>
+  </>
   );
 };
 

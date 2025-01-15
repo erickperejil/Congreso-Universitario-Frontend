@@ -8,7 +8,6 @@ const ScanPage: React.FC = () => {
     // Verificar si el texto decodificado es una URL válida
     try {
       const url = new URL(decodedText);
-      console.log(`Redirigiendo a: ${url.href}`);
       window.location.href = url.href; // Redirige a la URL
     } catch (error) {
       console.error("El texto escaneado no es una URL válida:", decodedText, error);

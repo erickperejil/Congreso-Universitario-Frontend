@@ -34,8 +34,8 @@ export default function FloatingNotification() {
 >
                     <div className="flex items-center justify-between w-full p-4 rounded-lg">
                         <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium">
-                            Verifica cuidadosamente la exactitud de <span className='font-bold'>todos tus datos personales</span>. Estos se usarán para generar certificados oficiales. 
+                            <span className="text-lg leading-6 xl:leading-5"> 
+                            Verifica cuidadosamente la exactitud de <span className='font-extrabold'>todos tus datos personales</span>. Estos se usarán para generar certificados oficiales. 
                             </span>
                         </div>
                         <button

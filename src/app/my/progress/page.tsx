@@ -76,7 +76,6 @@ export default function MyInscriptions() {
         // Llamar al API después de setear el ID
         (async () => {
           const data = await fetchAsistenciasByUsuarioId(payload.id_usuario);
-          console.log("asistencia", data);
           setAsistenciasInfo(data);
           setIsLoading(false);
         })();
@@ -200,7 +199,7 @@ export default function MyInscriptions() {
         </div>
 
         <div>
-          <h2 className="montserrat-font mt-6 text-lg">
+          <h2 className="montserrat-font mt-6 text-lg text-center lg:text-left">
             {obtenerMensajeMotivacional(
               asistenciasInfo.cantidad_minima_conferencias,
               asistenciasInfo.cantidad_asistidas

@@ -166,14 +166,13 @@ const ConferenciaForm: React.FC = () => {
         url_carpeta_zip: url_carpeta_zip || "",
       };
 
-      console.log("Creando Conferencia", newProduct);
 
       // Llamada al backend
       const response = await crearConferencia(newProduct);
+      console.info("Conferencia creada:", response);
       toast.success("Conferencia creada exitosamente");
       resetForm();
       scrollTo(0, 0);
-      console.log("Respuesta del servidor", response);
 
     } catch (error) {
       toast.error("Error al crear conferencia");
@@ -210,7 +209,6 @@ const ConferenciaForm: React.FC = () => {
       return; // Detén la ejecución si no hay imagen
     } */
 
-    console.log("Create button clicked, setting isCreatingProduct to true");
     setIsCreatingProduct(true);
     formRef.current?.requestSubmit(); // Envía el formulario si pasa la validación
   };

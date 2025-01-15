@@ -74,7 +74,7 @@ export default function ForgotPassword() {
       general: ""
     }));
 
-    const emailError = validateEmailForgotPassword(email);
+    const emailError = validateEmailForgotPassword(email.toLowerCase());
     setErrors((prevErrors) => ({ ...prevErrors, email: emailError }));
 
     if (emailError) {
@@ -138,7 +138,6 @@ export default function ForgotPassword() {
 
     // Obtiene el código ingresado
     const code = inputRefs.current.map((input) => input?.value).join("");
-    console.log('Código ingresado:', code);
 
     // Valida si el correo está presente
     if (!email) {
@@ -151,7 +150,7 @@ export default function ForgotPassword() {
 
     try {
       // Envía la petición para verificar el código
-      const response = await sendCodeToResetPasswordF(email, Number(code));
+      const response = await sendCodeToResetPasswordF(email.toLowerCase(), Number(code));
       if (response.error) {
         console.error('Error al verificar el código:', response.error);
         setErrors((prev) => ({
@@ -195,7 +194,7 @@ export default function ForgotPassword() {
     }
 
     try {
-      const response = await sendNewPasswordF(email, password);
+      const response = await sendNewPasswordF(email.toLowerCase(), password);
 
       if (response.error) {
         console.error('Error al enviar la nueva contraseña:', response.error);
@@ -248,9 +247,10 @@ export default function ForgotPassword() {
 
           {showInputCode && (
             <div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 text-center">
                 <p className="leading-4 text-[#ab9a9a] text-center">Ingresa el código que acabamos de enviarte a
                   <span className="text-white font-semibold">{" "}{email}</span> para verificar que eres tú</p>
+                <p className="text-[#ab9a9a]">Si no lo encuentras revisa la bandeja de <span className="text-white">spam.</span></p>
                 <InputFields inputRefs={inputRefs} handleInputChange={handleInputCodeChange} />
 
               </div>

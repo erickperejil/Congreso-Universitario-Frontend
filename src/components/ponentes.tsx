@@ -14,7 +14,6 @@ export default function PonentesComponente() {
     const loadPonentes = async () => {
       try {
         const data = await fetchPonentes();
-        console.log(data);
         setPonentes(data);
       } catch (err: unknown) {
         if (err instanceof Error) {

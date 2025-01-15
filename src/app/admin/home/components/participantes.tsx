@@ -42,7 +42,6 @@ const TableComponent = () => {
       try {
         setLoading(true);
         const data = await obtenerUsuarios();
-        console.log(data);
         setUsuarios(data);
         setFilteredData(data);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

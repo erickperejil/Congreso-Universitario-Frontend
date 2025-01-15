@@ -39,7 +39,6 @@ function Login() {
 
                 setShowRegisterButton(response.responseData.resultado);
 
-                console.log('Response:', response.responseData.resultado);
             } catch (err) {
                 console.error('Unexpected error:', err);
             }
@@ -51,6 +50,7 @@ function Login() {
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setSendingLogin(true);
+        setLoginError('');
 
         try {
             // Llamada al servicio de login
@@ -68,7 +68,7 @@ function Login() {
                         case -2:
                             setSecondActionModal(null);
                             setModalMessage(
-                                'Ha ocurrido un error inesperado. Te invitamos a intentar más tarde o, si lo prefieres, contacta con nosotros a congresofacultadingenieriaunah@gmail.com.'
+                                'Ha ocurrido un error inesperado. Te invitamos a intentar más tarde o, si lo prefieres, contacta con nosotros en congresofacultadingenieriaunah@gmail.com.'
                             );
                             break;
                         case -3:
@@ -141,7 +141,6 @@ function Login() {
     }
 
     const handleResendEmail = async () => {
-        console.log("correo", email);
         setButtonDisabled(true);
 
 
@@ -179,7 +178,7 @@ function Login() {
                 </div>
 
 
-                {loginError && <p className="flex justify-center items-start gap-1 text-red-400 text-sm text-center my-2">
+                {loginError && <p className="flex justify-center items-start gap-1 text-[#F8B133] text-sm text-center my-2">
                     <span className="material-symbols-outlined">
                         error
                     </span> {loginError}</p>}

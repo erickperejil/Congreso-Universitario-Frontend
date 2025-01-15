@@ -39,7 +39,6 @@ export default function ConfirmAccount() {
 /*   useEffect(() => {
     // Solo ejecutar si el correo ya está cargado y el parámetro es válido
     if (emailLoaded && !isNew && newParam !== null) {
-      console.log('Reenviando correo...');
       handleResendEmail();
     }
 
@@ -83,7 +82,6 @@ export default function ConfirmAccount() {
 
     // Obtiene el código ingresado
     const code = inputRefs.current.map((input) => input?.value).join("");
-    console.log('Código ingresado:', code);
 
     // Valida si el correo está presente
     if (!email) {
@@ -93,10 +91,7 @@ export default function ConfirmAccount() {
 
     try {
       // Envía la petición para verificar el código
-      console.log("codigo enviado", code)
-      console.log("correo enviado", email)
       const response = await verifyUser(email, code);
-      console.log("respuesta", response)
       if (response.error) {
         console.error('Error al verificar el código:', response.error);
         setError("El código ingresado es incorrecto");
@@ -106,7 +101,6 @@ export default function ConfirmAccount() {
       // Limpia el almacenamiento local y marca el código como válido
       localStorage.removeItem('registerEmail');
       localStorage.removeItem('timerEndTime');
-      console.log("valor usuario", response.responseData.valor_usuario)
       setIsNormalUser(response.responseData.valor_usuario)
       setIsCodeValid(true);
 
@@ -119,7 +113,6 @@ export default function ConfirmAccount() {
   };
 
   const handleResendEmail = (): Promise<void> => {
-    console.log("correo", email);
     return resendVerificationEmail(email)
       .then((response) => {
         if ('error' in response) {
@@ -243,7 +236,7 @@ function ConfirmationScreen({
           <span className="text-white font-semibold"> {email}</span>{" "}
           con un código para confirmar tu cuenta. Por favor ingrésalo a continuación.
         </p>
-        <p className="text-[#ab9a9a]">Si no lo encuentras revisa la bandeja de spam.</p>
+        <p className="text-[#ab9a9a] text-xl">Si no lo encuentras revisa la bandeja de <span className="text-white">spam.</span></p>
         <div className="text-white font-semibold text-xl">
           {timeLeft > 0 ? `Tiempo restante: ${formatTime(timeLeft)}` : "El tiempo ha expirado. Reenvía el correo."}
         </div>

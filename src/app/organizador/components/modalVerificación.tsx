@@ -8,6 +8,8 @@ interface InvoiceModalProps {
   onDeny: () => void;
   invoiceCode: string;
   invoiceImage: string;
+  isAccepted?: boolean | null;
+  loading?: boolean;
 }
 
 const InvoiceModal: React.FC<InvoiceModalProps> = ({
@@ -17,6 +19,8 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
   onDeny,
   invoiceCode,
   invoiceImage,
+  isAccepted = null,
+  loading=false,
 }) => {
   if (!isOpen) return null;
 
@@ -30,29 +34,57 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
 
         {/* Imagen de la factura */}
         <div className="relative w-full h-96 mb-6">
-          <Image
-            src={invoiceImage}
-            alt="Factura"
-            layout="fill"
-            objectFit="contain"
-            className="rounded-md border border-gray-300"
-          />
+          {invoiceImage ?  (
+            <Image
+              src={invoiceImage}
+              alt="Factura"
+              layout="fill"
+              objectFit="contain"
+              className="rounded-md border border-gray-300"
+            />
+          ) : <p className="text-center">No hay imagen</p>}
         </div>
 
         {/* Botones */}
         <div className="flex justify-around mt-4">
-          <button
-            onClick={onValidate}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
-          >
-            Validar
-          </button>
-          <button
-            onClick={onDeny}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
-          >
-            Denegar
-          </button>
+          {isAccepted === null && (
+            <>
+              <button
+                onClick={onValidate}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition hover:scale-105 disabled:opacity-50"
+                disabled={loading}
+              >
+                Aceptar
+              </button>
+              <button
+                onClick={onDeny}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition hover:scale-105 disabled:opacity-50"
+                disabled={loading}
+              >
+                Denegar
+              </button>
+            </>
+          )}
+
+          {isAccepted === false && (
+            <button
+              onClick={onValidate}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition hover:scale-105 disabled:opacity-50"
+              disabled={loading}
+            >
+              Aceptar
+            </button>
+          )}
+
+          {isAccepted === true && (
+            <button
+              onClick={onDeny}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition hover:scale-105 disabled:opacity-50"
+              disabled={loading}
+            >
+              Denegar
+            </button>
+          )}
         </div>
 
         {/* Cerrar modal */}

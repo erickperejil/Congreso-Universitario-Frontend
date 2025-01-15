@@ -49,7 +49,7 @@ export function validateDni(dni: string): string {
     }
 
     if (dni.length > 25 || !/^\d+$/.test(dni)) {
-        return "El DNI es invalido";
+        return "El DNI es inválido";
     }
     return "";
 }
@@ -60,14 +60,14 @@ export function validatePhone(phone: string): string {
     }
 
     if (phone.length !== 8 || !/^\d+$/.test(phone)) {
-        return "El teléfono es invalido";
+        return "El teléfono es inválido";
     }
     return "";
 }
 
 export function validatePassword(password: string): string {
     if (password === "") {
-        return "El campo es requerida";
+        return "El campo es requerido";
     }
 
 
@@ -97,8 +97,8 @@ export function validateStudentCode(studentCode: string): string {
         return "El campo es requerido";
     }
 
-    if (studentCode.length !== 11) {
-        return "Numero de cuenta invalido";
+    if (studentCode.length > 11) {
+        return "Número de cuenta inválido";
     }
 
     return "";
@@ -135,7 +135,7 @@ export function validateReceiptCode(receiptCode: string): string {
 
 export function validateOrganizerCode(organizerCode: string): string {
     if (organizerCode.length !== 4) {
-        return "Codigo de organizador invalido";
+        return "Codigo de organizador inválido";
     }
 
     return "";
@@ -187,7 +187,7 @@ export function validateForgotPasswordCode(code: string): string {
 
 export function validateEmailForgotPassword(email: string): string {
     if (email.length === 0) {
-        return "Ingrese el correo electronico"
+        return "Ingrese el correo electrónico"
     }
 
     return "";

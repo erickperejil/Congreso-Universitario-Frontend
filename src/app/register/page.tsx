@@ -33,6 +33,7 @@ import { checkEmailExists, getUniversities, getCareers, handleRegister } from ".
 import { genders } from "../constants/genders";
 import { Career } from "@/interfaces/Career";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 const Register = () => {
     const router = useRouter();
@@ -89,6 +90,19 @@ const Register = () => {
         receiptImage: "",
     });
 
+    useEffect(() => {
+        toast.info("¡Bienvenido/a! Ten a mano una foto de tu recibo para completar el registro.", {
+            position: "top-right",
+            autoClose: false,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined, 
+        });
+
+    }, []);
+
     /* Trae todas las universidades y carreras para el select */
     useEffect(() => {
         const getUniversitiesFromAPI = async () => {
@@ -100,7 +114,6 @@ const Register = () => {
 
             if (response.universities) {
                 setUniversities(response.universities);
-                console.log("Universidades:", response.universities);
             }
         };
 
@@ -111,7 +124,6 @@ const Register = () => {
                 return;
             }
 
-            console.log(response.data)
             setCarrers(response.data);
         }
 
@@ -128,9 +140,8 @@ const Register = () => {
             );
             if (unah) {
                 setUNAHId(unah.id);
-                console.log("UNAH encontrada:", unah);
             } else {
-                console.log("UNAH no encontrada");
+                console.warn("UNAH no encontrada");
             }
         }
     }, [universities]);
@@ -268,7 +279,6 @@ const Register = () => {
     const handleUniversityChange = (
         event: React.ChangeEvent<HTMLSelectElement>
     ) => {
-        console.log(event.target.value);
         setUniversityID(Number(event.target.value));
     };
 
@@ -399,10 +409,8 @@ const Register = () => {
 
     function handleBackStep(event: React.FormEvent): void {
         event.preventDefault(); // Detiene el envío del formulario
-        console.log("Retrocediendo...", currentStep);
 
         setCurrentStep((prevStep) => (prevStep > 1 ? prevStep - 1 : prevStep));
-        console.log("Retrocediendo...", currentStep);
     }
 
     const buildFormData = (): RegisterFormInterface => {
@@ -454,18 +462,14 @@ const Register = () => {
     const handleSubmit = async () => {
         setSending(true);
         const formData: RegisterFormInterface = buildFormData();
-        console.log("Datos a enviar:", formData);
 
         try {
             const response = await handleRegister(formData);
 
             if (response.error) {
                 console.error('Error al registrar usuario:', response.error);
-
-                if (response.error.statusCode === 500) {
-                    setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. Si el problema persiste, contacta al soporte. ¡Gracias por tu paciencia!");
+                    setModalMessage("Lo sentimos, hubo un error al procesar tu registro. Por favor, inténtalo de nuevo más tarde. Si el problema persiste, contacta al soporte. ¡Gracias por tu paciencia!. El servidor respondio con:" + response.error);
                     setShowModal(true);
-                }
                 return;
             }
 
@@ -500,7 +504,7 @@ const Register = () => {
                     <div
                         key={step}
                         className={`grid place-items-center w-10 h-10 cursor-pointer rounded-full
-                                ${step < currentStep ? "bg-gray-400" : ""} 
+                                ${step > currentStep ? "bg-gray-400" : ""}
                                 ${step === currentStep
                                 ? "bg-[#f8b133] w-12 h-12"
                                 : "bg-[#fff]"
@@ -914,6 +918,7 @@ const Register = () => {
                         Iniciar Sesión
                     </Link>
                 </p>
+
                 {showModal && (
                     <ModalWarning
                         title={modalMessage}

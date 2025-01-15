@@ -13,8 +13,8 @@ interface HomeProps {
 export default function Home({ children }: HomeProps) {
 
     const navOptions = [
-        { name: "Mi Perfil", icon: "person", link: "/organizador", default: true },
-        { name: "Participantes", icon: "person", link: "/organizador/participantes", default: false },
+        { name: "Mi Perfil", icon: "person", link: "/organizador/perfil", default: false },
+        { name: "Participantes", icon: "person", link: "/organizador", default: true },
     ];
 
     return (

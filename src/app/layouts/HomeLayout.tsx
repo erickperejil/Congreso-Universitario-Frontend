@@ -37,8 +37,6 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
         }
     }, [navOptions]);
 
-
-
     const handleOptionChange = (newOption: string) => {
         setOptionSelected(newOption);
         sessionStorage.setItem("optionSelected", newOption);
@@ -89,6 +87,7 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
             /*             Cookies.remove('authToken');
                         router.push('/login');
              */
+            sessionStorage.removeItem("optionSelected"); // Elimina una clave específica
             sessionStorage.clear(); 
             Cookies.remove('authToken', { path: '/' }); // Eliminar token
             router.push('/login');
@@ -96,7 +95,6 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
             console.error('Unexpected error during logout:', error);
         }
     }
-
 
     return (
         <>
@@ -131,7 +129,7 @@ export default function HomeLayout({ navOptions, children, className }: { navOpt
                         } sm:translate-x-0 border-r border-gray-800 dark:border-gray-700`}
                     aria-label="Sidebar"
                 >
-                    <div className={`h-full px-3 py-4 overflow-y-auto bg-[#101017]`}>
+                    <div className={`h-full px-3 py-4 overflow-y-auto bg-[#101017]`} id="logo-sidebar">
                         <Link
                             href="/my/"
                             className="w-full mb-5 flex items-start justify-start"

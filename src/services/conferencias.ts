@@ -14,7 +14,6 @@ export const fetchConferencias = async (dia: string): Promise<Conferencia[]> => 
   }
 
   const data = await response.json();
-  console.log("data",data)
   return data.conferencias;
 };
 
@@ -33,7 +32,6 @@ export const fetchConferenciasPorUsuario = async (idUsuario: number, dia: string
   }
 
   const data = await response.json();
-  console.log("data de usuario", data);
   return data.conferencias;
 };
 
@@ -51,7 +49,6 @@ export const fetchConferenciasPorUsuarioGeneral = async (idUsuario: number, fech
   }
 
   const data = await response.json();
-  console.log("data de usuario general", data);
   return data.conferencias;
 };
 
@@ -75,6 +72,5 @@ export const fetchConferenciasInscritasPorUsuario = async (
   }
 
   const data = await response.json(); // Parsear el JSON retornado
-  console.log("data de conferencias inscritas", data);
   return data.conferencias;
 };
