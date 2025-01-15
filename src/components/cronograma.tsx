@@ -314,7 +314,7 @@ export default function Cronograma({
   }, [diaSeleccionado, fetchPrompt, idUsuario]);
 
   return (
-    <div className="w-5/6 mt-10  w-full flex flex-col items-center select-none mx-auto">
+    <div className="w-5/6 px-4 md:px-8 mt-10 w-full flex flex-col items-center select-none mx-auto">
       <h2 className={`sm:text-6xl text-5xl mb-10 ${titleStyles || ""}`}>
         Conferencias
       </h2>
